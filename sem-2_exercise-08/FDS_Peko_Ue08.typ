@@ -3,7 +3,7 @@
 #set text(font: "Calibri", lang: "de")
 
 #align(center)[
-  #text(17pt)[*FDS2 - Übung 7*]\
+  #text(17pt)[*FDS2 - Übung 8*]\
   #text(14pt)[SS 2025]
 
   #text(16pt)[Tim Peko]
@@ -26,19 +26,45 @@
   ]
 ]
 
-= Beispiel 1: Objekterkennung
+= Beispiel 1: ADT `bstree`
 
 == Lösungsansatz
 
-Eine neue Funktion `count_and_color_objects(...)` erhält ein Quellbild (aus dem die Objekte gezählt werden sollen) und ein Zielbild, in dem die farbliche Markierung gespeichert wird. Der Schwellenwert `theta` $theta$ wird als Parameter übergeben und sorgt für das Abgrenzen der Objekte. Jedes erkannte Objekt wird mit einer neuen Zufallsfarbe eingefärbt.
+Für die Implementierung des binären Suchbaums (`bstree`) wurde eine Struktur angelegt, die einen Baum mit Knoten realisiert. Jeder Knoten enthält einen Wert vom Typ `int`, sowie Zeiger auf den linken und rechten Teilbaum. Der Baum als Ganzes verwaltet einen Zeiger auf den Wurzelknoten und einen Zähler für die Anzahl der Knoten im Baum.
 
-Es wird über alle Pixel des Quellbildes iteriert und die Helligkeit jedes Pixels mit dem Schwellenwert $theta$ verglichen. Zudem wird in einem Array mitgespeichert, ob die jeweiligen Pixel bereits besucht wurden. Ist dem nicht der Fall und die Helligkeit des Pixels ist größer oder gleich $theta$, wird das Pixel als neues Objekt erkannt und von diesem Pixel ausgehend per Flood-Fill Algorithmus mit einer neuen Zufallsfarbe eingefärbt.
+Die Hauptmethoden sind:
 
-Der Flood-Fill Algorithmus färbt den Pixel und ruft sich selbst rekursiv für alle umliegenden Pixel auf, wenn das Pixel noch nicht besucht wurde und die Helligkeit größer oder gleich $theta$ ist.
+1. *Konstruktoren und Destruktor*:
+   - `bstree()`: Erzeugt einen leeren Baum
+   - `bstree(bstree const& src)`: Kopiert einen bestehenden Baum
+   - `~bstree()`: Gibt den Speicher aller Knoten frei
 
-Ein naiver rekursiver Flood-Fill Algorithmus funktioniert nicht, da man schnell den Stack mit einem Stack-Overflow sprengt. Es muss für jeden _Pixel_ ein neuer Stack-Frame erstellt werden. Um dies zu vermeiden, wird die Scanline Methode verwendet. Diese markiert eine ganze Zeile auf einmal, und erzeugt daher nur einen Stack-Frame pro _Bildzeile_.
+2. *Zugriffsmethoden*:
+   - `apply`: Wendet eine Funktion auf jeden Knoten im Baum an (in-order Traversierung)
+   - `at`: Gibt den Wert am angegebenen Index zurück (in-order Traversierung)
+   - `contains`: Prüft, ob ein Wert im Baum vorhanden ist
+   - `count`: Zählt Vorkommen eines bestimmten Wertes im Baum
+   - `empty`: Prüft, ob der Baum leer ist
+   - `equals`: Vergleicht zwei Bäume auf strukturelle Gleichheit
+   - `size`: Gibt die Anzahl der Knoten im Baum zurück
 
-Referenzierte Dateien können unter `assets/` gefunden werden.
+3. *Modifikationsmethoden*:
+   - `insert`: Fügt einen Wert in den Baum ein
+   - `remove`: Entfernt ein Vorkommen eines Wertes aus dem Baum
+   - `remove_all`: Entfernt alle Vorkommen eines Wertes aus dem Baum
+   - `clear`: Entfernt alle Knoten aus dem Baum
+
+4. *Ausgabemethoden*:
+   - `print`: Gibt den Baum in-order aus
+   - `print_2d`: Visualisiert den Baum zweidimensional
+   - `print_2d_upright`: Visualisiert den Baum zweidimensional aufrecht
+
+Für die rekursiven Operationen wurden private Hilfsmethoden implementiert, die die eigentliche Rekursion durchführen. Die öffentlichen Methoden dienen hauptsächlich als Wrapper, die die Gültigkeit der Eingabeparameter prüfen und dann die entsprechenden rekursiven Methoden aufrufen.
+
+Bei der Implementierung der `remove`-Methode wurden drei Fälle unterschieden:
+1. Löschen eines Blattknotens: Der Knoten wird einfach entfernt
+2. Löschen eines Knotens mit einem Kind: Das Kind ersetzt den Knoten
+3. Löschen eines Knotens mit zwei Kindern: Der Knoten wird durch den kleinsten Wert im rechten Teilbaum ersetzt
 
 == Testfälle
 
@@ -54,141 +80,156 @@ Referenzierte Dateien können unter `assets/` gefunden werden.
   )
 }
 
-Die Testfälle sind in der Datei `main01.cpp` zu finden. Dessen Ausführung ergibt folgende Konsolenausgabe:
+Die Testfälle sind in der Datei `main01.cpp` implementiert. Dabei wurden folgende Aspekte getestet:
 
-#block(align(left, figure(
-  block(stroke: black, align(left, image("assets/testcases_console_output.png"))),
-  caption: "Konsolenausgabe der Testfälle"
-)))
-
-=== Testfall 1: Leeres Bild
+=== Testfall 1: Leerer Baum
 
 *Input:*\
-leeres Bild (width = 0, height = 0)\
-$theta = 0.2$
+Leerer Baum ohne Einfügeoperationen
+
+*Tests:*
+- `empty()`: Prüfen, ob der Baum leer ist
+- `size()`: Prüfen, ob die Größe 0 ist
+- `contains(5)`: Prüfen, ob ein beliebiger Wert enthalten ist
+- `at(0, value)`: Prüfen, ob auf einen Index zugegriffen werden kann
+- `remove(5)`: Prüfen, ob ein Wert entfernt werden kann
+- `clear()`: Prüfen, ob der leere Baum geleert werden kann
 
 *Output:*\
-```txt
-count = 0
-Kein geschriebenes Bild
+Alle Tests bestanden
+
+*Ergebnis*: #text(green)[success]
+
+=== Testfall 2: Einfügen von Werten
+
+*Input:*\
+Einfügen der Werte 10, 5, 15, 3, 7, 12, 20
+
+*Tests:*
+- `empty()`: Prüfen, ob der Baum nicht mehr leer ist
+- `size()`: Prüfen, ob die Größe 7 ist
+- `contains()`: Prüfen, ob alle eingefügten Werte enthalten sind
+- Visualisierung des Baums mit `print()`, `print_2d()` und `print_2d_upright()`
+
+*Output:*\
+Alle Tests bestanden, Baumstruktur entspricht den Erwartungen:
+```
+     20
+ 15
+     12
+10
+     7
+ 5
+     3
 ```
 
 *Ergebnis*: #text(green)[success]
 
-=== Testfall 2: Einfarbig unterhalb Threshold
+=== Testfall 3: Kopieren eines Baums
 
 *Input:*\
-Komplett schwarzes Bild\
-$theta = 0.1$
+Kopie eines Baums mit den Werten 10, 5, 15
 
-#image_display(
-  "assets/black_picture.png",
-  "Schwarzes Bild - Input für Testfall 2"
-)
+*Tests:*
+- `size()`: Prüfen, ob beide Bäume die gleiche Größe haben
+- `equals()`: Prüfen, ob beide Bäume strukturell gleich sind
+- Unabhängigkeit: Nach Einfügen in den ersten Baum prüfen, ob beide Bäume unterschiedlich sind
 
 *Output:*\
-```txt
-count = 0
-```
-
-#image_display(
-  "assets/testcase-2_output.png",
-  "Output von Testfall 2"
-)
+Alle Tests bestanden
 
 *Ergebnis*: #text(green)[success]
 
-=== Testfall 3: Einfarbig oberhalb Threshold
+=== Testfall 4: Entfernen von Knoten
 
 *Input:*\
-Komplett weißes Bild\
-$theta = 0.5$
+Baum mit den Werten 10, 5, 15, 3, 7, 12, 20
 
-#image_display(
-  "assets/white_picture.png",
-  "Weißes Bild - Input für Testfall 3"
-)
+*Tests:*
+- Entfernen eines Blattknotens (3)
+- Entfernen eines Knotens mit einem Kind (5)
+- Entfernen eines Knotens mit zwei Kindern (15)
+- Entfernen des Wurzelknotens (10)
+- Versuch, einen nicht vorhandenen Wert zu entfernen (100)
 
 *Output:*\
-```txt
-count = 1
-```
-
-#image_display(
-  "assets/testcase-3_output.png",
-  "Output von Testfall 3"
-)
+Alle Tests bestanden
 
 *Ergebnis*: #text(green)[success]
 
-=== Testfall 4: Mehrere getrennte Objekte
+=== Testfall 5: Anwenden einer Funktion
 
 *Input:*\
-Schwarzer Hintergrund mit 3 weißen Punkten (Helligkeit > $theta$)\
-$theta = 0.5$
+Baum mit den Werten 10, 5, 15
 
-#image_display(
-  "assets/3_dots_picture.png",
-  "Schwarzes Bild mit 3 weißen Punkten - Input für Testfall 4"
-)
+*Tests:*
+- Anwenden der Funktion `add_one` auf alle Knoten
+- Prüfen, ob alle Werte um 1 erhöht wurden (11, 6, 16)
 
 *Output:*\
-```txt
-count = 3
-```
-
-#image_display(
-  "assets/testcase-4_output.png",
-  "Output von Testfall 4"
-)
+Alle Tests bestanden
 
 *Ergebnis*: #text(green)[success]
 
-=== Testfall 5: Objekt mit Löchern
+=== Testfall 6: Indexbasierter Zugriff
 
 *Input:*\
-Kreis aus hellen Pixeln mit schwarzen Inneren\
-$theta = 0.5$
+Baum mit den Werten 10, 5, 15
 
-#image_display(
-  "assets/circle_hole_picture.png",
-  "Hohler weißer Kreis - Input für Testfall 5"
-)
+*Tests:*
+- Zugriff auf gültige Indices (0, 1, 2)
+- Versuch, auf ungültige Indices zuzugreifen (-1, 3)
 
 *Output:*\
-```txt
-count = 1
-```
-
-#image_display(
-  "assets/testcase-5_output.png",
-  "Output von Testfall 5"
-)
+Alle Tests bestanden
 
 *Ergebnis*: #text(green)[success]
 
-=== Testfall 6: Ungültiger Schwellenwert
+=== Testfall 7: Zählen von Vorkommen
 
 *Input:*\
-Komplett weißes Bild\
-$theta = 1.1$
+Baum mit den Werten 10, 5, 10, 15, 10 (Duplikate)
 
-#image_display(
-  "assets/white_picture.png",
-  "Weißes Bild - Input für Testfall 6"
-)
+*Tests:*
+- Zählen mehrfacher Vorkommen (10)
+- Zählen einzelner Vorkommen (5)
+- Zählen nicht vorhandener Werte (100)
 
 *Output:*\
-```txt
-count = 0
-Kein geschriebenes Bild
-```
+Alle Tests bestanden
 
 *Ergebnis*: #text(green)[success]
 
+=== Testfall 8: Entfernen aller Vorkommen
 
+*Input:*\
+Baum mit den Werten 10, 5, 10, 15, 10 (Duplikate)
+
+*Tests:*
+- Entfernen aller Vorkommen eines mehrfach vorhandenen Wertes (10)
+- Entfernen aller Vorkommen eines einmalig vorhandenen Wertes (5)
+- Versuch, alle Vorkommen eines nicht vorhandenen Wertes zu entfernen (100)
+
+*Output:*\
+Alle Tests bestanden
+
+*Ergebnis*: #text(green)[success]
+
+=== Testfall 9: Leeren des Baums
+
+*Input:*\
+Baum mit den Werten 10, 5, 15
+
+*Tests:*
+- Prüfen, ob `clear()` die richtige Anzahl entfernter Knoten zurückgibt
+- Prüfen, ob der Baum nach dem Leeren leer ist
+
+*Output:*\
+Alle Tests bestanden
+
+*Ergebnis*: #text(green)[success]
 
 
 #align(right + bottom)[
-  Aufwand in h: 4
+  Aufwand in h: 5
 ]

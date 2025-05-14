@@ -127,7 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bstree.cpp" />
     <ClCompile Include="main01.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bstree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
