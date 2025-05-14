@@ -1,0 +1,6 @@
+.vs/
+.vscode/
+.jj/
+x64/
+x86/
+*.zip
