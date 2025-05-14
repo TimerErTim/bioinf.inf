@@ -1,5 +1,6 @@
 #include "bstree.h"
 #include <iomanip>
+#include <string>
 
 bstree::bstree() : root(nullptr), node_count(0) {}
 
@@ -92,7 +93,8 @@ std::ostream& bstree::print_2d(std::ostream& out) const {
     if (root == nullptr) {
         out << "Empty tree";
     } else {
-        print_2d_recursive(out, root, 0, 5);
+        std::vector<bool> vert_lines;
+        print_2d_recursive(out, root, 0, vert_lines);
     }
     return out;
 }
@@ -101,7 +103,7 @@ std::ostream& bstree::print_2d_upright(std::ostream& out) const {
     if (root == nullptr) {
         out << "Empty tree";
     } else {
-        print_2d_upright_recursive(out, root, 0, 5);
+        print_2d_upright_recursive(out, root, 0);
     }
     return out;
 }
@@ -241,40 +243,77 @@ std::ostream& bstree::print_recursive(std::ostream& out, node_t* node) const {
     return out;
 }
 
-void bstree::print_2d_recursive(std::ostream& out, node_t* node, int space, int count) const {
+void bstree::print_2d_recursive(std::ostream& out, node_t* node, int space, std::vector<bool>& vert_lines) const {
     if (node == nullptr) {
         return;
     }
     
-    space += count;
+    // Increase distance between levels
+    int level_space = 4;
+    space += level_space;
     
-    print_2d_recursive(out, node->right, space, count);
+    // Store current size of vert_lines
+    int prev_size = vert_lines.size();
     
-    out << std::endl;
-    for (int i = count; i < space; i++) {
-        out << " ";
+    // Ensure vert_lines has enough space for this level
+    while (vert_lines.size() < space / level_space) {
+        vert_lines.push_back(false);
     }
-    out << node->value << std::endl;
     
-    print_2d_recursive(out, node->left, space, count);
+    // Set vertical line for current node's level
+    if (space > level_space) {
+        vert_lines[space / level_space - 1] = true;
+    }
+    
+    // Process right child first (goes to top of the output)
+    print_2d_recursive(out, node->right, space, vert_lines);
+    
+    // Line for this node
+    out << std::endl;
+    
+    // Print vertical lines for upper levels
+    for (int i = 0; i < space - level_space; i++) {
+        if (i % level_space == 0 && vert_lines[i / level_space]) {
+            out << "|";
+        } else {
+            out << " ";
+        }
+    }
+    
+    // Print connector and node value
+    if (space > level_space) {
+        out << "-";
+    }
+    out << node->value;
+    
+    // Turn off vertical line for this level before processing left child
+    if (space > level_space) {
+        vert_lines[space / level_space - 1] = false;
+    }
+    
+    // Process left child
+    print_2d_recursive(out, node->left, space, vert_lines);
+    
+    // Restore vert_lines to previous size
+    vert_lines.resize(prev_size);
 }
 
-void bstree::print_2d_upright_recursive(std::ostream& out, node_t* node, int space, int count) const {
+void bstree::print_2d_upright_recursive(std::ostream& out, node_t* node, int space) const {
     if (node == nullptr) {
         return;
     }
     
-    space += count;
+    space += 2;
     
-    print_2d_upright_recursive(out, node->left, space, count);
+    print_2d_upright_recursive(out, node->left, space);
     
     out << std::endl;
-    for (int i = count; i < space; i++) {
+    for (int i = 2; i < space; i++) {
         out << " ";
     }
     out << node->value << std::endl;
     
-    print_2d_upright_recursive(out, node->right, space, count);
+    print_2d_upright_recursive(out, node->right, space);
 }
 
 bstree::node_t* bstree::remove_node(node_t* node, value_t const& value, bool& removed) {

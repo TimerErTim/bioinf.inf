@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cstddef>
+#include <vector>
 
 struct bstree {
 
@@ -49,8 +50,8 @@ private:
   int count_recursive(node_t* node, value_t const& value) const;
   bool equals_recursive(node_t* lhs, node_t* rhs) const;
   std::ostream& print_recursive(std::ostream& out, node_t* node) const;
-  void print_2d_recursive(std::ostream& out, node_t* node, int space, int count) const;
-  void print_2d_upright_recursive(std::ostream& out, node_t* node, int space, int count) const;
+  void print_2d_recursive(std::ostream& out, node_t* node, int space, std::vector<bool>& vert_lines) const;
+  void print_2d_upright_recursive(std::ostream& out, node_t* node, int space) const;
   node_t* remove_node(node_t* node, value_t const& value, bool& removed);
   node_t* find_min_value_node(node_t* node);
   int remove_all_recursive(node_t*& node, value_t const& value);
