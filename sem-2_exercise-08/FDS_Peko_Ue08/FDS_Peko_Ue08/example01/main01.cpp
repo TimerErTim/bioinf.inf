@@ -65,6 +65,10 @@ void run_insertion_tests() {
     tree.insert(7);
     tree.insert(12);
     tree.insert(20);
+
+    tree.print(std::cout) << std::endl;
+    tree.print_2d(std::cout) << std::endl;
+    tree.print_2d_upright(std::cout) << std::endl;
     
     // Test empty
     test_result = !tree.empty();
