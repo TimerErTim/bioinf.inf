@@ -134,36 +134,52 @@ void bstree::print_2d_recursive(std::ostream& out, node_t* node, int depth) cons
     if (node == nullptr) {
         return;
     }
-
+    
     int step_size = 3;
 
-    print_2d_recursive(out, node->left, depth + 1);
-
+    // Print the right subtree with an increment of depth
+    print_2d_recursive(out, node->right, depth + 1);
+    
+    // Print the current node with indentations according to the depth
     for (int i = 0; i < depth; i++) {
         for (int j = 0; j < step_size; j++) {
-        out << " ";
+            int indent = i * step_size + j;
+            if (indent >= (depth - 1) * step_size + 1) {
+                out << "-";
+            } else {
+                out << " ";
+            }
+        }
     }
     out << node->value << std::endl;
-
-    print_2d_recursive(out, node->right, depth + 1);
+    
+    // Print the left subtree with an increment of depth
+    print_2d_recursive(out, node->left, depth + 1);
 }
 
 void bstree::print_2d_upright_recursive(std::ostream& out, node_t* node, int depth) const {
     if (node == nullptr) {
-        return 0;
+        return;
     }
     
-    print_2d_upright_recursive(out, node->left, depth + 1);
+    int step_size = 3;
+
+    print_2d_upright_recursive(out, node->right, depth + 1);
     
-    out << std::endl;
-    for (int i = 2; i < depth; i++) {
-        out << " ";
+    // Print the current node with indentations according to the depth
+    for (int i = 0; i < depth; i++) {
+        for (int j = 0; j < step_size; j++) {
+            int indent = i * step_size + j;
+            if (indent >= (depth - 1) * step_size + 1) {
+                out << "-";
+            } else {
+                out << " ";
+            }
+        }
     }
     out << node->value << std::endl;
     
-    print_2d_upright_recursive(out, node->right, depth + 1);
-
-    return 0;
+    print_2d_upright_recursive(out, node->left, depth + 1);
 }
 
 // Removes a node from the tree, guaranteeing that the tree is still a BST
@@ -361,8 +377,7 @@ std::ostream& bstree::print_2d(std::ostream& out) const {
     if (root == nullptr) {
         out << "nulltree";
     } else {
-        std::vector<bool> vert_lines;
-        print_2d_recursive(out, root, 0, vert_lines);
+        print_2d_recursive(out, root, 0);
     }
     return out;
 }
