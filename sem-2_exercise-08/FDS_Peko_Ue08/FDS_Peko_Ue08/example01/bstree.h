@@ -50,7 +50,9 @@ class bstree {
     bool equals_recursive(node_t* lhs, node_t* rhs) const;
     std::ostream& print_recursive(std::ostream& out, node_t* node) const;
     void print_2d_recursive(std::ostream& out, node_t* node, int depth) const;
-    void print_2d_upright_recursive(std::ostream& out, node_t* node, int depth) const;
+    void print_2d_upright(std::ostream& out, node_t* node) const;
+    int calculate_space_required_upright(node_t* node, int current_depth) const;
+    std::vector<node_t*> nodes_at_depth(node_t* node, int depth) const;
     node_t* remove_node(node_t* node, value_t const& value, bool& removed);
     node_t* find_min_value_node(node_t* node);
     int remove_all_recursive(node_t*& node, value_t const& value);

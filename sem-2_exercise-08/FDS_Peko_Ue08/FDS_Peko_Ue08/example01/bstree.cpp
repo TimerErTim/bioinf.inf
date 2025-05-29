@@ -1,6 +1,8 @@
 #include "bstree.h"
 #include <iomanip>
 #include <string>
+#include <vector>
+#include <optional>
 
 // Private helper methods
 
@@ -157,30 +159,104 @@ void bstree::print_2d_recursive(std::ostream& out, node_t* node, int depth) cons
     print_2d_recursive(out, node->left, depth + 1);
 }
 
-void bstree::print_2d_upright_recursive(std::ostream& out, node_t* node, int depth) const {
+// Prints a 2D representation of the tree in an upright format
+void bstree::print_2d_upright(std::ostream& out, node_t* node) const {
     if (node == nullptr) {
         return;
     }
-    
-    int step_size = 3;
 
-    print_2d_upright_recursive(out, node->right, depth + 1);
-    
-    // Print the current node with indentations according to the depth
-    for (int i = 0; i < depth; i++) {
-        for (int j = 0; j < step_size; j++) {
-            int indent = i * step_size + j;
-            if (indent >= (depth - 1) * step_size + 1) {
-                out << "-";
+    // Calculate the space required to print the tree
+    int space_required = calculate_space_required_upright(node, 0);
+
+    // Print the tree layer by layer
+    int current_depth = 0;
+    while (true) {
+        auto layer = nodes_at_depth(node, current_depth);
+        bool nodes_drawn_this_layer = false;  // Tracks if any nodes were drawn in this layer for breaking the loop
+        int sub_areas_amount = 1 << current_depth; // Calculate the number of sub-areas in the current layer
+        int sub_area_width = space_required / sub_areas_amount; // Calculate the width of each sub-area
+
+        for (auto n : layer) {
+            // Retrieve the sub area content based on the node to be inserted
+            std::string str_val;
+            if (n != nullptr) {
+                str_val = std::to_string(n->value);
+                nodes_drawn_this_layer = true;  
             } else {
+                str_val = "";
+            }
+
+            // Calculate spacing for the current node
+            int val_width = str_val.length();
+            int left_space = (sub_area_width - val_width) / 2;
+            int right_space = sub_area_width - left_space - val_width;
+
+            // Print the node with spacing
+            for (int i = 0; i < left_space; i++) {
+                out << " ";
+            }
+            out << str_val;
+            for (int i = 0; i < right_space; i++) {
                 out << " ";
             }
         }
+        out << std::endl;
+
+        // If no nodes were drawn in this layer, break the loop
+        if (!nodes_drawn_this_layer) {
+            break;
+        }
+
+        // Update current depth
+        current_depth += 1;
     }
-    out << node->value << std::endl;
-    
-    print_2d_upright_recursive(out, node->left, depth + 1);
 }
+
+// Calculates the space required to print the tree in an upright format
+int bstree::calculate_space_required_upright(node_t* node, int current_depth) const {
+    if (node == nullptr) {
+        return 2; // Return 2 for the empty space (margin left and right of 1)
+    }
+
+    std::string str_val = std::to_string(node->value);
+    int val_width = str_val.length() + 2; // Left and right margin
+    int sub_areas_amount = 1 << current_depth; // Calculate the amount of sub-areas in the current layer
+    int current_layer_width = val_width * sub_areas_amount; // Calculate the width of the current layer by multiplying the value width by the amount of sub-areas in the current layer
+
+    int left_layer_width = calculate_space_required_upright(node->left, current_depth + 1);
+    int right_layer_width = calculate_space_required_upright(node->right, current_depth + 1);
+
+    // Return the maximum width of the current layer or the total width based on the left and right children
+    return std::max(current_layer_width, std::max(left_layer_width, right_layer_width));
+}
+
+
+// Contains nullptr nodes for empty spots in the layer at given depth
+std::vector<bstree::node_t*> bstree::nodes_at_depth(node_t* node, int depth) const {
+    if (depth == 0) {
+        return std::vector<node_t*>{node};
+    }
+
+    node_t* left_node = nullptr;
+    node_t* right_node = nullptr;
+
+    if (node != nullptr) {
+        left_node = node->left;
+        right_node = node->right;
+    }
+
+    std::vector<node_t*> nodes{};
+    auto left_nodes = nodes_at_depth(left_node, depth - 1);
+    for (auto n : left_nodes) {
+        nodes.push_back(n);
+    }
+    auto right_nodes = nodes_at_depth(right_node, depth - 1);
+    for (auto n : right_nodes) {
+        nodes.push_back(n);
+    }
+    return nodes;
+}
+
 
 // Removes a node from the tree, guaranteeing that the tree is still a BST
 bstree::node_t* bstree::remove_node(node_t* node, value_t const& value, bool& removed) {
@@ -387,7 +463,7 @@ std::ostream& bstree::print_2d_upright(std::ostream& out) const {
     if (root == nullptr) {
         out << "nulltree";
     } else {
-        print_2d_upright_recursive(out, root, 0);
+        print_2d_upright(out, root);
     }
     return out;
 }
