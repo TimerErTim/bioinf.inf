@@ -66,7 +66,28 @@ Bei der Implementierung der `remove` Methode wurden drei Fälle unterschieden:
 2. Löschen eines Knotens mit einem Kind: Das Kind ersetzt den Knoten
 3. Löschen eines Knotens mit zwei Kindern: Der Knoten wird durch den kleinsten Wert im rechten Teilbaum ersetzt
 
-Die `print` Methoden geben die Baumstruktur in verschiedenen Formaten aus.
+=== Visualisierungsmethoden
+
+Die drei Ausgabemethoden implementieren unterschiedliche Traversierungs- und Ausgabealgorithmen:
+
+*`print()` - In-order Traversierung:*
+- Rekursive in-order Traversierung (links → Knoten → rechts)
+- Wrapper mit eckigen Klammern um Ausgabestring
+- Bedingte Ausgabe von `<` und `>` basierend auf `node->left/right != nullptr`
+- Direkte Ausgabe auf `std::ostream`
+
+*`print_2d()` - Depth-First mit Einrückung:*
+- Rekursive Tiefensuche: rechter Teilbaum → Knoten → linker Teilbaum
+- Tiefenparameter für Einrückungsberechnung (`depth * step_size`)
+- Bindestriche als Einrückungszeichen ab bestimmter Tiefe
+- Zeilenumbruch nach jedem Knoten
+
+*`print_2d_upright()` - Level-order mit Platzberechnung:*
+- Hilfsmethoden: `calculate_space_required_upright()` und `nodes_at_depth()`
+- Berechnung des Gesamtplatzbedarfs durch rekursive Maximumsuche
+- Level-order Traversierung mit `nullptr`-Platzhaltern für leere Positionen
+- Gleichmäßige Platzverteilung: `sub_area_width = space_required / (1 << depth)`
+- Zentrierte Knotenpositionierung mit links-/rechts-Padding
 
 == Testfälle
 
