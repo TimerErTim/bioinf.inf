@@ -276,11 +276,13 @@ bstree::node_t* bstree::remove_node(node_t* node, value_t const& value, bool& re
             // If the left side is empty, simply replace the node with the right side
             node_t* temp = node->right;
             delete node;
+            removed = true; // Set to true since we successfully removed the node
             return temp;
         } else if (node->right == nullptr) {
             // If the right side is empty, simply replace the node with the left side
             node_t* temp = node->left;
             delete node;
+            removed = true; // Set to true since we successfully removed the node
             return temp;
         }
         
@@ -290,7 +292,6 @@ bstree::node_t* bstree::remove_node(node_t* node, value_t const& value, bool& re
         node->value = temp->value;
         // Remove the minimum value from the right side
         node->right = remove_node(node->right, temp->value, removed);
-        removed = true; // Set to true since we successfully removed the node
     }
     
     return node;

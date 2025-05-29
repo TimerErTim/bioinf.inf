@@ -30,9 +30,9 @@
 
 == Lösungsansatz
 
-Für die Implementierung des binären Suchbaums (`bstree`) wurde eine Struktur angelegt, die einen Baum mit Knoten realisiert. Jeder Knoten enthält einen Wert vom Typ `int`, sowie Zeiger auf den linken und rechten Teilbaum. Der Baum als Ganzes verwaltet einen Zeiger auf den Wurzelknoten und einen Zähler für die Anzahl der Knoten im Baum.
+Der binäre Suchbaum (`bstree`) als Ganzes verwaltet einen Zeiger auf den Wurzelknoten und einen Zähler für die Anzahl der Knoten im Baum. Jeder Knoten enthält einen Wert vom Typ `int`, sowie Zeiger auf den linken und rechten Kindsknoten.
 
-Die Hauptmethoden sind:
+Die öffentlich angebotenen Methoden lassen sich in folgende Kategorien unterteilen:
 
 1. *Konstruktoren und Destruktor*:
    - `bstree()`: Erzeugt einen leeren Baum
@@ -55,179 +55,150 @@ Die Hauptmethoden sind:
    - `clear`: Entfernt alle Knoten aus dem Baum
 
 4. *Ausgabemethoden*:
-   - `print`: Gibt den Baum in-order aus
-   - `print_2d`: Visualisiert den Baum zweidimensional
-   - `print_2d_upright`: Visualisiert den Baum zweidimensional aufrecht
+   - `print`: Eine flache Darstellung des Baums
+   - `print_2d`: Eine zweidimensionale Darstellung des Baums von links nach rechts
+   - `print_2d_upright`: Eine zweidimensionale Darstellung des Baums von oben nach unten
 
 Für die rekursiven Operationen wurden private Hilfsmethoden implementiert, die die eigentliche Rekursion durchführen. Die öffentlichen Methoden dienen hauptsächlich als Wrapper, die die Gültigkeit der Eingabeparameter prüfen und dann die entsprechenden rekursiven Methoden aufrufen.
 
-Bei der Implementierung der `remove`-Methode wurden drei Fälle unterschieden:
-1. Löschen eines Blattknotens: Der Knoten wird einfach entfernt
+Bei der Implementierung der `remove` Methode wurden drei Fälle unterschieden:
+1. Löschen eines Leaf-Knotens: Der Knoten wird einfach entfernt
 2. Löschen eines Knotens mit einem Kind: Das Kind ersetzt den Knoten
 3. Löschen eines Knotens mit zwei Kindern: Der Knoten wird durch den kleinsten Wert im rechten Teilbaum ersetzt
+
+Die `print` Methoden geben die Baumstruktur in verschiedenen Formaten aus.
 
 == Testfälle
 
 #let image_display(
   image_path,
-  caption
+  caption: none,
+  width: 20em,
+  height: auto
 ) = {
   block(
     figure(
-      block(stroke: black, image(image_path, width: 20em)),
+      block(stroke: black, image(image_path, width: width, height: height)),
       caption: caption
     )
   )
 }
 
-Die Testfälle sind in der Datei `main01.cpp` implementiert. Dabei wurden folgende Aspekte getestet:
+Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebnisse auf der Konsole aus. Sie wurden in folgende Gruppen unterteilt.
 
-=== Testfall 1: Leerer Baum
+=== Leerer Baum
 
-*Input:*\
-Leerer Baum ohne Einfügeoperationen
+#image_display(
+  "assets/empyt_tree_test_output.png",
+  width: 80%
+)
 
-*Tests:*
-- `empty()`: Prüfen, ob der Baum leer ist
-- `size()`: Prüfen, ob die Größe 0 ist
-- `contains(5)`: Prüfen, ob ein beliebiger Wert enthalten ist
-- `at(0, value)`: Prüfen, ob auf einen Index zugegriffen werden kann
-- `remove(5)`: Prüfen, ob ein Wert entfernt werden kann
-- `clear()`: Prüfen, ob der leere Baum geleert werden kann
+*Ergebnis*: #text(green)[PASSED]
 
-*Output:*\
-Alle Tests bestanden
+=== Einzelner Knoten
 
-*Ergebnis*: #text(green)[success]
+#image_display(
+  "assets/single_node_test_output.png",
+  width: 80%
+)
 
-=== Testfall 2: Einfügen von Werten
+*Ergebnis*: #text(green)[PASSED]
 
-*Input:*\
-Einfügen der Werte 10, 5, 15, 3, 7, 12, 20
+=== Einfügen und Struktur
 
-*Tests:*
-- `empty()`: Prüfen, ob der Baum nicht mehr leer ist
-- `size()`: Prüfen, ob die Größe 7 ist
-- `contains()`: Prüfen, ob alle eingefügten Werte enthalten sind
-- Visualisierung des Baums mit `print()`, `print_2d()` und `print_2d_upright()`
+#image_display(
+  "assets/insertion_structure_test_output1.png",
+  height: 95%,
+  width: auto
+)
 
-*Output:*\
-Alle Tests bestanden, Baumstruktur entspricht den Erwartungen:
-```
-     20
- 15
-     12
-10
-     7
- 5
-     3
-```
+#image_display(
+  "assets/insertion_structure_test_output2.png",
+  height: 100%,
+  width: auto
+)
 
-*Ergebnis*: #text(green)[success]
+#image_display(
+  "assets/insertion_structure_test_output3.png",
+  width: 80%
+)
 
-=== Testfall 3: Kopieren eines Baums
+*Ergebnis*: #text(green)[PASSED]
 
-*Input:*\
-Kopie eines Baums mit den Werten 10, 5, 15
 
-*Tests:*
-- `size()`: Prüfen, ob beide Bäume die gleiche Größe haben
-- `equals()`: Prüfen, ob beide Bäume strukturell gleich sind
-- Unabhängigkeit: Nach Einfügen in den ersten Baum prüfen, ob beide Bäume unterschiedlich sind
+=== Copy Constructor
 
-*Output:*\
-Alle Tests bestanden
+#image_display(
+  "assets/copy_constructor_test_output.png",
+  width: 80%
+)
 
-*Ergebnis*: #text(green)[success]
+*Ergebnis*: #text(green)[PASSED]
 
-=== Testfall 4: Entfernen von Knoten
+=== Entfernen Edge Cases
 
-*Input:*\
-Baum mit den Werten 10, 5, 15, 3, 7, 12, 20
+#image_display(
+  "assets/removal_edges_test_output.png",
+  width: 80%
+)
 
-*Tests:*
-- Entfernen eines Blattknotens (3)
-- Entfernen eines Knotens mit einem Kind (5)
-- Entfernen eines Knotens mit zwei Kindern (15)
-- Entfernen des Wurzelknotens (10)
-- Versuch, einen nicht vorhandenen Wert zu entfernen (100)
+*Ergebnis*: #text(green)[PASSED]
 
-*Output:*\
-Alle Tests bestanden
+=== Entfernen von Werten
 
-*Ergebnis*: #text(green)[success]
+#image_display(
+  "assets/remove_all_test_output.png",
+  width: 80%
+)
 
-=== Testfall 5: Anwenden einer Funktion
+*Ergebnis*: #text(green)[PASSED]
 
-*Input:*\
-Baum mit den Werten 10, 5, 15
+=== Funktion anwenden
 
-*Tests:*
-- Anwenden der Funktion `add_one` auf alle Knoten
-- Prüfen, ob alle Werte um 1 erhöht wurden (11, 6, 16)
+#image_display(
+  "assets/apply_function_test_output.png",
+  width: 80%
+)
 
-*Output:*\
-Alle Tests bestanden
+*Ergebnis*: #text(green)[PASSED]
 
-*Ergebnis*: #text(green)[success]
+=== Ausführliches Indexing
 
-=== Testfall 6: Indexbasierter Zugriff
+#image_display(
+  "assets/indexing_test_output.png",
+  width: 80%
+)
 
-*Input:*\
-Baum mit den Werten 10, 5, 15
+*Ergebnis*: #text(green)[PASSED]
 
-*Tests:*
-- Zugriff auf gültige Indices (0, 1, 2)
-- Versuch, auf ungültige Indices zuzugreifen (-1, 3)
 
-*Output:*\
-Alle Tests bestanden
+=== Baum leeren
 
-*Ergebnis*: #text(green)[success]
+#image_display(
+  "assets/clear_test_output.png",
+  width: 80%
+)
 
-=== Testfall 7: Zählen von Vorkommen
+*Ergebnis*: #text(green)[PASSED]
 
-*Input:*\
-Baum mit den Werten 10, 5, 10, 15, 10 (Duplikate)
+=== Bäume vergleichen
 
-*Tests:*
-- Zählen mehrfacher Vorkommen (10)
-- Zählen einzelner Vorkommen (5)
-- Zählen nicht vorhandener Werte (100)
+#image_display(
+  "assets/equals_test_output.png",
+  width: 80%
+)
 
-*Output:*\
-Alle Tests bestanden
+*Ergebnis*: #text(green)[PASSED]
 
-*Ergebnis*: #text(green)[success]
+=== Edge Cases
 
-=== Testfall 8: Entfernen aller Vorkommen
+#image_display(
+  "assets/edge_cases_test_output.png",
+  width: 80%
+)
 
-*Input:*\
-Baum mit den Werten 10, 5, 10, 15, 10 (Duplikate)
+*Ergebnis*: #text(green)[PASSED]
 
-*Tests:*
-- Entfernen aller Vorkommen eines mehrfach vorhandenen Wertes (10)
-- Entfernen aller Vorkommen eines einmalig vorhandenen Wertes (5)
-- Versuch, alle Vorkommen eines nicht vorhandenen Wertes zu entfernen (100)
-
-*Output:*\
-Alle Tests bestanden
-
-*Ergebnis*: #text(green)[success]
-
-=== Testfall 9: Leeren des Baums
-
-*Input:*\
-Baum mit den Werten 10, 5, 15
-
-*Tests:*
-- Prüfen, ob `clear()` die richtige Anzahl entfernter Knoten zurückgibt
-- Prüfen, ob der Baum nach dem Leeren leer ist
-
-*Output:*\
-Alle Tests bestanden
-
-*Ergebnis*: #text(green)[success]
 
 
 #align(right + bottom)[
