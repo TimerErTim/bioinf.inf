@@ -47,7 +47,7 @@ int binary_search_v3(int* arr, int n, int target) {
     }
 }
 
-void get_cpu_info() {
+void print_cpu_info() {
     std::cout << "\n=== CPU Information ===" << std::endl;
     
 #ifdef _WIN32
@@ -124,7 +124,7 @@ void print_system_info() {
     
     std::cout << "Timer resolution: " << pfc::in_s(pfc::get_timer_resolution()) * 1e9 << " ns" << std::endl;
     
-    get_cpu_info();
+    print_cpu_info();
 }
 
 // Calculate theoretical operation counts for binary search

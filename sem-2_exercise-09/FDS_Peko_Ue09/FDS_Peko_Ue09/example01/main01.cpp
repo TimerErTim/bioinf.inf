@@ -6,6 +6,7 @@
 #include <functional>
 #include "pfc-mini.hpp"
 
+// For getting CPU info
 #ifdef _WIN32
 #include <windows.h>
 #include <intrin.h>
@@ -21,9 +22,7 @@ volatile int multiply_var1 = 3, multiply_var2 = 4;
 int test_array[1000000];
 volatile int index_result;
 
-void get_cpu_info() {
-    std::cout << "\n=== CPU Information ===" << std::endl;
-    
+void print_cpu_info() {    
 #ifdef _WIN32
     // Get CPU name
     int cpu_info[4];
@@ -87,10 +86,10 @@ void print_system_info() {
     std::cout << "Unknown";
 #endif
     std::cout << std::endl;
-    
-    std::cout << "Timer resolution: " << pfc::in_s(pfc::get_timer_resolution()) * 1e9 << " ns" << std::endl;
-    
-    get_cpu_info();
+        
+    print_cpu_info();
+
+	std::cout << "Timer resolution: " << pfc::in_s(pfc::get_timer_resolution()) * 1e9 << " ns" << std::endl;
 }
 
 // Operation measurement functions
