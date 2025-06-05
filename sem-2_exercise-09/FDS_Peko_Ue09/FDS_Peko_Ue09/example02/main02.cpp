@@ -7,6 +7,7 @@
 #include <cmath>
 #include "pfc-mini.hpp"
 #include "../example01/system_info.cpp"
+#include "../example01/timing_operations.cpp"
 
 // Binary search implementations from lecture slides
 int binary_search_v1(int* arr, int n, int target) {
@@ -42,24 +43,60 @@ int binary_search_v3(int* arr, int n, int target) {
     }
 }
 
-// Calculate theoretical operation counts for binary search
-int calculate_theoretical_operations(int n, bool found) {
+// Calculate theoretical runtime for binary search using actual operation timings
+double calculate_theoretical_runtime(int n, bool found, const BasicOperationTimings& timings) {
     // Based on binary search complexity analysis
     const int compare_ops = static_cast<int>(std::log2(n)) + 1;
-    const int arithmetic_ops = compare_ops * 2; // mid calculation, index updates
+    const int arithmetic_ops = compare_ops * 2; // mid calculation, index updates  
     const int assign_ops = compare_ops * 3; // left, right, mid assignments
+    const int index_ops = compare_ops; // array access operations
     
-    return compare_ops + arithmetic_ops + assign_ops;
+    // Calculate theoretical runtime using actual measured operation timings
+    double theoretical_time = 
+        compare_ops * timings.compare_ns +
+        arithmetic_ops * timings.add_ns + // approximating arithmetic as addition
+        assign_ops * timings.assign_ns +
+        index_ops * timings.index_ns;
+    
+    return theoretical_time;
+}
+
+// Calculate theoretical operation counts for analysis
+struct OperationCounts {
+    int compare_ops;
+    int arithmetic_ops;
+    int assign_ops;
+    int index_ops;
+    int total_ops;
+};
+
+OperationCounts calculate_theoretical_operations(int n, bool found) {
+    OperationCounts counts;
+    counts.compare_ops = static_cast<int>(std::log2(n)) + 1;
+    counts.arithmetic_ops = counts.compare_ops * 2;
+    counts.assign_ops = counts.compare_ops * 3;
+    counts.index_ops = counts.compare_ops;
+    counts.total_ops = counts.compare_ops + counts.arithmetic_ops + counts.assign_ops + counts.index_ops;
+    
+    return counts;
 }
 
 void measure_binary_search() {
     std::cout << "\n=== Binary Search Analysis ===" << std::endl;
     
+    // Initialize test array and basic operation variables
+    for (int i = 0; i < 1000000; ++i) {
+        test_array[i] = i;
+    }
+    
+    // Measure basic operations first for theoretical calculations
+    BasicOperationTimings timings = measure_all_basic_operations(10'000'000); // Faster for binary search analysis
+    
     std::vector<int> sizes = {1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000};
     const int test_iterations = 1000;
     
-    std::ofstream csv_file("binary_search_analysis.csv");
-    csv_file << "Size,Algorithm,Scenario,Theoretical_ns,Measured_ns,Operations_Count" << std::endl;
+    std::ofstream csv_file("../../../out/binary_search_analysis.csv");
+    csv_file << "Size,Algorithm,Scenario,Theoretical_ns,Measured_ns,Total_Operations,Compare_Ops,Arithmetic_Ops,Assign_Ops,Index_Ops" << std::endl;
     
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -103,21 +140,24 @@ void measure_binary_search() {
             });
             double not_found_ns = pfc::in_s(not_found_time) * 1e9;
             
-            // Calculate theoretical values
-            int theoretical_ops_found = calculate_theoretical_operations(size, true);
-            int theoretical_ops_not_found = calculate_theoretical_operations(size, false);
+            // Calculate theoretical values using actual operation timings
+            OperationCounts ops_found = calculate_theoretical_operations(size, true);
+            OperationCounts ops_not_found = calculate_theoretical_operations(size, false);
             
-            // Rough estimation: assume 1ns per operation (to be refined with actual measurements)
-            double theoretical_found_ns = theoretical_ops_found * 1.0;
-            double theoretical_not_found_ns = theoretical_ops_not_found * 1.0;
+            double theoretical_found_ns = calculate_theoretical_runtime(size, true, timings);
+            double theoretical_not_found_ns = calculate_theoretical_runtime(size, false, timings);
             
             std::cout << algo.first << " found: " << std::fixed << std::setprecision(3) 
-                      << found_ns << " ns (theoretical: " << theoretical_found_ns << " ns, ops: " << theoretical_ops_found << ")" << std::endl;
+                      << found_ns << " ns (theoretical: " << theoretical_found_ns << " ns, ops: " << ops_found.total_ops << ")" << std::endl;
             std::cout << algo.first << " not found: " << std::fixed << std::setprecision(3) 
-                      << not_found_ns << " ns (theoretical: " << theoretical_not_found_ns << " ns, ops: " << theoretical_ops_not_found << ")" << std::endl;
+                      << not_found_ns << " ns (theoretical: " << theoretical_not_found_ns << " ns, ops: " << ops_not_found.total_ops << ")" << std::endl;
             
-            csv_file << size << "," << algo.first << ",Found," << theoretical_found_ns << "," << found_ns << "," << theoretical_ops_found << std::endl;
-            csv_file << size << "," << algo.first << ",NotFound," << theoretical_not_found_ns << "," << not_found_ns << "," << theoretical_ops_not_found << std::endl;
+            csv_file << size << "," << algo.first << ",Found," << theoretical_found_ns << "," << found_ns << "," 
+                     << ops_found.total_ops << "," << ops_found.compare_ops << "," << ops_found.arithmetic_ops << "," 
+                     << ops_found.assign_ops << "," << ops_found.index_ops << std::endl;
+            csv_file << size << "," << algo.first << ",NotFound," << theoretical_not_found_ns << "," << not_found_ns << "," 
+                     << ops_not_found.total_ops << "," << ops_not_found.compare_ops << "," << ops_not_found.arithmetic_ops << "," 
+                     << ops_not_found.assign_ops << "," << ops_not_found.index_ops << std::endl;
         }
     }
     

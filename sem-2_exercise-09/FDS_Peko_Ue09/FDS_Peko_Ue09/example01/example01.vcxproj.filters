@@ -23,5 +23,11 @@
     <ClInclude Include="pfc-mini.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="system_info.cpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="timing_operations.cpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
