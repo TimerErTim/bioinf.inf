@@ -1,7 +1,0 @@
-Operation,Time_ns,Iterations
-Add,32,10000000
-Assign,31,10000000
-Compare,31,10000000
-Divide,31,10000000
-Multiply,31,10000000
-Index,136,10000000
