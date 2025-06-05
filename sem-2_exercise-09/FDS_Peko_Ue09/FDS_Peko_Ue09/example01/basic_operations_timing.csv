@@ -1,0 +1,7 @@
+Operation,Time_ns,Iterations
+Add,35,10000000
+Assign,34,10000000
+Compare,40,10000000
+Divide,35,10000000
+Multiply,34,10000000
+Index,177,10000000

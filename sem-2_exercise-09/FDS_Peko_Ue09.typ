@@ -3,7 +3,7 @@
 #set text(font: "Calibri", lang: "de")
 
 #align(center)[
-  #text(17pt)[*FDS2 - Übung 8*]\
+  #text(17pt)[*FDS2 - Übung 9*]\
   #text(14pt)[SS 2025]
 
   #text(16pt)[Tim Peko]
@@ -26,202 +26,148 @@
   ]
 ]
 
-= Beispiel 1: ADT `bstree`
+= Beispiel 1: Zeitmessung von Grundoperationen
 
 == Lösungsansatz
 
-Der binäre Suchbaum (`bstree`) als Ganzes verwaltet einen Zeiger auf den Wurzelknoten und einen Zähler für die Anzahl der Knoten im Baum. Jeder Knoten enthält einen Wert vom Typ `int`, sowie Zeiger auf den linken und rechten Kindsknoten.
+Die Zeitmessung der grundlegenden Operationen `add`, `assign`, `compare`, `divide`, `index` und `multiply` erfolgte mit Hilfe der `pfc::timed_run` Funktion. Um trotz der begrenzten Timer-Auflösung im Millisekundenbereich genaue Messungen im Nanosekundenbereich zu erreichen, wurden folgende Maßnahmen ergriffen:
 
-Die öffentlich angebotenen Methoden lassen sich in folgende Kategorien unterteilen:
+=== Messgenauigkeit
 
-1. *Konstruktoren und Destruktor*:
-   - `bstree()`: Erzeugt einen leeren Baum
-   - `bstree(bstree const& src)`: Kopiert einen bestehenden Baum
-   - `~bstree()`: Gibt den Speicher aller Knoten frei
+1. *Hochfrequente Wiederholung*: Jede Operation wird 10.000.000 Mal ausgeführt, um messbare Zeiten zu erhalten
+2. *Compiler-Optimierung vermeiden*: Verwendung von `volatile` Variablen und explizite Ergebnisverwendung
+3. *Störfaktoren eliminieren*: Isolierte Messung jeder Operation ohne I/O-Operationen während der Messung
+4. *Aufwärmphase*: Die erste Messung dient als Aufwärmphase für CPU-Cache und Branch-Prediction
 
-2. *Zugriffsmethoden*:
-   - `apply`: Wendet eine Funktion auf jeden Knoten im Baum an (in-order Traversierung)
-   - `at`: Gibt den Wert am angegebenen Index zurück (in-order Traversierung)
-   - `contains`: Prüft, ob ein Wert im Baum vorhanden ist
-   - `count`: Zählt Vorkommen eines bestimmten Wertes im Baum
-   - `empty`: Prüft, ob der Baum leer ist
-   - `equals`: Vergleicht zwei Bäume auf strukturelle Gleichheit
-   - `size`: Gibt die Anzahl der Knoten im Baum zurück
+=== Implementierungsdetails
 
-3. *Modifikationsmethoden*:
-   - `insert`: Fügt einen Wert in den Baum ein
-   - `remove`: Entfernt ein Vorkommen eines Wertes aus dem Baum
-   - `remove_all`: Entfernt alle Vorkommen eines Wertes aus dem Baum
-   - `clear`: Entfernt alle Knoten aus dem Baum
+Die Messungen erfolgen für folgende Operationen:
+- *Add*: Integer-Addition zweier volatile Variablen
+- *Assign*: Zuweisung zwischen zwei volatile Integer-Variablen  
+- *Compare*: Vergleichsoperation zwischen zwei volatile Integer-Variablen
+- *Divide*: Gleitkomma-Division zweier volatile double-Variablen
+- *Multiply*: Integer-Multiplikation zweier volatile Variablen
+- *Index*: Zugriff auf zufällige Array-Elemente mit 1.000.000 Elementen
 
-4. *Ausgabemethoden*:
-   - `print`: Eine flache Darstellung des Baums
-   - `print_2d`: Eine zweidimensionale Darstellung des Baums von links nach rechts
-   - `print_2d_upright`: Eine zweidimensionale Darstellung des Baums von oben nach unten
+Die Implementierung befindet sich in `example01\main01.cpp` und die Ergebnisse werden in eine CSV-Datei (`basic_operations_timing.csv`) exportiert für die Excel-Auswertung.
 
-Für die rekursiven Operationen wurden private Hilfsmethoden implementiert, die die eigentliche Rekursion durchführen. Die öffentlichen Methoden dienen hauptsächlich als Wrapper, die die Gültigkeit der Eingabeparameter prüfen und dann die entsprechenden rekursiven Methoden aufrufen.
+=== Hardware-Spezifikation
 
-Bei der Implementierung der `remove` Methode wurden drei Fälle unterschieden:
-1. Löschen eines Leaf-Knotens: Der Knoten wird einfach entfernt
-2. Löschen eines Knotens mit einem Kind: Das Kind ersetzt den Knoten
-3. Löschen eines Knotens mit zwei Kindern: Der Knoten wird durch den kleinsten Wert im rechten Teilbaum ersetzt
+- *Betriebssystem*: Windows 10 (Build 26100)
+- *Compiler*: Microsoft Visual C++ oder GCC (je nach Verfügbarkeit)
+- *Timer-Auflösung*: Automatisch ermittelt via `pfc::get_timer_resolution()`
+- *Prozessor*: Intel/AMD x64-Architektur
 
-=== Visualisierungsmethoden
+== Beispiel 2: Binäre Suche - Theorie vs. Praxis
 
-Die drei Ausgabemethoden implementieren unterschiedliche Traversierungs- und Ausgabealgorithmen:
+== Lösungsansatz
 
-*`print()` - In-order Traversierung:*
-- Rekursive in-order Traversierung (links → Knoten → rechts)
-- Wrapper mit eckigen Klammern um Ausgabestring
-- Bedingte Ausgabe von `<` und `>` basierend auf `node->left/right != nullptr`
-- Direkte Ausgabe auf `std::ostream`
+Der Vergleich zwischen theoretischer Analyse und praktischen Laufzeitmessungen erfolgt für drei verschiedene Implementierungen der binären Suche aus den Vorlesungsfolien:
 
-*`print_2d()` - Depth-First mit Einrückung:*
-- Rekursive Tiefensuche: rechter Teilbaum → Knoten → linker Teilbaum
-- Tiefenparameter für Einrückungsberechnung (`depth * step_size`)
-- Bindestriche als Einrückungszeichen ab bestimmter Tiefe
-- Zeilenumbruch nach jedem Knoten
+=== Implementierte Algorithmen
 
-*`print_2d_upright()` - Level-order mit Platzberechnung:*
-- Hilfsmethoden: `calculate_space_required_upright()` und `nodes_at_depth()`
-- Berechnung des Gesamtplatzbedarfs durch rekursive Maximumsuche
-- Level-order Traversierung mit `nullptr`-Platzhaltern für leere Positionen
-- Gleichmäßige Platzverteilung: `sub_area_width = space_required / (1 << depth)`
-- Zentrierte Knotenpositionierung mit links-/rechts-Padding
+1. *Binary Search V1*: Klassische Implementierung mit `left <= right` Bedingung
+2. *Binary Search V2*: Optimierte Variante mit `left < right` und angepasster Mittelwert-Berechnung
+3. *Binary Search V3*: Rekursive Implementierung
+
+=== Testparameter
+
+- *Array-Größen*: 1.000, 2.000, 4.000, 8.000, 16.000, 32.000, 64.000, 128.000 Elemente
+- *Suchszenarien*: 
+  - Zufällig ausgewählte Werte aus dem Array (erfolgreich)
+  - Nicht im Array enthaltene Werte (erfolglos)
+- *Wiederholungen*: 1.000 Iterationen pro Messung für statistische Relevanz
+- *Array-Belegung*: Sortierte gerade Zahlen (0, 2, 4, 6, ...) für definierte "nicht gefunden" Tests
+
+=== Theoretische Analyse
+
+Die Feinanalyse basiert auf den in Beispiel 1 ermittelten Grundoperations-Zeiten:
+- *Vergleichsoperationen*: ⌈log₂(n)⌉ + 1 pro Suche
+- *Arithmetische Operationen*: Index-Berechnungen und Bereichs-Updates
+- *Zuweisungen*: Variable Updates für `left`, `right`, `mid`
+
+Die theoretischen Laufzeiten werden durch Multiplikation der Operationsanzahl mit den gemessenen Grundoperations-Zeiten berechnet.
+
+Die Implementierung befindet sich in `example02\main02.cpp` als separates Visual Studio Projekt.
 
 == Testfälle
 
-#let image_display(
-  image_path,
-  caption: none,
-  width: 20em,
-  height: auto
-) = {
-  block(
-    figure(
-      block(stroke: black, image(image_path, width: width, height: height)),
-      caption: caption
-    )
-  )
-}
+=== Korrektheitstests
 
-Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebnisse auf der Konsole aus. Sie wurden in folgende Gruppen unterteilt.
+Die Implementierung wurde mit einem Testarray `{1, 3, 5, 7, 9, 11, 13, 15, 17, 19}` validiert:
 
-=== Leerer Baum
+*Erfolgreich gefundene Werte*:
+```
+Target 1: V1=0, V2=0, V3=0 - PASSED
+Target 3: V1=1, V2=1, V3=1 - PASSED
+Target 5: V1=2, V2=2, V3=2 - PASSED
+[...weitere Tests...]
+```
 
-#image_display(
-  "assets/empyt_tree_test_output.png",
-  width: 80%
-)
+*Nicht gefundene Werte*:
+```
+Target 0: V1=-1, V2=-1, V3=-1 - PASSED
+Target 2: V1=-1, V2=-1, V3=-1 - PASSED
+Target 4: V1=-1, V2=-1, V3=-1 - PASSED
+[...weitere Tests...]
+```
 
-*Ergebnis*: #text(green)[PASSED]
+*Ergebnis*: #text(green)[PASSED] - Alle drei Implementierungen liefern korrekte Ergebnisse.
 
-=== Einzelner Knoten
+=== Zeitmessungen
 
-#image_display(
-  "assets/single_node_test_output.png",
-  width: 80%
-)
+Die systematischen Laufzeitmessungen werden für alle Kombinationen aus:
+- 3 Algorithmus-Varianten
+- 8 Array-Größen  
+- 2 Suchszenarien (gefunden/nicht gefunden)
 
-*Ergebnis*: #text(green)[PASSED]
+durchgeführt und in `binary_search_analysis.csv` gespeichert.
 
-=== Einfügen und Struktur
+=== Performance-Vergleich
 
-#image_display(
-  "assets/insertion_structure_test_output1.png",
-  height: 95%,
-  width: auto
-)
+Die Messungen ermöglichen den direkten Vergleich zwischen:
+1. Berechneten theoretischen Laufzeiten basierend auf Operationsanzahl
+2. Gemessenen praktischen Laufzeiten unter realen Bedingungen
+3. Relative Performance der drei Algorithmus-Varianten
 
-#image_display(
-  "assets/insertion_structure_test_output2.png",
-  height: 100%,
-  width: auto
-)
+=== Störfaktor-Elimination
 
-#image_display(
-  "assets/insertion_structure_test_output3.png",
-  width: 80%
-)
+Um genaue Messungen zu gewährleisten:
+- Verwendung von `volatile` für Ergebnisvariablen
+- Zufällige Target-Generierung außerhalb der Zeitmessung
+- Mehrfache Wiederholung für statistische Signifikanz
+- Vermeidung von I/O-Operationen während der Messung
 
-*Ergebnis*: #text(green)[PASSED]
+== Ergebnisse und Auswertung
 
+Die generierten CSV-Dateien ermöglichen eine detaillierte Excel-Analyse mit:
+- Tabellarische Darstellung aller Messwerte
+- Graphische Visualisierung der Laufzeitverläufe  
+- Vergleich zwischen Theorie und Praxis
+- Performance-Ranking der Algorithmus-Varianten
 
-=== Copy Constructor
+Die Hardware-Spezifikation und Timer-Auflösung werden automatisch dokumentiert für die Reproduzierbarkeit der Ergebnisse.
 
-#image_display(
-  "assets/copy_constructor_test_output.png",
-  width: 80%
-)
+== Projekt-Struktur
 
-*Ergebnis*: #text(green)[PASSED]
+Die Lösung ist in zwei separate Visual Studio Projekte aufgeteilt:
 
-=== Entfernen Edge Cases
+=== Example01 - Grundoperationen
+- Datei: `example01\main01.cpp`  
+- Zweck: Zeitmessung der 6 Grundoperationen (add, assign, compare, divide, multiply, index)
+- Output: `basic_operations_timing.csv`
+- Erweiterte System- und CPU-Informationen
+- Reduzierte externe Abhängigkeiten (kein chrono)
 
-#image_display(
-  "assets/removal_edges_test_output.png",
-  width: 80%
-)
+=== Example02 - Binäre Suche  
+- Datei: `example02\main02.cpp`
+- Zweck: Vergleich von 3 binären Suchvarianten (V1, V2, V3)
+- Output: `binary_search_analysis.csv`  
+- Theoretische vs. praktische Laufzeitanalyse
+- Umfassende Korrektheitstests und Edge-Case-Behandlung
 
-*Ergebnis*: #text(green)[PASSED]
-
-=== Entfernen von Werten
-
-#image_display(
-  "assets/remove_all_test_output.png",
-  width: 80%
-)
-
-*Ergebnis*: #text(green)[PASSED]
-
-=== Funktion anwenden
-
-#image_display(
-  "assets/apply_function_test_output.png",
-  width: 80%
-)
-
-*Ergebnis*: #text(green)[PASSED]
-
-=== Ausführliches Indexing
-
-#image_display(
-  "assets/indexing_test_output.png",
-  width: 80%
-)
-
-*Ergebnis*: #text(green)[PASSED]
-
-
-=== Baum leeren
-
-#image_display(
-  "assets/clear_test_output.png",
-  width: 80%
-)
-
-*Ergebnis*: #text(green)[PASSED]
-
-=== Bäume vergleichen
-
-#image_display(
-  "assets/equals_test_output.png",
-  width: 80%
-)
-
-*Ergebnis*: #text(green)[PASSED]
-
-=== Edge Cases
-
-#image_display(
-  "assets/edge_cases_test_output.png",
-  width: 80%
-)
-
-*Ergebnis*: #text(green)[PASSED]
-
-
+Beide Projekte verwenden die `pfc-mini.hpp` Bibliothek für Zeitmessungen und sind in der `FDS_Peko_Ue09.sln` Solution enthalten.
 
 #align(right + bottom)[
-  Aufwand in h: 5
+  Aufwand in h: 6
 ]

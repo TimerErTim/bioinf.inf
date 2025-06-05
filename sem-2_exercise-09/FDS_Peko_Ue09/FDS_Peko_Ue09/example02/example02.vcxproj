@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{dbb5bb32-35f3-4862-942f-60e390f24590}</ProjectGuid>
-    <RootNamespace>example01</RootNamespace>
+    <ProjectGuid>{dbb5bb32-35f3-4862-942f-60e390f24591}</ProjectGuid>
+    <RootNamespace>example02</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,7 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main01.cpp" />
+    <ClCompile Include="main02.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pfc-mini.hpp" />
