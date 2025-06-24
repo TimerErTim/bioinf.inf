@@ -1,4 +1,4 @@
-#set page(numbering: "1 von 1", number-align: right, header: "24. April 2025")
+#set page(numbering: "1 von 1", number-align: right, header: "24. Juni 2025")
 #set heading(numbering: "1.1.")
 #set text(font: "Calibri", lang: "de")
 
@@ -34,10 +34,9 @@ Die Zeitmessung der grundlegenden Operationen `add`, `assign`, `compare`, `divid
 
 === Messgenauigkeit
 
-1. *Hochfrequente Wiederholung*: Jede Operation wird 10.000.000 Mal ausgeführt, um messbare Zeiten zu erhalten
+1. *Hochfrequente Wiederholung*: Jede Operation wird 100.000.000 Mal ausgeführt, um messbare Zeiten zu erhalten
 2. *Compiler-Optimierung vermeiden*: Verwendung von `volatile` Variablen und explizite Ergebnisverwendung
 3. *Störfaktoren eliminieren*: Isolierte Messung jeder Operation ohne I/O-Operationen während der Messung
-4. *Aufwärmphase*: Die erste Messung dient als Aufwärmphase für CPU-Cache und Branch-Prediction
 
 === Implementierungsdetails
 
@@ -47,18 +46,29 @@ Die Messungen erfolgen für folgende Operationen:
 - *Compare*: Vergleichsoperation zwischen zwei volatile Integer-Variablen
 - *Divide*: Gleitkomma-Division zweier volatile double-Variablen
 - *Multiply*: Integer-Multiplikation zweier volatile Variablen
-- *Index*: Zugriff auf zufällige Array-Elemente mit 1.000.000 Elementen
+- *Index*: Zugriff auf zufällige Array-Elemente
 
 Die Implementierung befindet sich in `example01\main01.cpp` und die Ergebnisse werden in eine CSV-Datei (`basic_operations_timing.csv`) exportiert für die Excel-Auswertung.
 
 === Hardware-Spezifikation
 
 - *Betriebssystem*: Windows 10 (Build 26100)
-- *Compiler*: Microsoft Visual C++ oder GCC (je nach Verfügbarkeit)
+- *Compiler*: Microsoft Visual C++ 1944
 - *Timer-Auflösung*: Automatisch ermittelt via `pfc::get_timer_resolution()`
-- *Prozessor*: Intel/AMD x64-Architektur
+- *Prozessor*: x64 13th Gen Intel(R) Core(TM) i5-1335U \@ 2.496GHz
 
-== Beispiel 2: Binäre Suche - Theorie vs. Praxis
+== Ergebnisse
+
+#figure(
+  image(
+    "assets/basic_operations_chart.png"
+  ),
+  caption: [
+    Laufzeit der Grundoperationen
+  ]
+)
+
+= Beispiel 2: Binäre Suche - Theorie vs. Praxis
 
 == Lösungsansatz
 
@@ -147,6 +157,24 @@ Die generierten CSV-Dateien ermöglichen eine detaillierte Excel-Analyse mit:
 - Performance-Ranking der Algorithmus-Varianten
 
 Die Hardware-Spezifikation und Timer-Auflösung werden automatisch dokumentiert für die Reproduzierbarkeit der Ergebnisse.
+
+#figure(
+  image(
+    "assets/binary_search_found_chart.png"
+  ),
+  caption: [
+    Laufzeit der Binärsuche (Werte gefunden)
+  ]
+)
+
+#figure(
+  image(
+    "assets/binary_search_not_found_chart.png"
+  ),
+  caption: [
+    Laufzeit der Binärsuche (Werte nicht auffindbar)
+  ]
+)
 
 == Projekt-Struktur
 

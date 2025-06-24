@@ -63,7 +63,7 @@ double measure_add_operation(int iterations) {
         (void)result;
 		// 20 operations
     });
-    return pfc::in_s(time) * 1e9 / 20.0; // Divide by 20 since we do 20 operations per iteration
+    return pfc::in_s(time) * iterations / 20.0; // Divide by 20 since we do 20 operations per iteration
 }
 
 double measure_assign_operation(int iterations) {
@@ -91,7 +91,7 @@ double measure_assign_operation(int iterations) {
         assign_var1 = assign_var2;
 		// 20 operations
     });
-    return pfc::in_s(time) * 1e9 / 20.0;
+    return pfc::in_s(time) * iterations / 20.0;
 }
 
 double measure_compare_operation(int iterations) {
@@ -139,7 +139,7 @@ double measure_compare_operation(int iterations) {
         (void)result;
 		// 20 operations
     });
-    return pfc::in_s(time) * 1e9 / 20.0;
+    return pfc::in_s(time) * iterations / 20.0;
 }
 
 double measure_divide_operation(int iterations) {
@@ -185,7 +185,7 @@ double measure_divide_operation(int iterations) {
         result = divide_var1 / divide_var2;
         (void)result;
     });
-    return pfc::in_s(time) * 1e9 / 20.0;
+    return pfc::in_s(time) * iterations / 20.0;
 }
 
 double measure_multiply_operation(int iterations) {
@@ -239,7 +239,7 @@ double measure_multiply_operation(int iterations) {
 		result = multiply_var1 * multiply_var2;
         (void)result;
     });
-    return pfc::in_s(time) * 1e9 / 25.0;
+    return pfc::in_s(time) * iterations / 25.0;
 }
 
 double measure_index_operation(int iterations) {    
@@ -293,7 +293,7 @@ double measure_index_operation(int iterations) {
         index_result = test_array[5000];
 		(void)index_result;
     });
-    return pfc::in_s(time) * 1e9 / 24.0;
+    return pfc::in_s(time) * iterations / 24.0;
 }
 
 // Structure to hold basic operation timings
