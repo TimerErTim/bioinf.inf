@@ -7,6 +7,7 @@
 
 #include "pattern_search.h"
 #include "data_collector.h"
+#include "pfc-mini.hpp"
 
 // Generates a random string of a given length from a given alphabet.
 std::string generate_random_string(size_t length, const std::string& alphabet) {
@@ -40,11 +41,11 @@ void run_search(
 ) {
     std::cout << "--- Running " << search_name << " for " << test_name << " ---" << std::endl;
     data_collector collector(text.length());
-    
-    auto start_time = std::chrono::high_resolution_clock::now();
-    long long position = search_function(text, pattern, collector, 0);
-    auto end_time = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::milli> duration = end_time - start_time;
+    long long position = -1;
+
+    auto duration = pfc::timed_run([&]() {
+        position = search_function(text, pattern, collector, 0);
+    });
 
     if (position != -1) {
         std::cout << "Pattern found at index: " << position << std::endl;
@@ -52,7 +53,9 @@ void run_search(
         std::cout << "Pattern not found." << std::endl;
     }
     std::cout << "Total comparisons: " << collector.get_total_comparisons() << std::endl;
-    std::cout << "Execution time: " << std::fixed << std::setprecision(4) << duration.count() << " ms" << std::endl;
+    
+    double time_ms = pfc::in_s(duration) * 1000.0;
+    std::cout << "Execution time: " << std::fixed << std::setprecision(4) << time_ms << " ms" << std::endl;
 
     std::string filename = "out/" + test_name + "_" + search_name + ".csv";
     collector.write_to_csv(filename);
