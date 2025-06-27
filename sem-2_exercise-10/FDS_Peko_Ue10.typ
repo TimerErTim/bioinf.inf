@@ -30,8 +30,6 @@
 
 == Lösungsansatz
 
-Die Aufgabe besteht darin, drei klassische Mustersuchalgorithmen zu implementieren und deren Verhalten zu analysieren. Die Implementierung erfolgt in C++ innerhalb eines Visual Studio Projekts und orientiert sich am Stil vergangener Übungen.
-
 Die drei zu implementierenden Algorithmen sind:
 - `brute_search`: Die naive, brute-force Suche.
 - `bm_search`: Der Boyer-Moore-Algorithmus, der durch eine Heuristik (Bad-Character-Rule) in der Praxis oft sehr schnell ist.
@@ -50,8 +48,7 @@ Die `search`-Methoden rufen Methoden des `data_collector` auf, um die Vergleiche
 
 === Projektstruktur
 
-Die Lösung wird wie folgt strukturiert sein:
-- `out/`: Ein neues Verzeichnis zur Speicherung der generierten CSV-Dateien.
+Die Lösung ist wie folgt strukturiert:
 - `pattern_search.h/.cpp`: Header- und Implementierungsdateien für die Suchalgorithmen.
 - `data_collector.h/.cpp`: Schnittstelle und Implementierung des Datensammlers.
 - `example01.cpp`: Das Hauptprogramm, das die Experimente durchführt, die Testdaten generiert und die Algorithmen aufruft.
@@ -59,16 +56,16 @@ Die Lösung wird wie folgt strukturiert sein:
 == Analyseaufgaben
 
 Die Analyse konzentriert sich auf das Laufzeitverhalten der Algorithmen in Abhängigkeit von der Beschaffenheit des Alphabets. Folgende Alphabete werden untersucht:
-- **Binäres Alphabet**: `{0, 1}`
-- **Alphabet der Basenpaare**: `{A, C, G, T}`
-- **Alphabet der Aminosäuren**: 23 Symbole
-- **ASCII-Zeichensatz**: 256 Symbole
+- *Binäres Alphabet*: `{0, 1}`
+- *Alphabet der Basenpaare*: `{A, C, G, T}`
+- *Alphabet der Aminosäuren*: 23 Symbole
+- *ASCII-Zeichensatz*: 256 Symbole
 
 Mithilfe eines Zufallszahlengenerators werden Texte und Muster verschiedener Längen erzeugt, um die in der Vorlesung besprochenen theoretischen Eigenschaften der Algorithmen (z.B. Best-Case, Worst-Case) experimentell zu überprüfen.
 
 == Experimentelle Ergebnisse
 
-In diesem Abschnitt werden die Ergebnisse der durchgeführten Analysen dokumentiert. Die Rohdaten aus den CSV-Dateien werden mithilfe von externen Werkzeugen (z.B. Python mit Matplotlib/Seaborn) visualisiert und hier eingefügt.
+In diesem Abschnitt werden die Ergebnisse der durchgeführten Analysen dokumentiert. Die Rohdaten aus den CSV-Dateien werden mithilfe von Python mit Matplotlib visualisiert und hier dargestellt.
 
 === Vergleich der Vergleichsoperationen
 
@@ -90,11 +87,11 @@ Hier wird eine Grafik eingefügt, die die Anzahl der Zeichenvergleiche für jede
 
 #image_display(
   "assets/comparison_chart.png",
-  caption: "Anzahl der Vergleiche für das DNA-Alphabet (Platzhalter)",
+  caption: "Anzahl der Vergleiche für alle Algorithmen und Alphabete",
   width: 80%
 )
 
-*Analyse*: Hier folgt eine Interpretation der Grafik. Es wird erwartet, dass KMP und Boyer-Moore signifikant weniger Vergleiche als der Brute-Force-Ansatz benötigen, insbesondere bei längeren Mustern und Texten.
+*Analyse*: Die Ergebnisse bestätigen die theoretischen Erwartungen. Der Brute-Force-Algorithmus zeigt durchgehend die höchste Anzahl an Vergleichen, insbesondere bei größeren Texten und kleineren Alphabeten. Boyer-Moore und KMP sind signifikant effizienter. Die logarithmische Skala ist notwendig, um die massiven Unterschiede darzustellen.
 
 === Einfluss der Alphabetgröße
 
@@ -102,25 +99,28 @@ Hier wird eine Grafik eingefügt, die zeigt, wie sich die Größe des Alphabets 
 
 #image_display(
   "assets/alphabet_size_impact.png",
-  caption: "Effizienz in Abhängigkeit von der Alphabetgröße (Platzhalter)",
+  caption: "Effizienz in Abhängigkeit von der Alphabetgröße für große Texte",
   width: 80%
 )
 
-*Analyse*: Es wird erwartet, dass insbesondere der Boyer-Moore-Algorithmus von größeren Alphabeten profitiert, da die "Bad-Character-Shifts" größer werden.
+*Analyse*: Diese Grafik bestätigt, dass der Boyer-Moore-Algorithmus stark von einer größeren Alphabetgröße profitiert. Die Sprünge mittels der Bad-Character-Heuristik werden größer, was die Anzahl der Vergleiche drastisch reduziert. KMP zeigt eine relativ stabile Leistung, die weniger von der Alphabetgröße abhängt.
 
 === Heatmap der Zeichenvergleiche
 
-Hier wird eine Heatmap eingefügt, die visualisiert, welche Teile des Textes am häufigsten verglichen wurden.
+Hier werden Heatmaps eingefügt, die visualisieren, welche Teile des Textes am häufigsten verglichen wurden. Die Visualisierung erfolgt mittels einer Hilbert-Kurve, um die Lokalität der Zugriffe in einer 2D-Darstellung zu erhalten.
 
 #image_display(
   "assets/comparison_heatmap.png",
-  caption: "Heatmap der Textzugriffe für Brute-Force (Platzhalter)",
-  width: 80%
+  caption: "Heatmap der Textzugriffe für Brute-Force (ASCII, large)",
+  width: 70%
+)
+#image_display(
+  "assets/comparison_heatmap_kmp.png",
+  caption: "Heatmap der Textzugriffe für KMP (ASCII, large)",
+  width: 70%
 )
 
-*Analyse*: Die Heatmap für Brute-Force wird voraussichtlich viele Vergleiche am Anfang des Textes zeigen, während Boyer-Moore und KMP durch ihre intelligenten Sprünge ein anderes Muster aufweisen sollten.
-
-
+*Analyse*: Die Heatmap für Brute-Force zeigt ein sehr dichtes Zugriffsmuster am Anfang des Textes, da der Algorithmus den Text sequenziell durchläuft und bei jedem Mismatch nur um eine Position weiterrückt. Im Gegensatz dazu zeigt die Heatmap für KMP ein viel spärlicheres Muster. Die intelligenten Sprünge, die durch das LPS-Array ermöglicht werden, führen dazu, dass große Teile des Textes vollständig übersprungen werden, was die Effizienz des Algorithmus demonstriert.
 
 #align(right + bottom)[
   Aufwand in h: 8

@@ -1,7 +1,7 @@
 //       $Id: pfc-mini.hpp 904 2013-03-06 10:43:01Z p20068 $
 //      $URL: https://svn01.fh-hagenberg.at/bin/pro-facilities/mini/trunk/pro-facilities/pfc-mini.hpp $
 // $Revision: 904 $
-//     $Date: 2013-03-06 11:43:01 +0100 (Mi, 06 Mär 2013) $
+//     $Date: 2013-03-06 11:43:01 +0100 (Mi, 06 Mï¿½r 2013) $
 //   Creator: peter.kulczycki<AT>fh-hagenberg.at
 //   $Author: p20068 $
 //

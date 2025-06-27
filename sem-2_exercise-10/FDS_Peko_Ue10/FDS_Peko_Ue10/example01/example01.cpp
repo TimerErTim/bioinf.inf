@@ -4,6 +4,7 @@
 #include <random>
 #include <functional>
 #include <iomanip>
+#include <filesystem>
 
 #include "pattern_search.h"
 #include "data_collector.h"
@@ -57,7 +58,9 @@ void run_search(
     double time_ms = pfc::in_s(duration) * 1000.0;
     std::cout << "Execution time: " << std::fixed << std::setprecision(4) << time_ms << " ms" << std::endl;
 
-    std::string filename = "out/" + test_name + "_" + search_name + ".csv";
+    // Create the out directory if it doesn't exist
+    std::filesystem::create_directories("../../../out");
+    std::string filename = "../../../out/" + test_name + "_" + search_name + ".csv";
     collector.write_to_csv(filename);
     std::cout << "Data written to " << filename << std::endl << std::endl;
 }
@@ -66,21 +69,21 @@ void run_search(
 int main() {
     const std::string binary_alphabet = "01";
     const std::string dna_alphabet = "ACGT";
-    const std::string amino_acid_alphabet = "ACDEFGHIKLMNPQRSTVWY"; // 20 common, can be extended
+    const std::string amino_acid_alphabet = "ACDEFGHIKLMNPQRSTVWY*XU"; // 23 common amino acids including stop codon and selenocysteine
     std::string ascii_alphabet;
     for (int i = 0; i < 256; ++i) {
         ascii_alphabet += static_cast<char>(i);
     }
 
     std::vector<test_case> test_cases = {
-        {"binary_small", binary_alphabet, 100, 5},
-        {"binary_large", binary_alphabet, 10000, 10},
-        {"dna_small", dna_alphabet, 200, 10},
-        {"dna_large", dna_alphabet, 20000, 20},
-        {"amino_acid_small", amino_acid_alphabet, 500, 15},
-        {"amino_acid_large", amino_acid_alphabet, 50000, 30},
-        {"ascii_small", ascii_alphabet, 1000, 20},
-        {"ascii_large", ascii_alphabet, 100000, 50}
+        {"binary_small", binary_alphabet, 1'000, 5},
+        {"binary_large", binary_alphabet, 100'000, 10},
+        {"dna_small", dna_alphabet, 2'000, 10},
+        {"dna_large", dna_alphabet, 200'000, 20},
+        {"amino_acid_small", amino_acid_alphabet, 5'000, 15},
+        {"amino_acid_large", amino_acid_alphabet, 500'000, 30},
+        {"ascii_small", ascii_alphabet, 10'000, 20},
+        {"ascii_large", ascii_alphabet, 1'000'000, 50}
     };
 
     for (const auto& tc : test_cases) {
@@ -95,9 +98,7 @@ int main() {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> distrib(0, text.length() - pattern.length());
-        if (distrib(gen) % 2 == 0) { // 50% chance to insert pattern
-             text.replace(distrib(gen), pattern.length(), pattern);
-        }
+        text.replace(distrib(gen), pattern.length(), pattern);
 
         run_search("brute_force", brute_search::search, text, pattern, tc.name);
         run_search("boyer_moore", bm_search::search, text, pattern, tc.name);
