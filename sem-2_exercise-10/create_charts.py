@@ -113,7 +113,8 @@ def create_hilbert_heatmap(test_name, algorithm):
     
     # Get coordinates for all points at once
     distances = np.arange(n)
-    coords = curve.points_from_distances(distances)
+    # Ensure coords is a numpy array for slicing
+    coords = np.array(curve.points_from_distances(distances))
     
     # Use a log scale for color intensity for better visualization
     image[coords[:, 0], coords[:, 1]] = np.log1p(df['total_comparisons'])
