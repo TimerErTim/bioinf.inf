@@ -42,4 +42,8 @@ void data_collector::write_to_csv(const std::string& filename) const {
 
 size_t data_collector::get_total_comparisons() const {
     return total_comparisons_;
+}
+
+const std::vector<data_collector::char_stats>& data_collector::get_text_statistics() const {
+    return text_statistics_;
 } 
