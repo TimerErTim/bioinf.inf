@@ -21,6 +21,7 @@ private:
 	static void print_as_tree(
 		const content_t& c,
 		const index_t i,
+		const size_t len,
 		const size_t depth,
 		std::ostream& out = std::cout
 	);
