@@ -3,15 +3,10 @@
 void heap_sorter::sort(content_t &c)
 {
 	build_heap(c);
-	std::cout << "built heap, sorting..." << std::endl;
 	for (index_t i = c.size(); i-- > 0;)
 	{
 		shift_down(c, 0, i + 1);
-		std::cout << "shifted down" << std::endl;
-		print_as_tree(c, 0, i + 1, 0);
-		std::swap(c[0], c[i]);
-		std::cout << "swapped" << std::endl;
-		print_content(c);
+		swap(c, 0, i);
 	}
 }
 
@@ -72,8 +67,6 @@ void heap_sorter::build_heap(content_t &c)
 	for (index_t i = c.size() / 2; i-- > 0;)
 	{
 		shift_down(c, i, c.size());
-		print_as_tree(c);
-		std::cout << std::endl;
 	}
 }
 
@@ -86,11 +79,11 @@ void heap_sorter::shift_down(content_t &c, index_t start, size_t len)
 		index_t l = left(i);
 		index_t r = right(i);
 
-		if (l < len && c[l] > c[largest])
+		if (l < len && less(c, largest, l))
 		{
 			largest = l;
 		}
-		if (r < len && c[r] > c[largest])
+		if (r < len && less(c, largest, r))
 		{
 			largest = r;
 		}
@@ -98,7 +91,7 @@ void heap_sorter::shift_down(content_t &c, index_t start, size_t len)
 		{
 			break;
 		}
-		std::swap(c[i], c[largest]);
+		swap(c, i, largest);
 		i = largest;
 	}
 }
