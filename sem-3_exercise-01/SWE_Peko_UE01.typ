@@ -30,7 +30,7 @@
 
 #show raw: it => {
   if it.block {
-    block(stroke: gray + 1pt, radius: 5pt, inset: (top: 5pt, right: 10pt, bottom: 10pt, left: 10pt))[
+    block(stroke: gray.lighten(90%), fill: gray.lighten(95%), radius: 5pt, width: 100%, inset: (top: 5pt, right: 10pt, bottom: 10pt, left: 10pt))[
       #place(top + right, dx: 5pt, text(size: 8pt, fill: gray.darken(50%))[
         #it.lang
       ])
@@ -315,12 +315,13 @@ Nachfolgend sind die vorhandenen Testfälle aus `main.cpp` beschrieben. Jeder Te
 
 == Lösungsansatz
 
-Für diese Aufgabe wird auf die Lösung der Aufgabe aus @heapsort-task-01 zurückgegriffen. In der Umsetzung machen wir uns globale Variablen für die Vergleichs- und Tauschanzahl zunutze und erstellen Hilfsfunktionen, die diese Variablen entsprechend inkrementieren.
+Für diese Aufgabe wird auf die Lösung der Aufgabe aus @heapsort-task-01 zurückgegriffen. In der Umsetzung machen wir uns globale Variablen für die Vergleichs- und Tauschanzahl zunutze und erstellen Hilfsfunktionen, die diese Variablen entsprechend inkrementieren. Diese verwenden wir in der Heapsort Implementierung.
 
 Außerdem wird in der `main.cpp` Funktion `run_for_size` implementiert, die für eine gegebene Array-Größe und Anzahl von Iterationen die durchschnittliche Vergleichs- und Tauschanzahl ermittelt und ausgibt. Diese Funktion wird für verschiedene Array-Größen aufgerufen und die Ergebnisse in Vektoren gespeichert. Die Ergebnisse sind in @analysis-task-02 zu sehen.
 
 == Source Code
 
+Counter inkrementierende Hilfsfunktionen:
 ```cpp
 // heapsort.hpp
 
@@ -342,6 +343,7 @@ private:
 };
 ```
 
+`run_for_size` und `main` Funktion:
 ```cpp
 // main.cpp
 
@@ -387,6 +389,47 @@ int main()
 
 ```
 
+Geänderte Funktionen in der Heapsort Implementierung:
+```cpp
+// heapsort.cpp
+
+void heap_sorter::sort(content_t &c)
+{
+	build_heap(c);
+	for (index_t i = c.size(); i-- > 0;)
+	{
+		shift_down(c, 0, i + 1);
+		swap(c, 0, i);
+	}
+}
+
+void heap_sorter::shift_down(content_t &c, index_t start, size_t len)
+{
+	index_t i = start;
+	while (left(i) < len)
+	{
+		index_t largest = i;
+		index_t l = left(i);
+		index_t r = right(i);
+
+		if (l < len && less(c, largest, l))
+		{
+			largest = l;
+		}
+		if (r < len && less(c, largest, r))
+		{
+			largest = r;
+		}
+		if (largest == i)
+		{
+			break;
+		}
+		swap(c, i, largest);
+		i = largest;
+	}
+}
+```
+
 == Analyse <analysis-task-02>
 
 === Komplexität
@@ -400,14 +443,14 @@ Das ermitteln der Vergleichs- & Tauschanzahl für die verschiedenen Array-Größ
   label_: "counting-output",
 )
 
-Grafisch dargestellt in @complexity-graph lässt sich deutlich eine Komplexität von $O(n log(n))$ erkennen. Zum Vergleich wird noch die Skalierungsformen $O(n)$ als Referenz in der Grafik abgebildet. Dabei wird hier nur die Zeitkomplexität betrachtet. Die Speicherkomplexität ist $O(n)$, wobei $n$ die Größe des Arrays ist. Wichtig dabei zu beachten ist, dass dies den bereits für das Array notwendigen Speicher darstellt. Es wird also kein zusätzlicher Speicher benötigt, da der Algorithmus in-place arbeitet.
+Grafisch dargestellt in @complexity-graph lässt sich deutlich eine Komplexität von $O(n log(n))$ erkennen. Zum Vergleich wird noch die Skalierungsformen $O(n)$ als Referenz in der Grafik abgebildet. Dabei wird hier nur die Zeitkomplexität betrachtet. Die Speicherkomplexität ist $O(1)$, weil der Algorithmus in-place arbeitet. Das bedeutet, er benötigt keinen zusätzlichen Speicherplatz. Also Konstant im Bezug auf die Array-Größe $n$.
 
 #annotated_graphic(lq.diagram(
   width: 100%,
   height: 100%,
   title: [Heapsort: Comparisons - Swaps],
   xlabel: [Array Size $n$],
-  ylabel: [Sortieraufwand],
+  ylabel: [$T(n)$],
   //xscale: "log",
   //yscale: "log",
   lq.plot(complexity_n, complexity_compares, label: "Comparisons", mark: lq.marks.x),
