@@ -1,0 +1,6 @@
+[tools]
+typst = "latest"
+
+[env]
+TYPST_FONT_PATHS = "{{config_root}}/common/fonts"
+TYPST_ROOT = "{{config_root}}"

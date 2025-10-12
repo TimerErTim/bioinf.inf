@@ -1,46 +1,10 @@
-#set page(numbering: "1 von 1", number-align: right, header: [
-  WS 2025/26 #h(1fr) Tim Peko
-])
-#set heading(numbering: "1.1.")
-#set text(font: "Calibri", lang: "de")
+#import "../common/template.typ": documentation-template
 
-#align(center)[
-  #text(17pt)[*SWE3 - Übung 1*]\
-  #text(14pt)[WS 2025/26]
-
-  #text(16pt)[Tim Peko]
-]
-
-#context[
-  #let show_outline = counter(page).final().first() > 5
-
-  #if show_outline [
-    #show outline.entry: it => [
-      #set text(size: 14pt - it.element.level * 1.5pt)
-      #it
-    ]
-    #outline(title: "Inhaltsverzeichnis")
-    #pagebreak()
-  ]
-
-  #if not show_outline [
-    #v(2em)
-  ]
-]
-
-#show raw: it => {
-  if it.block {
-    block(stroke: gray.lighten(90%), fill: gray.lighten(95%), radius: 5pt, width: 100%, inset: (top: 5pt, right: 10pt, bottom: 10pt, left: 10pt))[
-      #place(top + right, dx: 5pt, text(size: 8pt, fill: gray.darken(50%))[
-        #it.lang
-      ])
-      #v(5pt)
-      #it
-    ]
-  } else {
-    it
-  }
-}
+#show: documentation-template.with(
+  title: "SWE3 - Übung 1",
+  semester-term: "WS 2025/26",
+  author: "Tim Peko"
+)
 
 #let image_display(image_path, caption: none, width: 20em, height: auto, label_: none) = {
   show figure: set block(width: 100%)
@@ -276,35 +240,50 @@ Nachfolgend sind die vorhandenen Testfälle aus `main.cpp` beschrieben. Jeder Te
 - *Ziel*: Prüfen, dass ein leeres Feld unverändert bleibt und keine Fehler auftreten.
 - *Relevanz*: Randfall für korrekte Abbruchbedingungen im Algorithmus (`build_heap` kehrt sofort zurück).
 
-#image_display("assets/2025-10-08_empty_array_test.png", caption: "Leeres Array", width: 40%)
+#figure(
+  image("assets/2025-10-08_empty_array_test.png", width: 40%),
+  caption: "Leeres Array"
+)
 
 === Negative Elemente
 
 - *Ziel*: Sicherstellen, dass auch negative Werte korrekt sortiert werden.
 - *Relevanz*: Vergleichsoperatoren funktionieren unabhängig vom Vorzeichen, Heapsort ist wertunabhängig.
 
-#image_display("assets/2025-10-08_negative_elements_test.png", caption: "Negative Elemente", width: 40%)
+#figure(
+  image("assets/2025-10-08_negative_elements_test.png", width: 40%),
+  caption: "Negative Elemente"
+)
 
 === Absteigend sortiertes Array
 
 - *Ziel*: Worst-Case-nahe Ordnung prüfen; das Ergebnis muss vollständig aufsteigend sein.
 - *Relevanz*: Belastet die `shift_down`-Operationen besonders stark.
 
-#image_display("assets/2025-10-08_descending_sorted_array_test.png", caption: "Absteigend sortiertes Array", width: 40%)
+#figure(
+  image("assets/2025-10-08_descending_sorted_array_test.png", width: 40%),
+  caption: "Absteigend sortiertes Array"
+)
 
 === Bereits sortiertes Array
 
 - *Ziel*: Prüfen, dass ein bereits aufsteigend sortiertes Feld unverändert bleibt.
 - *Relevanz*: Keine unnötigen Änderungen, Korrektheit der Swap-/Heap-Grenzenlogik.
 
-#image_display("assets/2025-10-08_already_sorted_array_test.png", caption: "Bereits sortiertes Array", width: 40%)
+#figure(
+  image("assets/2025-10-08_already_sorted_array_test.png", width: 40%),
+  caption: "Bereits sortiertes Array"
+)
 
 === Duplikate
 
 - *Ziel*: Sicherstellen, dass gleiche Werte korrekt gruppiert werden und die Gesamtordnung stimmt.
 - *Relevanz*: Heapsort ist nicht stabil, aber die Sortierung nach Wert muss korrekt sein.
 
-#image_display("assets/2025-10-08_duplicates_test.png", caption: "Duplikate", width: 40%)
+#figure(
+  image("assets/2025-10-08_duplicates_test.png", width: 40%),
+  caption: "Duplikate"
+)
 
 = Heapsort Komplexität
 
@@ -436,28 +415,34 @@ void heap_sorter::shift_down(content_t &c, index_t start, size_t len)
 
 Das ermitteln der Vergleichs- & Tauschanzahl für die verschiedenen Array-Größen liefert die folgenden Ergebnisse:
 
-#image_display(
-  "assets/2025-10-09_counting_output.png",
-  caption: "Ausgabe der Vergleichs- & Tauschanzahl",
-  width: 80%,
-  label_: "counting-output",
+#figure(
+  image("assets/2025-10-09_counting_output.png", width: 80%),
+  caption: "Ausgabe der Vergleichs- & Tauschanzahl"
 )
+
+#figure(
+  image("assets/2025-10-09_counting_output.png", width: 80%), 
+  caption: "Ausgabe der Vergleichs- & Tauschanzahl"
+) <counting-output>
 
 Grafisch dargestellt in @complexity-graph lässt sich deutlich eine Komplexität von $O(n log(n))$ erkennen. Zum Vergleich wird noch die Skalierungsformen $O(n)$ als Referenz in der Grafik abgebildet. Dabei wird hier nur die Zeitkomplexität betrachtet. Die Speicherkomplexität ist $O(1)$, weil der Algorithmus in-place arbeitet. Das bedeutet, er benötigt keinen zusätzlichen Speicherplatz. Also Konstant im Bezug auf die Array-Größe $n$.
 
-#annotated_graphic(lq.diagram(
-  width: 100%,
-  height: 100%,
-  title: [Heapsort: Comparisons - Swaps],
-  xlabel: [Array Size $n$],
-  ylabel: [$T(n)$],
-  //xscale: "log",
-  //yscale: "log",
-  lq.plot(complexity_n, complexity_compares, label: "Comparisons", mark: lq.marks.x),
-  lq.plot(complexity_n, complexity_swaps, label: "Swaps", mark: lq.marks.x),
-  lq.plot(complexity_n, n => 3.1 * n * calc.log(n), label: [$O(n log(n))$], mark: none),
-  lq.plot(complexity_n, n => 13 * n, label: [$O(n)$], mark: none),
-), caption: "Komplexität von Comparisons und Swaps", width: 90%, height: 10cm, label_: "complexity-graph")
+#figure(box(stroke: black, inset: 5pt,
+  lq.diagram(
+    width: 75%,
+    height: 8cm,
+    title: [Heapsort: Comparisons - Swaps],
+    xlabel: [Array Size $n$],
+    ylabel: [$T(n)$],
+    //xscale: "log",
+    //yscale: "log",
+    lq.plot(complexity_n, complexity_compares, label: "Comparisons", mark: lq.marks.x),
+    lq.plot(complexity_n, complexity_swaps, label: "Swaps", mark: lq.marks.x),
+    lq.plot(complexity_n, n => 3.1 * n * calc.log(n), label: [$O(n log(n))$], mark: none),
+    lq.plot(complexity_n, n => 13 * n, label: [$O(n)$], mark: none),
+  )), 
+  caption: "Komplexität von Comparisons und Swaps"
+) <complexity-graph>
 
 #figure(table(
   columns: (auto, auto, auto),
