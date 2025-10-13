@@ -24,6 +24,9 @@
     <ClInclude Include="stream_reader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="file_manipulator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="merge_sort.cpp">
@@ -39,6 +42,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="file_manipulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

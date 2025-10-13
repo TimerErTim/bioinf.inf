@@ -15,10 +15,13 @@ public:
     virtual ~IMergeReader() = default;
 
     /// Returns the current value at the reader's position.
-    virtual T peek() = 0;
+    virtual T get() = 0;
 
     /// Advances the reader to the next value.
     virtual bool advance() = 0;
+
+    /// Checks if the reader is advanced to exhaustion.
+    virtual bool is_exhausted() = 0;
 
     /// Converts this reader into an IMergeWriter, allowing the read data to be written.
     virtual std::unique_ptr<IMergeWriter<T>> into_writer() = 0;
@@ -42,20 +45,21 @@ public:
     using value_t = std::string;
     using size_t = std::size_t;
 
-    void sort_in_memory(const std::string& file_name);
+    void sort_file_in_memory(const std::string& file_name);
+    void sort_vec_in_memory(std::vector<std::string>& data);
 private:
     template<typename T>
     void sort(
-        std::unique_ptr<IMergeReader<T>> reader_l,
-        std::unique_ptr<IMergeReader<T>> reader_r,
-        std::unique_ptr<IMergeWriter<T>> writer_l,
-        std::unique_ptr<IMergeWriter<T>> writer_r,
+        std::unique_ptr<IMergeReader<T>>& reader_l,
+        std::unique_ptr<IMergeReader<T>>& reader_r,
+        std::unique_ptr<IMergeWriter<T>>& writer_l,
+        std::unique_ptr<IMergeWriter<T>>& writer_r,
         size_t total_size
     );
 
     template<typename T>
     void complete_sort(
-        std::shared_ptr<IMergeReader<T>> unsorted_source,
+        std::unique_ptr<IMergeReader<T>>& unsorted_source,
         std::unique_ptr<IMergeWriter<T>> buffer1,
         std::unique_ptr<IMergeWriter<T>> buffer2,
         std::unique_ptr<IMergeWriter<T>> buffer3,
@@ -63,12 +67,12 @@ private:
     );
 
     template<typename T>
-    void merge_step(IMergeReader<T>& sorted_l, IMergeReader<T>& sorted_r, IMergeWriter<T>& writer_l, IMergeWriter<T>& writer_r, size_t chunk_size);
+    void merge(IMergeReader<T>& sorted_l, IMergeReader<T>& sorted_r, IMergeWriter<T>& writer_l, IMergeWriter<T>& writer_r, size_t chunk_size);
 
     /// Returns the number of elements read from the reader.
     template<typename T>
     long long split(IMergeReader<T>& reader, IMergeWriter<T>& writer_l, IMergeWriter<T>& writer_r);
 
     template<typename T>
-    void merge(IMergeReader<T>& reader_l, IMergeReader<T>& reader_r, IMergeWriter<T>& writer, size_t chunk_size);
+    bool merge_step(IMergeReader<T>& reader_l, IMergeReader<T>& reader_r, IMergeWriter<T>& writer, size_t chunk_size);
 };

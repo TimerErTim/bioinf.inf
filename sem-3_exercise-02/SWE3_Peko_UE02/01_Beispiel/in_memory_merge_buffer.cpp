@@ -19,21 +19,26 @@ private:
 
 public:
     explicit InMemoryReader(std::shared_ptr<std::vector<T>> data, size_t cursor = 0)
-        : _data(std::move(data)), _cursor(cursor) {}
+        : _data(data), _cursor(cursor) {}
 
-    T peek() override {
-        if (_cursor >= _data->size()) {
+    T get() override {
+        if (is_exhausted()) {
             throw std::underflow_error("No more elements to read");
         }
         return (*_data)[_cursor];
     }
 
     bool advance() override {
-        if (_cursor >= _data->size()) {
+        if (is_exhausted()) {
             return false;
         }
         _cursor++;
+        // Return true if we can further advance once more
         return _cursor < _data->size();
+    }
+
+    bool is_exhausted() override {
+        return _cursor >= _data->size();
     }
 
     std::unique_ptr<IMergeWriter<T>> into_writer() override {
