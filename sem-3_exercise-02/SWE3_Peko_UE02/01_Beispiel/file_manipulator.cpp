@@ -18,11 +18,12 @@ void fm::copy(std::string const& destination_file_name, std::string const& sourc
 
 
 void fm::fill_randomly(std::string const& file_name, size_type n, size_type len) {
-  std::ofstream out(file_name);
+    std::ofstream out(file_name);
 
-  while (out && (n-- > 0)) {
-    out << random_string(len) << ' ';
-  }
+    while (out && (n-- > 0)) {
+        out << random_string(len) << ' ';
+    }
+    out.close();
 }
 
 

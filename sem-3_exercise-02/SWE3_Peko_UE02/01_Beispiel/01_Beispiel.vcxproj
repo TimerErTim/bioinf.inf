@@ -130,9 +130,9 @@
     <ClInclude Include="stream_reader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="file_io.cpp" />
     <ClCompile Include="file_manipulator.cpp" />
-    <ClCompile Include="in_memory_io.cpp" />
+    <ClCompile Include="file_merge_buffer.cpp" />
+    <ClCompile Include="in_memory_merge_buffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="merge_sort.cpp" />
     <ClCompile Include="random.cpp" />

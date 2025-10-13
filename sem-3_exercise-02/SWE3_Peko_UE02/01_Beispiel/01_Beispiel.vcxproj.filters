@@ -32,12 +32,6 @@
     <ClCompile Include="merge_sort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="file_io.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="in_memory_io.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,6 +39,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="file_manipulator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="file_merge_buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="in_memory_merge_buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

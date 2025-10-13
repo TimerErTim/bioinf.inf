@@ -1,5 +1,7 @@
 #include "merge_sort.hpp"
-#include "in_memory_io.cpp"
+#include "in_memory_merge_buffer.cpp"
+#include "stream_reader.h"
+
 #include <fstream>
 #include <memory>
 #include <iostream>
@@ -160,21 +162,24 @@ void merge_sorter::complete_sort(
 
 void merge_sorter::sort_file_in_memory(const std::string &file_name)
 {
-    std::ifstream file(file_name);
+    std::ifstream read_file(file_name);
+    stream_reader<std::string> reader(read_file);
     std::vector<std::string> data;
-    std::string line;
-    while (std::getline(file, line))
-    {
-        data.push_back(line);
+    while (reader.has_next()) {
+        auto value = reader.get();
+        if (value.length() == 0) continue;
+        data.push_back(value);
     }
+    read_file.close();
 
     sort_vec_in_memory(data);
 
-    std::ofstream out(file_name);
+    std::ofstream write_file(file_name);
     for (const auto &entry : data)
     {
-        out << entry << " ";
+        write_file << entry << " ";
     }
+    write_file.close();
 }
 
 void merge_sorter::sort_vec_in_memory(std::vector<std::string> &data)
