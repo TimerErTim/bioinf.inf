@@ -92,20 +92,23 @@ inline T stream_reader<T>::peek() {
 
 template<typename T>
 inline bool stream_reader<T>::has_next() {
-  return buffer.has_value() || (m_in && m_in.good() && !m_in.eof());
+    if (buffer) return true;
+    T tmp;
+    if (m_in >> tmp) {           // only true when a token was actually read
+        buffer = std::move(tmp); // stash it for next()
+        return true;
+    }
+    return false;
 }
 
 template<typename T>
 inline std::optional<T> stream_reader<T>::next() {
-  if (buffer.has_value()) {
-    std::optional<T> v = {};
-    buffer.swap(v);
-    return v.value();
-  } else if (has_next()) {
-    T value = {};
-    m_in >> value;
-    return value;
-  } else {
-    return {};
-  }
+    if (buffer) {
+        auto v = std::move(*buffer);
+        buffer.reset();
+        return v;
+    }
+    T tmp;
+    if (m_in >> tmp) return tmp; // succeed → return token
+    return std::nullopt;         // fail → no token
 }
