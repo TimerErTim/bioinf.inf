@@ -1,7 +1,7 @@
 
 
 #let format-raw(it) = {
-  show raw: set text(font: "JetBrains Mono", ligatures: false)
+  set text(font: "JetBrains Mono")
 
   let highlight-color = gray.lighten(90%)
   if it.block {
