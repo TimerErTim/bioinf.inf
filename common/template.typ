@@ -54,6 +54,7 @@
     #semester-term #h(1fr) #author
   ])
   set heading(numbering: "1.1.")
+  show heading: set block(below: 1em, above: 1.25em)
   set text(font: "Roboto Slab", lang: "de")
 
   align(center)[
