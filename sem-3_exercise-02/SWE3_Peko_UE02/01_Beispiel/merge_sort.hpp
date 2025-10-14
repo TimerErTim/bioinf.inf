@@ -23,7 +23,7 @@ public:
     /// Checks if the reader is advanced to exhaustion.
     virtual bool is_exhausted() = 0;
 
-    /// Converts this reader into an IMergeWriter, allowing the read data to be written.
+    /// Converts this reader into an IMergeWriter, allowing the buffer to be reused for writing.
     virtual std::unique_ptr<IMergeWriter<T>> into_writer() = 0;
 };
 

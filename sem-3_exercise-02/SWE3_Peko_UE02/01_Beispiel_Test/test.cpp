@@ -22,11 +22,12 @@ TEST(RandomTest, ProducesRealValuesInRange) {
 
 TEST(StreamReaderTest, TestReadAndPutback) {
   std::stringstream ss;
-  ss.str("1 2 3");
+  ss.str("1 2 3 ");
   stream_reader<std::string> reader(ss);
   EXPECT_EQ(reader.get(), "1");
   ss.putback('4');
   EXPECT_EQ(reader.get(), "4");
   EXPECT_EQ(reader.get(), "2");
   EXPECT_EQ(reader.get(), "3");
+  ASSERT_FALSE(reader.has_next());
 }

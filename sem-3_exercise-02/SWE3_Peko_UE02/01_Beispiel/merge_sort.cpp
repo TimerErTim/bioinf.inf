@@ -8,10 +8,10 @@
 
 template <typename T>
 void merge_sorter::sort(
-    std::unique_ptr<IMergeReader<T>>& reader_l,
-    std::unique_ptr<IMergeReader<T>>& reader_r,
-    std::unique_ptr<IMergeWriter<T>>& writer_l,
-    std::unique_ptr<IMergeWriter<T>>& writer_r,
+    std::unique_ptr<IMergeReader<T>> &reader_l,
+    std::unique_ptr<IMergeReader<T>> &reader_r,
+    std::unique_ptr<IMergeWriter<T>> &writer_l,
+    std::unique_ptr<IMergeWriter<T>> &writer_r,
     size_t total_size)
 {
     size_t chunk_size = 1;
@@ -19,7 +19,8 @@ void merge_sorter::sort(
     {
         merge(*reader_l, *reader_r, *writer_l, *writer_r, chunk_size);
         chunk_size *= 2;
-        if (chunk_size >= total_size) {
+        if (chunk_size >= total_size)
+        {
             // We have finished the last iteration and writers contain sorted data
             break;
         }
@@ -28,7 +29,7 @@ void merge_sorter::sort(
         auto tmp_writer_l = reader_l->into_writer();
         auto tmp_writer_r = reader_r->into_writer();
 
-        reader_l = writer_l->into_reader();   // re-seat: OK, we own the pointer
+        reader_l = writer_l->into_reader(); // re-seat: OK, we own the pointer
         reader_r = writer_r->into_reader();
 
         writer_l = std::move(tmp_writer_l);
@@ -43,9 +44,10 @@ void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, I
 
     while (true)
     {
-        IMergeWriter<T>& writer = write_to_left ? writer_l : writer_r;
+        IMergeWriter<T> &writer = write_to_left ? writer_l : writer_r;
 
-        if (!merge_step(sorted_l, sorted_r, writer, chunk_size)) {
+        if (!merge_step(sorted_l, sorted_r, writer, chunk_size))
+        {
             break;
         }
 
@@ -59,31 +61,22 @@ long long merge_sorter::split(IMergeReader<T> &reader, IMergeWriter<T> &writer_l
 {
     long long count = 0;
     bool left_target = true;
-    T value = reader.get();
-    while (true)
+    while (!reader.is_exhausted())
     {
         if (left_target)
         {
-            writer_l.append(value);
+            writer_l.append(reader.get());
         }
         else
         {
-            writer_r.append(value);
+            writer_r.append(reader.get());
         }
         count++;
-
-        // Advance reader or break loop if reader is exhausted
-        if (reader.advance())
-        {
-            value = reader.get();
-        }
-        else
-        {
-            break;
-        }
-
         // Alternate between target writers
         left_target = !left_target;
+
+        // Advance reader
+        reader.advance();
     }
     return count;
 }
@@ -95,8 +88,6 @@ bool merge_sorter::merge_step(IMergeReader<T> &reader_l, IMergeReader<T> &reader
     size_t r_merged_count = 0; // Increment until chunk_size is reached
     bool l_exhausted = reader_l.is_exhausted();
     bool r_exhausted = reader_r.is_exhausted();
-
-
 
     // Zip and merge one chunk of size chunk_size_per_reader
     while (l_merged_count < chunk_size_per_reader && r_merged_count < chunk_size_per_reader && !l_exhausted && !r_exhausted)
@@ -139,41 +130,47 @@ bool merge_sorter::merge_step(IMergeReader<T> &reader_l, IMergeReader<T> &reader
 
 template <typename T>
 void merge_sorter::complete_sort(
-    std::unique_ptr<IMergeReader<T>>& unsorted_source,
+    std::unique_ptr<IMergeReader<T>> &unsorted_source,
     std::unique_ptr<IMergeWriter<T>> buffer1,
     std::unique_ptr<IMergeWriter<T>> buffer2,
     std::unique_ptr<IMergeWriter<T>> buffer3,
-    std::unique_ptr<IMergeWriter<T>> buffer4    
-) {
+    std::unique_ptr<IMergeWriter<T>> buffer4)
+{
+    // Split the unsorted source into two halves
     auto total_size = split(*unsorted_source, *buffer1, *buffer2);
 
+    // Sort the two halves
     auto reader_l = buffer1->into_reader();
     auto reader_r = buffer2->into_reader();
     sort<T>(reader_l, reader_r, buffer3, buffer4, total_size);
 
+    // Merge the two sorted halves into the soure
     auto sorted_l = buffer3->into_reader();
     auto sorted_r = buffer4->into_reader();
-    auto sorted_full   = unsorted_source->into_writer();
-
+    auto sorted_full = unsorted_source->into_writer();
     merge_step<T>(*sorted_l, *sorted_r, *sorted_full, total_size);
 
-    unsorted_source = sorted_full->into_reader(); // re-seat the source: now valid
+    // re-seat the source => reset the cursor to 0
+    unsorted_source = sorted_full->into_reader();
 }
 
+/// @brief Sorts the file in memory using the merge sort algorithm with four in memory buffers.
+/// @param file_name The name of the file to sort.
 void merge_sorter::sort_file_in_memory(const std::string &file_name)
 {
+    // Reads the file into a vector, which we can sort in-memory
     std::ifstream read_file(file_name);
     stream_reader<std::string> reader(read_file);
     std::vector<std::string> data;
-    while (reader.has_next()) {
-        auto value = reader.get();
-        if (value.length() == 0) continue;
-        data.push_back(value);
+    while (reader.has_next())
+    {
+        data.push_back(reader.get());
     }
     read_file.close();
 
     sort_vec_in_memory(data);
 
+    // Write the sorted data back to the file
     std::ofstream write_file(file_name);
     for (const auto &entry : data)
     {
@@ -182,25 +179,23 @@ void merge_sorter::sort_file_in_memory(const std::string &file_name)
     write_file.close();
 }
 
+/// @brief Sorts the vector in memory using the merge sort algorithm with four in memory buffers.
+/// @param data The vector to sort.
 void merge_sorter::sort_vec_in_memory(std::vector<std::string> &data)
 {
     std::unique_ptr<IMergeReader<std::string>> input_reader(std::make_unique<InMemoryReader<std::string>>(std::make_shared<std::vector<std::string>>(data)));
 
-    InMemoryWriter<std::string> buffer1;
-    InMemoryWriter<std::string> buffer2;
-    InMemoryWriter<std::string> buffer3;
-    InMemoryWriter<std::string> buffer4;
-
     complete_sort<std::string>(
-        input_reader, 
-        std::make_unique<InMemoryWriter<std::string>>(buffer1), 
-        std::make_unique<InMemoryWriter<std::string>>(buffer2), 
-        std::make_unique<InMemoryWriter<std::string>>(buffer3), 
-        std::make_unique<InMemoryWriter<std::string>>(buffer4));
+        input_reader,
+        std::make_unique<InMemoryWriter<std::string>>(),
+        std::make_unique<InMemoryWriter<std::string>>(),
+        std::make_unique<InMemoryWriter<std::string>>(),
+        std::make_unique<InMemoryWriter<std::string>>());
 
-    // Write the data from input_reader to data
+    // Write the data from input_reader back to data vector
     data.clear();
-    while(!input_reader->is_exhausted()) {
+    while (!input_reader->is_exhausted())
+    {
         data.push_back(input_reader->get());
         input_reader->advance();
     }

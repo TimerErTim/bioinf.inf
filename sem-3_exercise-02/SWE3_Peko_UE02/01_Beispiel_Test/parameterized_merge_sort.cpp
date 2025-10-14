@@ -6,7 +6,7 @@
 #include "../01_Beispiel/file_manipulator.cpp"
 
 constexpr int TEST_STRING_LENGTHS[] = {2, 10, 20};
-constexpr int TEST_ARRAY_LENGTHS[] = {10, 500, 10000};
+constexpr int TEST_ARRAY_LENGTHS[] = {10, 200, 5000, 100000};
 
 class MergeSorterTest: public testing::TestWithParam<std::tuple<int, int>> {};
 
@@ -22,12 +22,15 @@ INSTANTIATE_TEST_CASE_P(
 TEST_P(MergeSorterTest, TestSortInMemoryParameterized) {
     auto [string_length, array_length] = GetParam();
 
+    // Arrange
     std::string filename = "test_file.txt";
     file_manipulator::fill_randomly(filename, array_length, string_length);
 
+    // Act
     merge_sorter sorter;
     sorter.sort_file_in_memory(filename);
     
+    // Assert
     std::ifstream file(filename);
     stream_reader<std::string> reader(file);
     
@@ -38,5 +41,6 @@ TEST_P(MergeSorterTest, TestSortInMemoryParameterized) {
         prev = current;
     }
 
+    // Clean up
     remove(filename.c_str());
 }
