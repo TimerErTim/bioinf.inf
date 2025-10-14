@@ -55,7 +55,7 @@
   ])
   set heading(numbering: "1.1.")
   show heading: set block(below: 1em, above: 1.25em)
-  set text(font: "Roboto Slab", lang: "de")
+  set text(font: "Roboto Serif", lang: "de")
 
   align(center)[
     #text(17pt)[*#title*]\
