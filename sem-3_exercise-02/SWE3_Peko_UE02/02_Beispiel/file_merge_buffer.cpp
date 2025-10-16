@@ -20,7 +20,11 @@ private:
 public:
     explicit FileMergeReader(const std::string& filename)
         : _filename(filename) {
+        // Open source file for reading; throw if unavailable
         _file = std::make_unique<std::ifstream>(filename);
+        if (!_file->is_open()) {
+            throw std::runtime_error("FileMergeReader: cannot open file for reading: " + filename);
+        }
         _reader = std::make_unique<stream_reader<T>>(*_file);
     }
 
@@ -64,6 +68,9 @@ public:
         // autotruncation by std::ofstream is not reliable
         file_manipulator::delete_file(filename); 
         _file = std::make_unique<std::ofstream>(filename);
+        if (!_file->is_open()) {
+            throw std::runtime_error("FileMergeWriter: cannot open file for writing: " + filename);
+        }
     }
 
     bool append(const T& value) override {

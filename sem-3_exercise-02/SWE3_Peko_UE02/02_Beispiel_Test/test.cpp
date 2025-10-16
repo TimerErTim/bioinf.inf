@@ -4,6 +4,7 @@
 #include "../02_Beispiel/random.cpp" // Dont know why, but we have to import .cpp instead of .h for Test project to build
 #include "../02_Beispiel/stream_reader.h"
 #include "../02_Beispiel/file_manipulator.cpp"
+#include <stdexcept>
 
 constexpr int TEST_STRING_LENGTHS[] = {10, 100};
 constexpr int TEST_ARRAY_LENGTHS[] = {100000, 1000000};
@@ -185,5 +186,25 @@ TEST(MergeSortTest, TestFileWithDifferentStringLengthsOnDisk) {
 
     // Clean up
     remove(filename.c_str());
+}
+
+TEST(MergeSortTest, TestNonexistentFileOnDiskThrows) {
+    // Arrange
+    std::string filename = "__no_such_file_exists__.txt";
+    remove(filename.c_str());
+
+    // Act + Assert
+    merge_sorter sorter;
+    ASSERT_THROW(sorter.sort_file_on_disk(filename), std::runtime_error);
+}
+
+TEST(MergeSortTest, TestNonexistentFileInMemoryThrows) {
+    // Arrange
+    std::string filename = "__no_such_file_exists_in_memory__.txt";
+    remove(filename.c_str());
+
+    // Act + Assert
+    merge_sorter sorter;
+    ASSERT_THROW(sorter.sort_file_in_memory(filename), std::runtime_error);
 }
 

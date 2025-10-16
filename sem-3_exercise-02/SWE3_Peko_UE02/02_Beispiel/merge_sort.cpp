@@ -6,7 +6,12 @@
 #include <fstream>
 #include <memory>
 #include <iostream>
+#include <stdexcept>
 
+/// Performs iterative external merge passes on two sorted input readers, writing
+/// chunk-wise alternately to two writers. The chunk size doubles after each pass
+/// until both halves are fully sorted. Reader/writer roles are swapped between
+/// passes to avoid additional buffers.
 template <typename T>
 void merge_sorter::sort(
     std::unique_ptr<IMergeReader<T>> &reader_l,
@@ -41,6 +46,9 @@ void merge_sorter::sort(
     }
 }
 
+/// Merge two already-sorted readers chunk-wise, appending the merged runs to
+/// alternating writers. This alternation allows the next pass to read back
+/// the merged runs without extra copying.
 template <typename T>
 void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, IMergeWriter<T> &writer_l, IMergeWriter<T> &writer_r, size_t chunk_size)
 {
@@ -60,6 +68,8 @@ void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, I
     }
 }
 
+/// Split a source reader into two destination writers by alternately writing
+/// elements to left and right writers. Returns the number of elements observed.
 template <typename T>
 long long merge_sorter::split(IMergeReader<T> &reader, IMergeWriter<T> &writer_l, IMergeWriter<T> &writer_r)
 {
@@ -83,6 +93,9 @@ long long merge_sorter::split(IMergeReader<T> &reader, IMergeWriter<T> &writer_l
     return count;
 }
 
+/// Merge a single run from each reader into a target writer. Each side contributes
+/// up to chunk_size_per_reader elements (or until exhausted). Returns true if any
+/// reader still has elements remaining; false if both are exhausted for this pass.
 template <typename T>
 bool merge_sorter::merge_step(IMergeReader<T> &reader_l, IMergeReader<T> &reader_r, IMergeWriter<T> &writer, size_t chunk_size_per_reader)
 {
@@ -130,6 +143,9 @@ bool merge_sorter::merge_step(IMergeReader<T> &reader_l, IMergeReader<T> &reader
     return !l_exhausted || !r_exhausted;
 }
 
+/// Orchestrates a complete sort using four buffers: two for producing merged runs
+/// and two for reading them in the next pass. After final pass, merges both halves
+/// into the original source and re-seats the source reader at position 0.
 template <typename T>
 void merge_sorter::complete_sort(
     std::unique_ptr<IMergeReader<T>> &unsorted_source,
@@ -162,6 +178,9 @@ void merge_sorter::sort_file_in_memory(const std::string &file_name)
 {
     // Reads the file into a vector, which we can sort in-memory
     std::ifstream read_file(file_name);
+    if (!read_file.is_open()) {
+        throw std::runtime_error("merge_sorter::sort_file_in_memory: cannot open file for reading: " + file_name);
+    }
     stream_reader<std::string> reader(read_file);
     std::vector<std::string> data;
     while (reader.has_next())
@@ -174,6 +193,9 @@ void merge_sorter::sort_file_in_memory(const std::string &file_name)
 
     // Write the sorted data back to the file
     std::ofstream write_file(file_name);
+    if (!write_file.is_open()) {
+        throw std::runtime_error("merge_sorter::sort_file_in_memory: cannot open file for writing: " + file_name);
+    }
     for (const auto &entry : data)
     {
         write_file << entry << " ";
