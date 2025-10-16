@@ -415,6 +415,17 @@ Alle Testfälle bestehen erfolgreich, wie in @task-01-test-results zu sehen ist.
 
 == Lösungsidee
 
+Aufgrund der Hinweise in der Übungsangabe
+
+#quote(block: true)[
+    Ein paar Implementierungshinweise:
+1. Die Klasse merge_sorter soll die in der Übung besprochene Klasse file_manipulator für alle Dateioperationen
+verwenden. Diese Dateioperationen könnten sein: eine Datei kopieren, eine Datei mit Zufallswerten füllen, eine
+Datei in mehrere Dateien aufsplitten, den Inhalt einer Datei ausgeben.
+2. Die Klasse file_manipulator operiert auf ifstreams und ofstreams. Die einzigen erlaubten Operationen auf diese
+Streams sind nur << und >>
+]
+
 == Ergebnisse
 
 == Testfälle
