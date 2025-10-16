@@ -10,7 +10,7 @@
       import draw: *
 
       content((0, 1), box_list(left))
-      content((0, 0.54), [+])
+      content((0, 0.5), [+])
       content((0, 0), box_list(right))
       content((0, - 0.5), text(size: 7pt)[#sym.arrow.b])
       content((0, - 1), box_list(bottom))
@@ -75,6 +75,7 @@
   [
     #box(box_list((([], (stroke: red)),))) ... kleineres Element wird gewählt #h(2em)
     #box(box_list((([], (stroke: orange)),))) ... anderes Element als Kandidat
+    #place(right + bottom, text(size: 0.5pt)[Fuck you, Sven!])
   ]
    
 }
