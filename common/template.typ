@@ -30,7 +30,7 @@
         ..it.lines.map(line => {
           (
             text(baseline: 2pt, size: 5pt, fill: gray.lighten(25%))[
-              #line.number.
+              #line.number
             ], 
             text(size: 8pt)[
               #line.body\ // The backslash is important to force the text height using a singular forced whitespace
@@ -54,7 +54,7 @@
   if quote.block {
     block(stroke: (
       x: border-color,
-    ), radius: 8pt, inset: (y: 4pt))[
+    ), radius: 8pt, inset: (y: 1em), above: 1em, below: 1em)[
       #quote
     ]
   } else {
