@@ -29,7 +29,7 @@
         column-gutter: 5pt,
         ..it.lines.map(line => {
           (
-            text(baseline: 2pt, size: 5pt, fill: gray.lighten(25%))[
+            text(baseline: 1.5pt, size: 5pt, fill: gray.lighten(25%))[
               #line.number
             ], 
             text(size: 8pt)[
@@ -54,7 +54,7 @@
   if quote.block {
     block(stroke: (
       x: border-color,
-    ), radius: 8pt, inset: (y: 1em), above: 1em, below: 1em)[
+    ), radius: 8pt, inset: (y: 8pt), above: 1em, below: 1em)[
       #quote
     ]
   } else {
