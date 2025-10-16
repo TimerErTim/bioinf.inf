@@ -29,8 +29,8 @@ Der Merge Sort Algorithmus ist
 - kein in-place Sortieralgorithmus, da er zusätzlichen Speicher benötigt.
 - ein vergleichsbasierter Sortieralgorithmus, da er nur auf Vergleichsoperatoren basiert.
 - gut in Dateien aufteilbar, da er die Daten in kleinere Chunks aufteilt, die separat sortiert werden können.
-- mit einer Zeitkomplexität von O(n log n) im besten, durchschnittlichen und schlechtesten Fall.
-- mit einer Platzkomplexität von O(n) für den zusätzlichen Speicher.
+- mit einer Zeitkomplexität von $O(n log n)$ im besten, durchschnittlichen und schlechtesten Fall.
+- mit einer Platzkomplexität von $O(n)$ für den zusätzlichen Speicher.
 
 #figure(
   box(stroke: black, inset: 10pt, visualize_mergesort_complexity()), 
@@ -376,7 +376,7 @@ Der Standard-Testfall
     std::string filename = "test_file.txt";
     file_manipulator::fill_randomly(filename, array_length, string_length);
     ```
-+ *Act* - Sortiert diese per `merge_sorter::sort_file_in_memory(...)` und verifiziert das Ergebnis hinsichtlich der Sortierung\ ```cpp
++ *Act* - Sortiert diese per `merge_sorter::sort_file_in_memory(...)`\ ```cpp
     merge_sorter sorter;
     sorter.sort_file_in_memory(filename);
     ```
