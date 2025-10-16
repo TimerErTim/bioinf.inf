@@ -44,6 +44,11 @@
   }
 }
 
+#let format-equation(it) = {
+  set text(font: "Libertinus Math")
+  it
+} 
+
 #let format-quote(quote) = {
   let border-color = gray.lighten(50%)
   if quote.block {
@@ -100,6 +105,7 @@
   show raw: format-raw
   show quote: format-quote
   show image: format-image
+  show math.equation: format-equation
   show figure: set align(start)
 
   doc
