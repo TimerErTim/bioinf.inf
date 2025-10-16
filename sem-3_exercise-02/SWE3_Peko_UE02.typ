@@ -11,7 +11,7 @@
 
 === Merge Sort
 
-Der Merge Sort Algorithmus funktioniert, indem wir immer sortierte Subarrays zu einem sortierten Superarray zusammenfügen. Dazu machen wir uns die sortierte Eigenschaft zu Nutze und fügen immer das kleinste Element des linken und rechten Subarrays zu dem Superarray hinzu. Dieser Vorgang wird in @merge-step-visualization demonstiert. Wichtig ist hierbei, dass ein zusätzlicher Buffer benötigt wird, der das gemerged Superarray speichert.
+Der Merge Sort Algorithmus funktioniert, indem wir immer sortierte Subarrays zu einem sortierten Superarray zusammenfügen. Dazu machen wir uns die sortierte Eigenschaft zu Nutze und fügen immer das kleinste Element des linken und rechten Subarrays zu dem Superarray hinzu. Dieser Vorgang wird in @merge-step-visualization demonstriert. Wichtig ist hierbei, dass ein zusätzlicher Buffer benötigt wird, der das gemerged Superarray speichert.
 
 Um die gesamte Collection zu sortieren, brechen wir die Collection auf die kleinste möglichen Subarrays, die bereits sortiert sind, auf. Das sind die Subarrays, die nur ein Element enthalten. Danach wird der Merge Schritt für die immer größer werdenden (gemerged) Super-/Subarrays wiederholt, bis die gesamte Collection sortiert ist. Das ist in @mergesort-visualization visualisiert.
 
@@ -39,7 +39,7 @@ Der Merge Sort Algorithmus ist
 
 === Implementierung In-Memory
 
-Es exisitert eine `main.cpp` Datei, die allerdings nur eine Dummy Main Funktion enthält. Sie dient lediglich dazu, das Projekt kompilieren zu können. Alternativ könnte in Visual Studio auch der Projekttyp auf `Static Library` gesetzt werden. Das wird hier zur leichteren Kompabilität nicht gemacht.
+Es existiert eine `main.cpp` Datei, die allerdings nur eine Dummy Main Funktion enthält. Sie dient lediglich dazu, das Projekt kompilieren zu können. Alternativ könnte in Visual Studio auch der Projekttyp auf `Static Library` gesetzt werden. Das wird hier zur leichteren Kompatibilität nicht gemacht.
 
 ==== Buffer Interfaces
 
@@ -129,7 +129,7 @@ bool merge_sorter::merge_step(IMergeReader<T> &reader_l, IMergeReader<T> &reader
 }
 ```
 
-In Vorbereitung auf On-Disk Sortierung, alterniert die `merge` Methode für jeden Teilchunk zwischen zwei Zielbuffern.
+In Vorbereitung auf On-Disk Sortierung, alterniert die `merge` Methode für jeden Teilchunk zwischen zwei Zielbuffern. @merge-iteration-flowchart visualisiert diesen Vorgang.
 
 ```cpp
 template <typename T>
@@ -150,6 +150,12 @@ void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, I
     }
 }
 ```
+
+#figure(
+    quote(block: true, attribution: "Übungsangabe", image("assets/merge_iteration_flowchart.png")),
+    caption: [Jeweils Chunks der Größe $n$ von A und B, werden zu einem Chunk der Größe $2n$ zusammengeführt. Die neuen
+Chunks werden abgechselnd in C und D geschrieben.]
+) <merge-iteration-flowchart>
 
 Diese Schritter werden in der `sort` Methode so oft wiederholt und zwischen Quell- und Zielbuffern alterniert, bis die gesamte Collection sortiert ist. Dabei ist hier der finale merge Schritt noch ausständig.
 
@@ -184,6 +190,13 @@ Die `complete_sort` Methode
 + Splittet die unsortierte Collection in zwei Hälften
 + Führt den finalen Merge Schritt aus
 + Setzt den Quellbuffer auf den neuen sortierten Buffer
+Visualisierung in @complete-sort-flowchart.
+
+#figure(
+    quote(block: true, attribution: "Übungsangabe", image("assets/complete_sort_flowchart.png")),
+    caption: [Flowchart der `complete_sort` Methode: Aufteilung und wiederholtes zusammenführen von immer größeren Chunks.]
+) <complete-sort-flowchart>
+
 
 ```cpp
 template <typename T>
@@ -369,7 +382,7 @@ void merge_sorter::sort_vec_in_memory(std::vector<std::string> &data)
 }
 ```
 
-== Testfälle
+== Testfälle <task-01-test-cases>
 
 Der Standard-Testfall
 + *Arrange* - Legt eine Datei mit zufälligen Strings an\ ```cpp
@@ -413,20 +426,120 @@ Alle Testfälle bestehen erfolgreich, wie in @task-01-test-results zu sehen ist.
 
 = Aufgabe: On Disk <chapter-task-02>
 
+== Anforderungen
+
+Wir müssen folgende Anforderungen aus der Angabe erfüllen:
+
+#quote(block: true, attribution: "Übungsangabe")[
+Ein paar Implementierungshinweise:
++ Die Klasse merge_sorter soll die in der Übung besprochene Klasse file_manipulator für alle Dateioperationen
+  verwenden. Diese Dateioperationen könnten sein: eine Datei kopieren, eine Datei mit Zufallswerten füllen, eine
+  Datei in mehrere Dateien aufsplitten, den Inhalt einer Datei ausgeben.
++ Die Klasse file_manipulator operiert auf ifstreams und ofstreams. Die einzigen erlaubten Operationen auf diese
+  Streams sind nur `<<` und `>>`.
++ Die Klasse `stream_reader<value_type>` ...
+]
+
+
+
 == Lösungsidee
 
-Aufgrund der Hinweise in der Übungsangabe
+Prinzipiell müssen nur noch die `IMergeReader` und `IMergeWriter` Interfaces für On-Disk implementiert werden. Um auch die Anforderungen zu erfüllen, nutzen wir dazu eine `file_manipulator` Klasse, die folgende statische Methoden bereitstellt:
 
-#quote(block: true)[
-    Ein paar Implementierungshinweise:
-1. Die Klasse merge_sorter soll die in der Übung besprochene Klasse file_manipulator für alle Dateioperationen
-verwenden. Diese Dateioperationen könnten sein: eine Datei kopieren, eine Datei mit Zufallswerten füllen, eine
-Datei in mehrere Dateien aufsplitten, den Inhalt einer Datei ausgeben.
-2. Die Klasse file_manipulator operiert auf ifstreams und ofstreams. Die einzigen erlaubten Operationen auf diese
-Streams sind nur << und >>
-]
++ `fill_randomly(std::string const& file_name, size_type n = 100, size_type len = 4)`: Füllt eine Datei mit Zufallswerten.
++ `append(std::ofstream& file, std::string const& str)`: Fügt eine Zeichenkette an die Datei an.
++ `print(std::string const& src_file_name, std::ostream& out = std::cout)`: Gibt den Inhalt der Datei auf die Konsole aus.
++ `delete_file(std::string const& file_name)`: Löscht eine Datei.
+
+=== Kleine Optimierung
+
+In der `merge_sorter::sort(...)` Methode können wir die Iteration früher abbrechen, als wir in @chapter-task-01 implementiert haben. Dazu verwenden wir die `chunk_size > total_size / 2` Bedingung statt `chunk_size >= total_size`. Das liegt daran, dass wir nur den Inhalt der beiden Writer, die jeweils die Hälfte der Daten entsprechen, sortieren müssen. Der letzte Merge Schritt wird dann über den finalen `merge_sorter::merge(...)` Aufruf in `merge_sorter::complete_sort(...)` durchgeführt.
+
+=== Validierung und Fehlerbehandlung
+
+- Öffnen einer Datei wird geprüft; bei Fehlern werden aussagekräftige Exceptions geworfen (z. B. in `FileMergeReader`/`-Writer`, `merge_sorter::sort_file_in_memory`).
+- Lesen/Writing geschieht nur über `<<`/`>>` (Anforderung 2); Formatfehler führen zu `has_next()==false` und werden nicht stillschweigend als leere Tokens interpretiert.
+
+=== On-Disk Buffers
+
+Die On-Disk Implementierung erfolgt über zwei Klassen in `file_merge_buffer.cpp`:
+
+- `FileMergeReader<T>`: Implementiert `IMergeReader<T>` für das Lesen aus Dateien. Nutzt intern `stream_reader<T>` und `std::ifstream`. Beim Öffnen wird geprüft, ob die Datei existiert - andernfalls wird eine `std::runtime_error` Exception geworfen.
+
+- `FileMergeWriter<T>`: Implementiert `IMergeWriter<T>` für das Schreiben in Dateien. Nutzt `std::ofstream` und die `file_manipulator::append()` Methode. Beim Erstellen wird die Zieldatei geleert, um saubere Ausgangsbedingungen zu schaffen.
+
+Beide Klassen unterstützen die `into_reader()`/`into_writer()` Konvertierung, die für das Wechseln zwischen Lese- und Schreibmodus auf derselben Datei erforderlich ist. Dies ermöglicht es, dass die Buffer-Dateien sowohl als Eingabe als auch als Ausgabe in verschiedenen Phasen des Merge-Sort-Algorithmus verwendet werden können.
+
+```cpp
+template<typename T>
+class FileMergeReader : public IMergeReader<T> {
+private:
+    std::string _filename;
+    std::unique_ptr<stream_reader<T>> _reader;
+    std::unique_ptr<std::ifstream> _file;
+
+public:
+    T get() override {
+        if (is_exhausted()) {
+            throw std::underflow_error("No more elements to read");
+        }
+        return _reader->peek();
+    }
+
+    bool advance() override {
+        if (is_exhausted()) {
+            return false;
+        }
+        _reader->get(); // consume current element
+        return _reader->has_next();
+    }
+
+    bool is_exhausted() override {
+        return !_reader->has_next();
+    }
+};
+
+template<typename T>
+class FileMergeWriter : public IMergeWriter<T> {
+private:
+    std::string _filename;
+    std::unique_ptr<std::ofstream> _file;
+public:
+    bool append(const T& value) override {
+        if (!_file->is_open()) {
+            return false;
+        }
+        file_manipulator::append(*_file, value);
+        return true;
+    }
+};
+```
+
+== Tests
+
+Wir setzen auch in diesem Beispiel auf den etablierten Standard-Testfall aus @task-01-test-cases. Dabei werden die Testfälle für On-Disk Sortierung hinzugefügt. Wir erzeugen beim Testfall $"string_length" = 100$ und $"array_length = 1000000"$ eine Datei mit knapp unter $100 "MB"$ Daten. Mit dem zusätzlichen Speichervorbauch der vier Buffer sind das insgesamt $\~300 "MB"$ Speicher.
+
+Zusätzlich testen wir die Fehlerbehandlung für nicht vorhandene Dateien:
+
+```cpp
+TEST(MergeSortTest, TestNonexistentFileOnDiskThrows) {
+    // Arrange
+    std::string filename = "__no_such_file_exists__.txt";
+    remove(filename.c_str());
+
+    // Act + Assert
+    merge_sorter sorter;
+    ASSERT_THROW(sorter.sort_file_on_disk(filename), std::runtime_error);
+}
+```
 
 == Ergebnisse
 
-== Testfälle
+Die Tests verifizieren die korrekte Sortierung und robuste Fehlerbehandlung. Auch hier zeigt @task-02-test-results, dass die Laufzeit entsprechend mit der Größe der zu sortierenden Datenfolge wächst. Der Testlauf, der die $100 "MB"$ Datei sortiert, dauert \~10 Minuten. Die Struktur mit `IMergeReader`/`IMergeWriter` ermöglicht identische Kernlogik für In-Memory und On-Disk, was die Wartbarkeit verbessert.
+
+#figure(
+    image("assets/2025-10-16_test_results_task-02.png"),
+    caption: [Ergebnisse der Testfälle für Beispiel 2]
+) <task-02-test-results>
+
 
