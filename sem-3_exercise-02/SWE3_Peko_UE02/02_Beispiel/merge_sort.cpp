@@ -205,16 +205,16 @@ void merge_sorter::sort_file_in_memory(const std::string &file_name)
 
 /// @brief Sorts the vector in memory using the merge sort algorithm with four in memory buffers.
 /// @param data The vector to sort.
-void merge_sorter::sort_vec_in_memory(std::vector<std::string> &data)
+void merge_sorter::sort_vec_in_memory(std::vector<value_t> &data)
 {
-    std::unique_ptr<IMergeReader<std::string>> input_reader(std::make_unique<InMemoryReader<std::string>>(std::make_shared<std::vector<std::string>>(data)));
+    std::unique_ptr<IMergeReader<value_t>> input_reader(std::make_unique<InMemoryReader<value_t>>(std::make_shared<std::vector<value_t>>(data)));
 
-    complete_sort<std::string>(
+    complete_sort<value_t>(
         input_reader,
-        std::make_unique<InMemoryWriter<std::string>>(),
-        std::make_unique<InMemoryWriter<std::string>>(),
-        std::make_unique<InMemoryWriter<std::string>>(),
-        std::make_unique<InMemoryWriter<std::string>>());
+        std::make_unique<InMemoryWriter<value_t>>(),
+        std::make_unique<InMemoryWriter<value_t>>(),
+        std::make_unique<InMemoryWriter<value_t>>(),
+        std::make_unique<InMemoryWriter<value_t>>());
 
     // Write the data from input_reader back to data vector
     data.clear();
@@ -229,18 +229,18 @@ void merge_sorter::sort_vec_in_memory(std::vector<std::string> &data)
 /// @param file_name The name of the file to sort.
 void merge_sorter::sort_file_on_disk(const std::string &file_name)
 {
-    std::unique_ptr<IMergeReader<std::string>> input_reader(
-        std::make_unique<FileMergeReader<std::string>>(
+    std::unique_ptr<IMergeReader<value_t>> input_reader(
+        std::make_unique<FileMergeReader<value_t>>(
             file_name
         )
     );
 
-    complete_sort<std::string>(
+    complete_sort<value_t>(
         input_reader,
-        std::make_unique<FileMergeWriter<std::string>>("buffer_a.txt"),
-        std::make_unique<FileMergeWriter<std::string>>("buffer_b.txt"),
-        std::make_unique<FileMergeWriter<std::string>>("buffer_c.txt"),
-        std::make_unique<FileMergeWriter<std::string>>("buffer_d.txt"));
+        std::make_unique<FileMergeWriter<value_t>>("buffer_a.txt"),
+        std::make_unique<FileMergeWriter<value_t>>("buffer_b.txt"),
+        std::make_unique<FileMergeWriter<value_t>>("buffer_c.txt"),
+        std::make_unique<FileMergeWriter<value_t>>("buffer_d.txt"));
 
     // Data is already written back to original file
 }

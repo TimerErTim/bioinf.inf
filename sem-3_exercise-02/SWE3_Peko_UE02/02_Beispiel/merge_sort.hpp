@@ -46,7 +46,7 @@ public:
     using size_t = std::size_t;
 
     void sort_file_in_memory(const std::string& file_name);
-    void sort_vec_in_memory(std::vector<std::string>& data);
+    void sort_vec_in_memory(std::vector<value_t>& data);
     void sort_file_on_disk(const std::string& file_name);
 private:
     template<typename T>

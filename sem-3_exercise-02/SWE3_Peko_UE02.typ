@@ -157,7 +157,7 @@ void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, I
 Chunks werden abgechselnd in C und D geschrieben.]
 ) <merge-iteration-flowchart>
 
-Diese Schritter werden in der `sort` Methode so oft wiederholt und zwischen Quell- und Zielbuffern alterniert, bis die gesamte Collection sortiert ist. Dabei ist hier der finale merge Schritt noch ausständig.
+Diese Schritte werden in der `sort` Methode so oft wiederholt und zwischen Quell- und Zielbuffern alterniert, bis die gesamte Collection sortiert ist. Dabei ist hier der finale merge Schritt noch ausständig.
 
 ```cpp
 template <typename T>
@@ -359,17 +359,17 @@ public:
 Die komplette In-Memory Sortierung wird in der `sort_vec_in_memory` Methode zusammengeführt. Die `sort_file_in_memory` Methode liest mit den in @file-handling-task-01 gezeigten Methoden die Datei in einen `std::vector<std::string>` und führt dann die Sortierung mit `sort_vec_in_memory` durch, bevor sie die sortierte Datenfolge wieder in die Datei schreibt.
 
 ```cpp
-void merge_sorter::sort_vec_in_memory(std::vector<std::string> &data)
+void merge_sorter::sort_vec_in_memory(std::vector<value_t> &data)
 {
-    std::unique_ptr<IMergeReader<std::string>> input_reader(
-      std::make_unique<InMemoryReader<std::string>>(
-        std::make_shared<std::vector<std::string>>(data)
+    std::unique_ptr<IMergeReader<value_t>> input_reader(
+      std::make_unique<InMemoryReader<value_t>>(
+        std::make_shared<std::vector<value_t>>(data)
       )
     );
 
-    complete_sort<std::string>(
+    complete_sort<value_t>(
         input_reader,
-        std::make_unique<InMemoryWriter<std::string>>(),
+        std::make_unique<InMemoryWriter<value_t>>(),
         ...);
 
     // Write the data from input_reader back to data vector
@@ -412,6 +412,7 @@ Die folgenden Testfälle überprüfen die `merge_sorter` Implementierung:
   - String Länge 2, 10, 20
   - Array Länge 10, 200, 5000, 100000
 - Leere Datei
+- Datei mit nicht alphanumerischen Zeichen
 - Verkehrt sortierte Datei
 - Datei mit Duplikaten
 - Datei mit unterschiedlich langen Strings

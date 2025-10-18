@@ -160,8 +160,8 @@ void merge_sorter::sort_file_in_memory(const std::string &file_name)
 {
     // Reads the file into a vector, which we can sort in-memory
     std::ifstream read_file(file_name);
-    stream_reader<std::string> reader(read_file);
-    std::vector<std::string> data;
+    stream_reader<value_t> reader(read_file);
+    std::vector<value_t> data;
     while (reader.has_next())
     {
         data.push_back(reader.get());
@@ -181,16 +181,16 @@ void merge_sorter::sort_file_in_memory(const std::string &file_name)
 
 /// @brief Sorts the vector in memory using the merge sort algorithm with four in memory buffers.
 /// @param data The vector to sort.
-void merge_sorter::sort_vec_in_memory(std::vector<std::string> &data)
+void merge_sorter::sort_vec_in_memory(std::vector<value_t> &data)
 {
-    std::unique_ptr<IMergeReader<std::string>> input_reader(std::make_unique<InMemoryReader<std::string>>(std::make_shared<std::vector<std::string>>(data)));
+    std::unique_ptr<IMergeReader<value_t>> input_reader(std::make_unique<InMemoryReader<value_t>>(std::make_shared<std::vector<value_t>>(data)));
 
     complete_sort<std::string>(
         input_reader,
-        std::make_unique<InMemoryWriter<std::string>>(),
-        std::make_unique<InMemoryWriter<std::string>>(),
-        std::make_unique<InMemoryWriter<std::string>>(),
-        std::make_unique<InMemoryWriter<std::string>>());
+        std::make_unique<InMemoryWriter<value_t>>(),
+        std::make_unique<InMemoryWriter<value_t>>(),
+        std::make_unique<InMemoryWriter<value_t>>(),
+        std::make_unique<InMemoryWriter<value_t>>());
 
     // Write the data from input_reader back to data vector
     data.clear();
