@@ -84,6 +84,11 @@
     #text(17pt)[*#title*]\
     #text(14pt)[#semester-term]
 
+    #if aufwand-in-h != none [
+      #text(13pt)[
+        Aufwand in h: #aufwand-in-h
+      ]
+    ]\
     #text(16pt)[#author]
   ]
 
@@ -109,10 +114,4 @@
   show figure: set align(start)
 
   doc
-
-  if aufwand-in-h != none [
-    #align(right + bottom)[
-      Aufwand in h: #aufwand-in-h
-    ]
-  ]
 }
