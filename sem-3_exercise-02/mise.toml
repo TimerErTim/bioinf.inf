@@ -3,15 +3,21 @@ rust = "nightly"
 
 [tasks."run:benchmarks-rust"]
 outputs=["rust_peko_s3ue02/out/results.json"]
-sources=["rust_peko_s3ue02/src/**"]
+sources=["rust_peko_s3ue02/src/**/*.rs", "rust_peko_s3ue02/Cargo.toml"]
 dir="rust_peko_s3ue02/"
 description = "Run the benchmarks for the Rust implementation"
 run = "cargo run --release"
 
-[tasks."build:documenation"]
-depends = ["run:benchmarks-rust"]
+[tasks."build:documentation"]
 description="Build the typst documentation"
 run = [
-    "cp rust_peko_s3ue02/out/results.json assets/benchmarks_results.json",
     "typst compile SWE3_Peko_UE02.typ"
+]
+
+[tasks."rebuild:documentation"]
+depends = ["run:benchmarks-rust"]
+depends_post = ["build:documentation"]
+description = "Rebuild the typst documentation and all its external data dependencies"
+run = [
+    "cp rust_peko_s3ue02/out/results.json assets/benchmarks_results.json"
 ]

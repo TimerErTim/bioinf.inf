@@ -143,3 +143,43 @@
     lq.plot(range(1, 100), n => n, label: [$S(n) = O(n)$], mark: none),
   )
 }
+
+#let visualize_mergesort_benchmarks_results(results) = {
+  let data-dict = map_dict_values(collect_by_key(results.entries, it => it.mode), it => collect_by_key(it, it => it.len))
+
+  let time-plots = (
+    data-dict.in_memory.pairs().map(((size, data)) => lq.plot(data.map(it => it.n), data.map(it => it.elapsed_ms / 1000), label: [in-memory $"len"=#size$], mark: "^")) 
+    +
+    data-dict.on_disk.pairs().map(((size, data)) => lq.plot(data.map(it => it.n), data.map(it => it.elapsed_ms / 1000), label: [on-disk $"len"=#size$], mark: "s"))
+  )
+
+  let space-plots = (
+    data-dict.in_memory.pairs().map(((size, data)) => lq.plot(data.map(it => it.n), data.map(it => it.peak_mem_kb / 1024), label: [in-memory $"len"=#size$], mark: "^")) 
+    +
+    data-dict.on_disk.pairs().map(((size, data)) => lq.plot(data.map(it => it.n), data.map(it => it.peak_mem_kb / 1024), label: [on-disk $"len"=#size$], mark: "s"))
+  )
+
+  block[
+    #lq.diagram(
+      width: 100%,
+      height: 8cm,
+      title: [$T(n)$ und $S(n)$ des Merge Sort Algorithmus mit größer werdender Datenmenge $n$],
+      ylabel: [Laufzeit in $s$],
+      xaxis: (mirror: false),
+      yaxis: (mirror: false),
+
+      ..time-plots,
+    )
+    #lq.diagram(
+      width: 100%,
+      height: 8cm,
+      xaxis: (mirror: false),
+      yaxis: (mirror: false),
+      xlabel: [Datenmenge $n$],
+      ylabel: [Speicherbedarf in $"MB"$],
+      legend: none,
+
+      ..space-plots
+    )
+  ]
+}

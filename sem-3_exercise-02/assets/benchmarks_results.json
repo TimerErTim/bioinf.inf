@@ -1,0 +1,99 @@
+{
+  "entries": [
+    {
+      "elapsed_ms": 141,
+      "len": 10,
+      "mode": "in_memory",
+      "n": 100000,
+      "peak_mem_kb": 3415740
+    },
+    {
+      "elapsed_ms": 3312,
+      "len": 10,
+      "mode": "in_memory",
+      "n": 1000000,
+      "peak_mem_kb": 3567884
+    },
+    {
+      "elapsed_ms": 52664,
+      "len": 10,
+      "mode": "in_memory",
+      "n": 10000000,
+      "peak_mem_kb": 5135912
+    },
+    {
+      "elapsed_ms": 548,
+      "len": 100,
+      "mode": "in_memory",
+      "n": 100000,
+      "peak_mem_kb": 4328504
+    },
+    {
+      "elapsed_ms": 7986,
+      "len": 100,
+      "mode": "in_memory",
+      "n": 1000000,
+      "peak_mem_kb": 3917824
+    },
+    {
+      "elapsed_ms": 83431,
+      "len": 100,
+      "mode": "in_memory",
+      "n": 10000000,
+      "peak_mem_kb": 7484520
+    },
+    {
+      "elapsed_ms": 223,
+      "len": 10,
+      "mode": "on_disk",
+      "n": 100000,
+      "peak_mem_kb": 3792840
+    },
+    {
+      "elapsed_ms": 2518,
+      "len": 10,
+      "mode": "on_disk",
+      "n": 1000000,
+      "peak_mem_kb": 3817752
+    },
+    {
+      "elapsed_ms": 30911,
+      "len": 10,
+      "mode": "on_disk",
+      "n": 10000000,
+      "peak_mem_kb": 4086072
+    },
+    {
+      "elapsed_ms": 1068,
+      "len": 100,
+      "mode": "on_disk",
+      "n": 100000,
+      "peak_mem_kb": 3756580
+    },
+    {
+      "elapsed_ms": 13282,
+      "len": 100,
+      "mode": "on_disk",
+      "n": 1000000,
+      "peak_mem_kb": 3958040
+    },
+    {
+      "elapsed_ms": 175749,
+      "len": 100,
+      "mode": "on_disk",
+      "n": 10000000,
+      "peak_mem_kb": 6770620
+    }
+  ],
+  "system": {
+    "arch": "x86_64",
+    "cpu_brand": "13th Gen Intel(R) Core(TM) i5-1335U",
+    "cpu_cores_logical": 12,
+    "cpu_frequency_mhz": 2496,
+    "host_name": "Ultrabook-Tim",
+    "kernel_version": "6.6.87.2-microsoft-standard-WSL2",
+    "long_os_version": "Linux (openSUSE Tumbleweed 20251020)",
+    "os": "linux",
+    "total_memory_kb": 7990476
+  }
+}

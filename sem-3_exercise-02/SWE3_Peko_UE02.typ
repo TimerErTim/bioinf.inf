@@ -425,6 +425,7 @@ Zusätzlich gibt es kleine Testfälle, die sowohl die `random.h` als auch die `s
 
 Alle Testfälle bestehen erfolgreich, wie in @task-01-test-results zu sehen ist. Es fällt auf, dass die Laufzeit bei den parametrisierten Testfällen stark unterschiedlich ausfällt. Das liegt an der stark unterschiedlichen Größe der zu sortierenden Datei.
 
+#pagebreak(weak: true)
 = Aufgabe: On Disk <chapter-task-02>
 
 == Anforderungen
@@ -536,11 +537,40 @@ TEST(MergeSortTest, TestNonexistentFileOnDiskThrows) {
 
 == Ergebnisse
 
+=== Testergebnisse
+
 Die Tests verifizieren die korrekte Sortierung und robuste Fehlerbehandlung. Auch hier zeigt @task-02-test-results, dass die Laufzeit entsprechend mit der Größe der zu sortierenden Datenfolge wächst. Der Testlauf, der die $100 "MB"$ Datei sortiert, dauert \~10 Minuten. Die Struktur mit `IMergeReader`/`IMergeWriter` ermöglicht identische Kernlogik für In-Memory und On-Disk, was die Wartbarkeit verbessert.
 
 #figure(
     image("assets/2025-10-16_test_results_task-02.png"),
     caption: [Ergebnisse der Testfälle für Beispiel 2]
 ) <task-02-test-results>
+
+== Benchmark
+
+#let benchmark-data = json("assets/benchmarks_results.json")
+
+Final wurde ein gegenüberstellender Benchmark durchgeführt, der die Laufzeit $T(n)$ und den Speicherbedarf $S(n)$ des Merge Sort Algorithmus für In-Memory und On-Disk vergleicht. Die Implementierung dazu wurde in Rust geschrieben, da ich hierfür mit dem Benchmarking Ecosystem vertrauter bin. Die Ergebnisse sind in @task-02-benchmarks-results zu sehen. Sie zeigen, dass die Laufzeit für On-Disk deutlich höher ist als für In-Memory, da der Algorithmus auf der Festplatte arbeiten muss. Der RAM-Bedarf fällt bei gleicher Einzelelementlänge $="len"$ geringer aus, bleibt aber auch nicht konstant.
+
+Der Benchmark wurde auf folgender Hardware durchgeführt:
+#figure(
+    table(
+        columns: (auto, auto),
+        [*CPU*], [#benchmark-data.system.cpu_brand \@ #calc.round(benchmark-data.system.cpu_frequency_mhz / 1000, digits: 2) $"GHz"$],
+        [*Logical Cores*], [#benchmark-data.system.cpu_cores_logical],
+        [*RAM*], [#calc.round(benchmark-data.system.total_memory_kb / 1024 / 1024, digits: 2) $"GB"$],
+        [*Arch*], [#benchmark-data.system.arch],
+        [*Kernel*], [#benchmark-data.system.kernel_version],
+        [*OS*], [#benchmark-data.system.long_os_version],
+    ),
+    caption: [Hardware-Spezifikationen des Benchmark-Systems]
+)
+
+#figure(
+    box(stroke: black, inset: 10pt, 
+        visualize_mergesort_benchmarks_results(benchmark-data)
+    ),
+    caption: [Benchmark Ergebnisse des Merge Sort Algorithmus auf einer #benchmark-data.system.cpu_brand CPU]
+) <task-02-benchmarks-results>
 
 

@@ -60,7 +60,7 @@ fn bench_on_disk(n: usize, len: usize) -> io::Result<(Duration, u64)> {
     let buf4 = file_buffer::FileMergeWriter::create(&b4)?;
 
     let sorter = MergeSorter::<String>::new();
-    let mut tracker = PeakMemTracker::start();
+    let tracker = PeakMemTracker::start();
     let start = Instant::now();
     let mut r = sorter.complete_sort(reader, buf1, buf2, buf3, buf4)?;
     let elapsed = start.elapsed();
