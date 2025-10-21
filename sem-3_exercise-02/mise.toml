@@ -1,3 +1,10 @@
 [tools]
 rust = "nightly"
 
+[tasks."run:benchmarks-rust"]
+outputs=["rust_peko_s3ue02/out/*"]
+sources=["rust_peko_s3ue02/src/**"]
+dir="rust_peko_s3ue02/"
+description = "Run the benchmarks for the Rust implementation"
+run = "cargo run --release"
+
