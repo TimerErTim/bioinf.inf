@@ -33,6 +33,44 @@ pub struct RunMetrics<'a> {
     pub peak_mem_kb: u64,
 }
 
+#[derive(Debug, Serialize, Clone)]
+pub struct SystemInfo {
+    pub os: String,
+    pub arch: String,
+    pub kernel_version: Option<String>,
+    pub long_os_version: Option<String>,
+    pub host_name: Option<String>,
+    pub total_memory_kb: u64,
+    pub cpu_brand: String,
+    pub cpu_frequency_mhz: u64,
+    pub cpu_cores_logical: usize,
+}
+
+pub fn collect_system_info() -> SystemInfo {
+    let mut sys = System::new_all();
+    sys.refresh_all();
+
+    let cpus = sys.cpus();
+    let cpu_brand = cpus
+        .get(0)
+        .map(|c| c.brand().to_string())
+        .unwrap_or_else(|| "unknown".to_string());
+    let cpu_frequency_mhz = cpus.iter().map(|c| c.frequency()).max().unwrap_or(0);
+    let cpu_cores_logical = cpus.len();
+
+    SystemInfo {
+        os: std::env::consts::OS.to_string(),
+        arch: std::env::consts::ARCH.to_string(),
+        kernel_version: System::kernel_version(),
+        long_os_version: System::long_os_version(),
+        host_name: System::host_name(),
+        total_memory_kb: (sys.total_memory() / 1024) as u64,
+        cpu_brand,
+        cpu_frequency_mhz,
+        cpu_cores_logical,
+    }
+}
+
 pub struct PeakMemTracker {
     peak_used_bytes: std::sync::Arc<std::sync::atomic::AtomicU64>,
     _handle: std::thread::JoinHandle<()>,
@@ -102,6 +140,7 @@ pub fn write_metrics<P: AsRef<Path>>(path: P, metrics: &[RunMetrics<'_>]) -> io:
     let file = File::create(path)?;
     let mut w = BufWriter::new(file);
     let wrapper = serde_json::json!({
+        "system": collect_system_info(),
         "entries": metrics
     });
     let json_string = serde_json::to_string_pretty(&wrapper).unwrap();

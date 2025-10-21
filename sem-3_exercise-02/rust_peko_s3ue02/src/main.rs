@@ -35,7 +35,7 @@ fn bench_in_memory(n: usize, len: usize) -> io::Result<(Duration, u64)> {
         r.advance()?;
     }
 
-    Ok((elapsed, tracker.peak_mb()))
+    Ok((elapsed, tracker.peak_kb()))
 }
 
 fn bench_on_disk(n: usize, len: usize) -> io::Result<(Duration, u64)> {
@@ -73,12 +73,12 @@ fn bench_on_disk(n: usize, len: usize) -> io::Result<(Duration, u64)> {
         prev = Some(cur);
         r.advance()?;
     }
-    Ok((elapsed, tracker.peak_mb()))
+    Ok((elapsed, tracker.peak_kb()))
 }
 
 fn main() -> io::Result<()> {
-    let sizes = [1000, 20000, 500000, 1000000];
-    let string_lens = [20, 50, 100];
+    let sizes = [100000, 1000000, 10000000];
+    let string_lens = [10, 100];
 
     let mut results: Vec<RunMetrics> = Vec::new();
     for &len in &string_lens {
