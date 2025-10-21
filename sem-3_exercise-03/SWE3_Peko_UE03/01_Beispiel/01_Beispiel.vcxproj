@@ -127,6 +127,7 @@
     <ClInclude Include="buffer.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="complex_t.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
