@@ -1,88 +1,144 @@
 {
   "entries": [
     {
-      "elapsed_ms": 141,
-      "len": 10,
-      "mode": "in_memory",
-      "n": 100000,
-      "peak_mem_kb": 3415740
-    },
-    {
-      "elapsed_ms": 3312,
+      "elapsed_ms": 2399,
       "len": 10,
       "mode": "in_memory",
       "n": 1000000,
-      "peak_mem_kb": 3567884
+      "peak_mem_kb": 165788
     },
     {
-      "elapsed_ms": 52664,
+      "elapsed_ms": 5239,
       "len": 10,
       "mode": "in_memory",
-      "n": 10000000,
-      "peak_mem_kb": 5135912
+      "n": 2000000,
+      "peak_mem_kb": 330992
     },
     {
-      "elapsed_ms": 548,
-      "len": 100,
+      "elapsed_ms": 8207,
+      "len": 10,
       "mode": "in_memory",
-      "n": 100000,
-      "peak_mem_kb": 4328504
+      "n": 3000000,
+      "peak_mem_kb": 538296
     },
     {
-      "elapsed_ms": 7986,
-      "len": 100,
+      "elapsed_ms": 10350,
+      "len": 10,
+      "mode": "in_memory",
+      "n": 4000000,
+      "peak_mem_kb": 661392
+    },
+    {
+      "elapsed_ms": 15029,
+      "len": 10,
+      "mode": "in_memory",
+      "n": 5000000,
+      "peak_mem_kb": 870048
+    },
+    {
+      "elapsed_ms": 4845,
+      "len": 200,
       "mode": "in_memory",
       "n": 1000000,
-      "peak_mem_kb": 3917824
+      "peak_mem_kb": 681980
     },
     {
-      "elapsed_ms": 83431,
-      "len": 100,
+      "elapsed_ms": 16582,
+      "len": 200,
       "mode": "in_memory",
-      "n": 10000000,
-      "peak_mem_kb": 7484520
+      "n": 2000000,
+      "peak_mem_kb": 1362244
     },
     {
-      "elapsed_ms": 223,
-      "len": 10,
-      "mode": "on_disk",
-      "n": 100000,
-      "peak_mem_kb": 3792840
+      "elapsed_ms": 79219,
+      "len": 200,
+      "mode": "in_memory",
+      "n": 3000000,
+      "peak_mem_kb": 2064232
     },
     {
-      "elapsed_ms": 2518,
+      "elapsed_ms": 136580,
+      "len": 200,
+      "mode": "in_memory",
+      "n": 4000000,
+      "peak_mem_kb": 2723892
+    },
+    {
+      "elapsed_ms": 264538,
+      "len": 200,
+      "mode": "in_memory",
+      "n": 5000000,
+      "peak_mem_kb": 3448176
+    },
+    {
+      "elapsed_ms": 2579,
       "len": 10,
       "mode": "on_disk",
       "n": 1000000,
-      "peak_mem_kb": 3817752
+      "peak_mem_kb": 1294312
     },
     {
-      "elapsed_ms": 30911,
+      "elapsed_ms": 5312,
       "len": 10,
       "mode": "on_disk",
-      "n": 10000000,
-      "peak_mem_kb": 4086072
+      "n": 2000000,
+      "peak_mem_kb": 1294312
     },
     {
-      "elapsed_ms": 1068,
-      "len": 100,
+      "elapsed_ms": 8669,
+      "len": 10,
       "mode": "on_disk",
-      "n": 100000,
-      "peak_mem_kb": 3756580
+      "n": 3000000,
+      "peak_mem_kb": 1294312
     },
     {
-      "elapsed_ms": 13282,
-      "len": 100,
+      "elapsed_ms": 10560,
+      "len": 10,
+      "mode": "on_disk",
+      "n": 4000000,
+      "peak_mem_kb": 1294312
+    },
+    {
+      "elapsed_ms": 12945,
+      "len": 10,
+      "mode": "on_disk",
+      "n": 5000000,
+      "peak_mem_kb": 1294312
+    },
+    {
+      "elapsed_ms": 19250,
+      "len": 200,
       "mode": "on_disk",
       "n": 1000000,
-      "peak_mem_kb": 3958040
+      "peak_mem_kb": 1294312
     },
     {
-      "elapsed_ms": 175749,
-      "len": 100,
+      "elapsed_ms": 46271,
+      "len": 200,
       "mode": "on_disk",
-      "n": 10000000,
-      "peak_mem_kb": 6770620
+      "n": 2000000,
+      "peak_mem_kb": 1294312
+    },
+    {
+      "elapsed_ms": 71379,
+      "len": 200,
+      "mode": "on_disk",
+      "n": 3000000,
+      "peak_mem_kb": 1294312
+    },
+    {
+      "elapsed_ms": 109336,
+      "len": 200,
+      "mode": "on_disk",
+      "n": 4000000,
+      "peak_mem_kb": 1294312
+    },
+    {
+      "elapsed_ms": 156496,
+      "len": 200,
+      "mode": "on_disk",
+      "n": 5000000,
+      "peak_mem_kb": 1294256
     }
   ],
   "system": {

@@ -176,7 +176,7 @@
       xaxis: (mirror: false),
       yaxis: (mirror: false),
       xlabel: [Datenmenge $n$],
-      ylabel: [Speicherbedarf in $"MB"$],
+      ylabel: [Speicherbedarf in $"MB"$ USS],
       legend: none,
 
       ..space-plots

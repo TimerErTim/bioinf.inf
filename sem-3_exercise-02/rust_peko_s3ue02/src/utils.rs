@@ -1,9 +1,10 @@
 use rand::{distr::Alphanumeric, Rng};
 use serde::Serialize;
 use std::fs::{self, File};
-use std::io::{self, BufWriter, Write};
+use std::io::{self, BufRead, BufReader, BufWriter, Write};
 use std::path::Path;
-use sysinfo::{MemoryRefreshKind, RefreshKind, System};
+use std::sync::Arc;
+use sysinfo::System;
 
 pub fn random_string(len: usize) -> String {
     rand::rng()
@@ -72,7 +73,7 @@ pub fn collect_system_info() -> SystemInfo {
 }
 
 pub struct PeakMemTracker {
-    peak_used_bytes: std::sync::Arc<std::sync::atomic::AtomicU64>,
+    peak_used_kb: std::sync::Arc<std::sync::atomic::AtomicU64>,
     _handle: std::thread::JoinHandle<()>,
     stop_flag: std::sync::Arc<std::sync::atomic::AtomicBool>,
 }
@@ -83,29 +84,27 @@ impl PeakMemTracker {
     }
     
     pub fn start_with_rate(sample_rate: std::time::Duration) -> Self {
-        let peak_used_bytes = std::sync::Arc::new(std::sync::atomic::AtomicU64::new(0));
+        let peak_used_kb = std::sync::Arc::new(std::sync::atomic::AtomicU64::new(0));
         let stop_flag = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
         
-        let peak_clone = peak_used_bytes.clone();
-        let stop_clone = stop_flag.clone();
+        let peak_clone = Arc::clone(&peak_used_kb);
+        let stop_clone = Arc::clone(&stop_flag);
         
-        let handle = std::thread::spawn(move || {
-            let mut sys = System::new_with_specifics(RefreshKind::nothing().with_memory(MemoryRefreshKind::everything().without_swap()));
-            
+        let pid = std::process::id();
+        let _handle = std::thread::spawn(move || {            
             while !stop_clone.load(std::sync::atomic::Ordering::Relaxed) {
-                sys.refresh_memory_specifics(MemoryRefreshKind::everything().without_swap());
-                let used = sys.used_memory();
+                let uss_kb = get_uss_kb(pid).unwrap();
                 
-                let mut current_peak = peak_clone.load(std::sync::atomic::Ordering::Relaxed);
-                while used > current_peak {
+                let mut peak_uss_kb = peak_clone.load(std::sync::atomic::Ordering::Relaxed);
+                while uss_kb > peak_uss_kb {
                     match peak_clone.compare_exchange_weak(
-                        current_peak,
-                        used,
+                        peak_uss_kb,
+                        uss_kb,
                         std::sync::atomic::Ordering::Relaxed,
                         std::sync::atomic::Ordering::Relaxed
                     ) {
                         Ok(_) => break,
-                        Err(actual) => current_peak = actual,
+                        Err(actual) => peak_uss_kb = actual,
                     }
                 }
                 
@@ -114,18 +113,18 @@ impl PeakMemTracker {
         });
         
         Self { 
-            peak_used_bytes, 
-            _handle: handle,
+            peak_used_kb, 
+            _handle,
             stop_flag,
         }
     }
     
     pub fn peak_kb(&self) -> u64 { 
-        (self.peak_used_bytes.load(std::sync::atomic::Ordering::Relaxed) / 1024) as u64 
+        (self.peak_used_kb.load(std::sync::atomic::Ordering::Relaxed)) as u64 
     }
     
     pub fn peak_mb(&self) -> u64 { 
-        (self.peak_used_bytes.load(std::sync::atomic::Ordering::Relaxed) / (1024 * 1024)) as u64 
+        (self.peak_used_kb.load(std::sync::atomic::Ordering::Relaxed) / 1024) as u64 
     }
 }
 
@@ -133,6 +132,30 @@ impl Drop for PeakMemTracker {
     fn drop(&mut self) {
         self.stop_flag.store(true, std::sync::atomic::Ordering::Relaxed);
     }
+}
+
+/// Returns USS (unique memory) in kilobytes for the given PID.
+/// Falls back to /proc/<pid>/smaps if smaps_rollup is unavailable.
+pub fn get_uss_kb(pid: u32) -> io::Result<u64> {
+    let rollup_path = format!("/proc/{}/smaps_rollup", pid);
+    let smaps_path = format!("/proc/{}/smaps", pid);
+
+    let file = File::open(&rollup_path).or_else(|_| File::open(&smaps_path))?;
+    let reader = BufReader::new(file);
+
+    let mut private_kb = 0;
+
+    for line in reader.lines().flatten() {
+        if line.starts_with("Private_Clean:") || line.starts_with("Private_Dirty:") {
+            if let Some(value_str) = line.split_whitespace().nth(1) {
+                if let Ok(value) = value_str.parse::<u64>() {
+                    private_kb += value;
+                }
+            }
+        }
+    }
+
+    Ok(private_kb)
 }
 
 pub fn write_metrics<P: AsRef<Path>>(path: P, metrics: &[RunMetrics<'_>]) -> io::Result<()> {

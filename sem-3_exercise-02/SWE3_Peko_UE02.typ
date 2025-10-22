@@ -546,7 +546,7 @@ Die Tests verifizieren die korrekte Sortierung und robuste Fehlerbehandlung. Auc
     caption: [Ergebnisse der Testfälle für Beispiel 2]
 ) <task-02-test-results>
 
-== Benchmark
+=== Benchmark
 
 #let benchmark-data = json("assets/benchmarks_results.json")
 
