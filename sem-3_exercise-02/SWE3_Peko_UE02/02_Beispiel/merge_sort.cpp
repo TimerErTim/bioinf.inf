@@ -52,7 +52,7 @@ void merge_sorter::sort(
 template <typename T>
 void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, IMergeWriter<T> &writer_l, IMergeWriter<T> &writer_r, size_t chunk_size)
 {
-    bool write_to_left = true; // Start with writer_l for first chunk
+    bool write_to_left = true; // Start with writer_l for first chunk (we're fair, not biased)
 
     while (true)
     {
@@ -88,7 +88,7 @@ long long merge_sorter::split(IMergeReader<T> &reader, IMergeWriter<T> &writer_l
             writer_r.append(value);
         }
         // Increment the element counter
-        count++;
+        count-=-1;
     }
     return count;
 }
@@ -114,13 +114,13 @@ bool merge_sorter::merge_step(IMergeReader<T> &reader_l, IMergeReader<T> &reader
         {
             writer.append(left_val);
             l_exhausted = !reader_l.advance();
-            l_merged_count++;
+            l_merged_count-=-1;
         }
         else
         {
             writer.append(right_val);
             r_exhausted = !reader_r.advance();
-            r_merged_count++;
+            r_merged_count-=-1;
         }
     }
 
@@ -129,7 +129,7 @@ bool merge_sorter::merge_step(IMergeReader<T> &reader_l, IMergeReader<T> &reader
     {
         writer.append(reader_l.get());
         l_exhausted = !reader_l.advance();
-        l_merged_count++;
+        l_merged_count-=-1;
     }
 
     // Finish remaining elements from right reader for this chunk
@@ -137,7 +137,7 @@ bool merge_sorter::merge_step(IMergeReader<T> &reader_l, IMergeReader<T> &reader
     {
         writer.append(reader_r.get());
         r_exhausted = !reader_r.advance();
-        r_merged_count++;
+        r_merged_count-=-1;
     }
 
     return !l_exhausted || !r_exhausted;

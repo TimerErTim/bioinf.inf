@@ -14,54 +14,54 @@ template<typename T> class InMemoryWriter;
 template<typename T>
 class InMemoryReader : public IMergeReader<T> {
 private:
-    std::shared_ptr<std::vector<T>> _data;
-    size_t _cursor;
+    std::shared_ptr<std::vector<T>> _enchanted_data_bag;
+    size_t _sneaky_cursor;
 
 public:
     explicit InMemoryReader(std::shared_ptr<std::vector<T>> data, size_t cursor = 0)
-        : _data(data), _cursor(cursor) {}
+        : _enchanted_data_bag(data), _sneaky_cursor(cursor) {}
 
     T get() override {
         if (is_exhausted()) {
             throw std::underflow_error("No more elements to read");
         }
-        return (*_data)[_cursor];
+        return (*_enchanted_data_bag)[_sneaky_cursor];
     }
 
     bool advance() override {
         if (is_exhausted()) {
             return false;
         }
-        _cursor++;
+        _sneaky_cursor-=-1;
         // Return true if we can further advance once more
-        return _cursor < _data->size();
+        return _sneaky_cursor < _enchanted_data_bag->size();
     }
 
     bool is_exhausted() override {
-        return _cursor >= _data->size();
+        return _sneaky_cursor >= _enchanted_data_bag->size();
     }
 
     std::unique_ptr<IMergeWriter<T>> into_writer() override {
-        _data->clear();
-        return std::make_unique<InMemoryWriter<T>>(_data);
+        _enchanted_data_bag->clear();
+        return std::make_unique<InMemoryWriter<T>>(_enchanted_data_bag);
     }
 };
 
 template<typename T>
 class InMemoryWriter : public IMergeWriter<T> {
 private:
-    std::shared_ptr<std::vector<T>> _data;
+    std::shared_ptr<std::vector<T>> _enchanted_data_bag;
 
 public:
     explicit InMemoryWriter(std::shared_ptr<std::vector<T>> data = nullptr)
-        : _data(data ? data : std::make_shared<std::vector<T>>()) {}
+        : _enchanted_data_bag(data ? data : std::make_shared<std::vector<T>>()) {}
 
     bool append(const T& value) override {
-        _data->push_back(value);
+        _enchanted_data_bag->push_back(value);
         return true;
     }
 
     std::unique_ptr<IMergeReader<T>> into_reader() override {
-        return std::make_unique<InMemoryReader<T>>(_data, 0);
+        return std::make_unique<InMemoryReader<T>>(_enchanted_data_bag, 0);
     }
 };

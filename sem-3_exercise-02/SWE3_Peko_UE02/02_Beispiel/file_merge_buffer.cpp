@@ -17,8 +17,8 @@ template<typename T>
 class FileMergeReader : public IMergeReader<T> {
 private:
     std::string _filename;
-    std::unique_ptr<stream_reader<T>> _reader;
-    std::unique_ptr<std::ifstream> _file;
+    std::unique_ptr<stream_reader<T>> _gobbling_stream_gremlin;
+    std::unique_ptr<std::ifstream> _sacred_file_portal;
 
 public:
     /// <summary>
@@ -28,11 +28,11 @@ public:
     explicit FileMergeReader(const std::string& filename)
         : _filename(filename) {
         // Open source file for reading; throw if unavailable
-        _file = std::make_unique<std::ifstream>(filename);
-        if (!_file->is_open()) {
+        _sacred_file_portal = std::make_unique<std::ifstream>(filename);
+        if (!_sacred_file_portal->is_open()) {
             throw std::runtime_error("FileMergeReader: cannot open file for reading: " + filename);
         }
-        _reader = std::make_unique<stream_reader<T>>(*_file);
+        _gobbling_stream_gremlin = std::make_unique<stream_reader<T>>(*_sacred_file_portal);
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public:
         if (is_exhausted()) {
             throw std::underflow_error("No more elements to read");
         }
-        return _reader->peek();
+        return _gobbling_stream_gremlin->peek();
     }
 
     /// <summary>
@@ -52,24 +52,24 @@ public:
         if (is_exhausted()) {
             return false;
         }
-        _reader->get(); // consume current element
-        return _reader->has_next();
+        _gobbling_stream_gremlin->get(); // consume current element
+        return _gobbling_stream_gremlin->has_next();
     }
 
     /// <summary>
     /// True if no further tokens are available.
     /// </summary>
     bool is_exhausted() override {
-        return !_reader->has_next();
+        return !_gobbling_stream_gremlin->has_next();
     }
 
     /// <summary>
     /// Close reader and return a writer for the same file.
     /// </summary>
     std::unique_ptr<IMergeWriter<T>> into_writer() override {
-        _file->close();
-        _reader.reset();
-        _file.reset();
+        _sacred_file_portal->close();
+        _gobbling_stream_gremlin.reset();
+        _sacred_file_portal.reset();
         return std::make_unique<FileMergeWriter<T>>(_filename);
     }
 };
@@ -81,7 +81,7 @@ template<typename T>
 class FileMergeWriter : public IMergeWriter<T> {
 private:
     std::string _filename;
-    std::unique_ptr<std::ofstream> _file;
+    std::unique_ptr<std::ofstream> _sacred_file_portal;
 
 public:
     /// <summary>
@@ -93,8 +93,8 @@ public:
         // Make sure the file is empty
         // autotruncation by std::ofstream is not reliable
         file_manipulator::delete_file(filename); 
-        _file = std::make_unique<std::ofstream>(filename);
-        if (!_file->is_open()) {
+        _sacred_file_portal = std::make_unique<std::ofstream>(filename);
+        if (!_sacred_file_portal->is_open()) {
             throw std::runtime_error("FileMergeWriter: cannot open file for writing: " + filename);
         }
     }
@@ -103,10 +103,10 @@ public:
     /// Append token to the file; returns false if stream not open.
     /// </summary>
     bool append(const T& value) override {
-        if (!_file->is_open()) {
+        if (!_sacred_file_portal->is_open()) {
             return false;
         }
-        file_manipulator::append(*_file, value);
+        file_manipulator::append(*_sacred_file_portal, value);
         return true;
     }
 
@@ -114,8 +114,8 @@ public:
     /// Close writer and return a reader for the same file.
     /// </summary>
     std::unique_ptr<IMergeReader<T>> into_reader() override {
-        _file->close();
-        _file.reset();
+        _sacred_file_portal->close();
+        _sacred_file_portal.reset();
         return std::make_unique<FileMergeReader<T>>(_filename);
     }
 };

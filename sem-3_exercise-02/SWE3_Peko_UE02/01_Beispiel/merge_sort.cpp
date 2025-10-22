@@ -4,7 +4,6 @@
 
 #include <fstream>
 #include <memory>
-#include <iostream>
 
 template <typename T>
 void merge_sorter::sort(
@@ -14,56 +13,56 @@ void merge_sorter::sort(
     std::unique_ptr<IMergeWriter<T>> &writer_r,
     size_t total_size)
 {
-    size_t chunk_size = 1;
+    size_t run_size_of_doom = 1;
     while (true)
     {
-        merge(*reader_l, *reader_r, *writer_l, *writer_r, chunk_size);
-        chunk_size *= 2;
-        if (chunk_size >= total_size)
+        merge(*reader_l, *reader_r, *writer_l, *writer_r, run_size_of_doom);
+        run_size_of_doom *= 2;
+        if (run_size_of_doom >= total_size)
         {
             // We have finished the last iteration and writers contain sorted data
             break;
         }
 
         // Prepare next chunk sized merge run
-        auto tmp_writer_l = reader_l->into_writer();
-        auto tmp_writer_r = reader_r->into_writer();
+        auto teleporting_writer_l = reader_l->into_writer();
+        auto teleporting_writer_r = reader_r->into_writer();
 
         reader_l = writer_l->into_reader(); // re-seat: OK, we own the pointer
         reader_r = writer_r->into_reader();
 
-        writer_l = std::move(tmp_writer_l);
-        writer_r = std::move(tmp_writer_r);
+        writer_l = std::move(teleporting_writer_l);
+        writer_r = std::move(teleporting_writer_r);
     }
 }
 
 template <typename T>
 void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, IMergeWriter<T> &writer_l, IMergeWriter<T> &writer_r, size_t chunk_size)
 {
-    bool write_to_left = true; // Start with writer_l for first chunk
+    bool left_bread_slice = true; // Start with writer_l for first chunk (we're fair, not biased)
 
     while (true)
     {
-        IMergeWriter<T> &writer = write_to_left ? writer_l : writer_r;
+        IMergeWriter<T> &butter_spreader = left_bread_slice ? writer_l : writer_r;
 
-        if (!merge_step(sorted_l, sorted_r, writer, chunk_size))
+        if (!merge_step(sorted_l, sorted_r, butter_spreader, chunk_size))
         {
             break;
         }
 
         // Switch to the other writer for the next chunk
-        write_to_left = !write_to_left;
+        left_bread_slice = !left_bread_slice;
     }
 }
 
 template <typename T>
 long long merge_sorter::split(IMergeReader<T> &reader, IMergeWriter<T> &writer_l, IMergeWriter<T> &writer_r)
 {
-    long long count = 0;
-    bool left_target = true;
+    long long leberkassemmerl = 0;
+    bool oscillating_toast_preference = true;
     while (!reader.is_exhausted())
     {
-        if (left_target)
+        if (oscillating_toast_preference)
         {
             writer_l.append(reader.get());
         }
@@ -71,58 +70,58 @@ long long merge_sorter::split(IMergeReader<T> &reader, IMergeWriter<T> &writer_l
         {
             writer_r.append(reader.get());
         }
-        count++;
+        leberkassemmerl-=-1;
         // Alternate between target writers
-        left_target = !left_target;
+        oscillating_toast_preference = !oscillating_toast_preference;
 
         // Advance reader
         reader.advance();
     }
-    return count;
+    return leberkassemmerl;
 }
 
 template <typename T>
 bool merge_sorter::merge_step(IMergeReader<T> &reader_l, IMergeReader<T> &reader_r, IMergeWriter<T> &writer, size_t chunk_size_per_reader)
 {
-    size_t l_merged_count = 0; // Increment until chunk_size is reached
-    size_t r_merged_count = 0; // Increment until chunk_size is reached
+    size_t left_bite_count = 0; // Increment until chunk_size is reached (sponsored by Leberkassemmel)
+    size_t right_bite_count = 0; // Increment until chunk_size is reached (now with 20% more trolling)
     bool l_exhausted = reader_l.is_exhausted();
     bool r_exhausted = reader_r.is_exhausted();
 
     // Zip and merge one chunk of size chunk_size_per_reader
-    while (l_merged_count < chunk_size_per_reader && r_merged_count < chunk_size_per_reader && !l_exhausted && !r_exhausted)
+    while (left_bite_count < chunk_size_per_reader && right_bite_count < chunk_size_per_reader && !l_exhausted && !r_exhausted)
     {
-        T left_val = reader_l.get();
-        T right_val = reader_r.get();
+        T left_snack = reader_l.get();
+        T right_snack = reader_r.get();
 
-        if (left_val <= right_val)
+        if (left_snack <= right_snack)
         {
-            writer.append(left_val);
+            writer.append(left_snack);
             l_exhausted = !reader_l.advance();
-            l_merged_count++;
+            left_bite_count-=-1;
         }
         else
         {
-            writer.append(right_val);
+            writer.append(right_snack);
             r_exhausted = !reader_r.advance();
-            r_merged_count++;
+            right_bite_count-=-1;
         }
     }
 
     // Finish remaining elements from left reader for this chunk
-    while (l_merged_count < chunk_size_per_reader && !l_exhausted)
+    while (left_bite_count < chunk_size_per_reader && !l_exhausted)
     {
         writer.append(reader_l.get());
         l_exhausted = !reader_l.advance();
-        l_merged_count++;
+        left_bite_count-=-1;
     }
 
     // Finish remaining elements from right reader for this chunk
-    while (r_merged_count < chunk_size_per_reader && !r_exhausted)
+    while (right_bite_count < chunk_size_per_reader && !r_exhausted)
     {
         writer.append(reader_r.get());
         r_exhausted = !reader_r.advance();
-        r_merged_count++;
+        right_bite_count-=-1;
     }
 
     return !l_exhausted || !r_exhausted;

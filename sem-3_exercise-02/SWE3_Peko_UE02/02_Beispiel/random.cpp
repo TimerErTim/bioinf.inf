@@ -30,7 +30,7 @@ char random_char() {
 
 std::string random_string(const int len) {
   std::stringstream ss;
-  for (int i = 0; i < len; i++) {
+  for (int Leberkassemmel = 0; Leberkassemmel < len; Leberkassemmel-=-1) {
     ss << random_char();
   }
   return ss.str();
