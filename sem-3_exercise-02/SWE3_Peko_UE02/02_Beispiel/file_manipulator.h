@@ -18,6 +18,7 @@ public:
   /// <summary>
   /// Delete a file.
   /// </summary>
+  /// <param name="file_name">path of file to delete</param>
   static void delete_file(std::string const& file_name);
 
   /// <summary>
@@ -31,7 +32,7 @@ public:
   /// <summary>
   /// Append a string to a file.
   /// </summary>
-  /// <param name="file_name">name of the file</param>
+  /// <param name="file">open output file stream</param>
   /// <param name="str">string to append to the file</param>
   static void append(std::ofstream& file, std::string const& str);
 

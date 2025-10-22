@@ -16,8 +16,7 @@ public:
   using value_type = std::string;
 
   /// <summary>
-  /// Copy the contents of one file to another. Please not that this uses the value_type to get
-  /// successive elements and then copies them over.
+  /// Copy the contents of one file to another using tokenized extraction/insertion.
   /// </summary>
   static void copy(std::string const& destination_file_name, std::string const& source_file_name);
 
@@ -42,7 +41,7 @@ public:
   /// </summary>
   /// <param name="src_file_name">name of the source file</param>
   /// <param name="destination_file_names">vector with names of the target files</param>
-  /// <returns></returns>
+  /// <returns>number of tokens written in total</returns>
   static size_type split(std::string const& src_file_name, std::vector<value_type> const& destination_file_names);
 
   /// <summary>

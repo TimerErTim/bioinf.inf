@@ -26,7 +26,7 @@ public:
   /// <summary>
   /// Create a new stream reader consuming the provided stream.
   /// </summary>
-  /// <param name="stream"></param>
+  /// <param name="stream">input stream to read tokens from</param>
   explicit stream_reader(std::istream& stream);
 
   /// <summary>

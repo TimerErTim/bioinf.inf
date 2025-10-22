@@ -45,94 +45,23 @@ Es existiert eine `main.cpp` Datei, die allerdings nur eine Dummy Main Funktion 
 
 Da in @chapter-task-02 auf die On-Disk Sortierung eingegangen wird, habe ich einen Merge Sort implementiert, der es uns erlaubt, einfach per Interface die Buffer Typen (In-Memory oder On-Disk) zu wechseln:
 
-```cpp
-// merge_sort.hpp
+- IMergeReader<T>: liefert das aktuelle Element (`get()`), rückt vor (`advance()`), meldet Ende (`is_exhausted()`), kann in einen Writer umgewandelt werden (`into_writer()`).
+- IMergeWriter<T>: hängt Elemente an (`append(value)`), kann in einen Reader umgewandelt werden (`into_reader()`).
 
-/// Generic interface for reading elements in merge operations.
-template<typename T>
-class IMergeReader {
-public:
-    virtual ~IMergeReader() = default;
-
-    /// Returns the current value at the reader's position.
-    virtual T get() = 0;
-
-    /// Advances the reader to the next value.
-    virtual bool advance() = 0;
-
-    /// Checks if the reader is advanced to exhaustion.
-    virtual bool is_exhausted() = 0;
-
-    /// Converts this reader into an IMergeWriter, allowing the buffer to be reused for writing.
-    virtual std::unique_ptr<IMergeWriter<T>> into_writer() = 0;
-};
-
-/// Generic interface for writing (appending) elements in merge operations.
-template<typename T>
-class IMergeWriter {
-public:
-    virtual ~IMergeWriter() = default;
-
-    /// Appends a value at the writer's position.
-    virtual bool append(const T& value) = 0;
-
-    /// Converts this writer into an IMergeReader, allowing the written data to be read.
-    virtual std::unique_ptr<IMergeReader<T>> into_reader() = 0;
-};
-```
+Diese Trennung macht die Kernlogik unabhängig vom Speicherort der Daten und ermöglicht identische Sortierlogik für In‑Memory und On‑Disk.
 
 ==== Kernlogik <core-mergesort-logic>
 
 Der Kern der Merge Sort Implementierung ist die `merge_step` Methode, die zwei Subarrays merged und in einen Zielbuffer schreibt. Das ist in @merge-step-visualization visualisiert. Chunksize ist dabei die Größe der bereits gemergeden und damit sortierten Subarrays.
 
-```cpp
-template <typename T>
-bool merge_sorter::merge_step(IMergeReader<T> &reader_l, IMergeReader<T> &reader_r, IMergeWriter<T> &writer, size_t chunk_size_per_reader)
-{
-    size_t l_merged_count = 0; // Increment until chunk_size is reached
-    size_t r_merged_count = 0; // Increment until chunk_size is reached
-    bool l_exhausted = reader_l.is_exhausted();
-    bool r_exhausted = reader_r.is_exhausted();
+- Vergleiche jeweils das aktuelle Element beider Leser.
+- Schreibe das kleinere in den Writer und rücke am entsprechenden Leser vor.
+- Beende den Chunk, sobald je Seite `chunk_size` Elemente übertragen wurden oder eine Seite erschöpft ist.
+- Schreibe verbleibende Elemente der nicht erschöpften Seite für diesen Chunk.
 
-    // Zip and merge one chunk of size chunk_size_per_reader
-    while (l_merged_count < chunk_size_per_reader && r_merged_count < chunk_size_per_reader && !l_exhausted && !r_exhausted)
-    {
-        T left_val = reader_l.get();
-        T right_val = reader_r.get();
-
-        if (left_val <= right_val)
-        {
-            writer.append(left_val);
-            l_exhausted = !reader_l.advance();
-            l_merged_count++;
-        }
-        else
-        {
-            writer.append(right_val);
-            r_exhausted = !reader_r.advance();
-            r_merged_count++;
-        }
-    }
-
-    // Finish remaining elements from left reader for this chunk
-    while (l_merged_count < chunk_size_per_reader && !l_exhausted)
-    {
-        writer.append(reader_l.get());
-        l_exhausted = !reader_l.advance();
-        l_merged_count++;
-    }
-
-    // Finish remaining elements from right reader for this chunk
-    ... // Same but for other side
-
-    return !l_exhausted || !r_exhausted;
-}
-```
-
-In Vorbereitung auf On-Disk Sortierung, alterniert die `merge` Methode für jeden Teilchunk zwischen zwei Zielbuffern. @merge-iteration-flowchart visualisiert diesen Vorgang.
+In Vorbereitung auf On-Disk Sortierung, alterniert die `merge` Methode für jeden Teilchunk zwischen zwei Zielbuffern. @merge-iteration-flowchart visualisiert diesen Vorgang. Das alternierende Schreiben erlaubt es, im nächsten Durchlauf ohne zusätzliche Kopien wieder einzulesen.
 
 ```cpp
-template <typename T>
 void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, IMergeWriter<T> &writer_l, IMergeWriter<T> &writer_r, size_t chunk_size)
 {
     bool write_to_left = true; // Start with writer_l for first chunk
@@ -157,32 +86,7 @@ void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, I
     Chunks werden abgechselnd in C und D geschrieben.],
 ) <merge-iteration-flowchart>
 
-Diese Schritte werden in der `sort` Methode so oft wiederholt und zwischen Quell- und Zielbuffern alterniert, bis die gesamte Collection sortiert ist. Dabei ist hier der finale merge Schritt noch ausständig.
-
-```cpp
-template <typename T>
-void merge_sorter::sort(
-    std::unique_ptr<IMergeReader<T>> &reader_l, ... &reader_r,
-    std::unique_ptr<IMergeWriter<T>> &writer_l, ... &writer_r,
-    size_t total_size)
-{
-    size_t chunk_size = 1;
-    while (true)
-    {
-        merge(*reader_l, *reader_r, *writer_l, *writer_r, chunk_size);
-        chunk_size *= 2;
-        if (chunk_size >= total_size)
-        {
-            // We have finished the last iteration and writers contain sorted data
-            break;
-        }
-
-        // Prepare next chunk sized merge run
-        // Swap reader and writer buffer roles
-        ...
-    }
-}
-```
+`sort` führt wiederholt Merges mit verdoppelnder Chunkgröße aus und tauscht nach jedem Durchlauf die Rollen von Readern/Writern (Re‑Seating). Abgebrochen wird, wenn die Writer die jeweils vollständigen sortierten Hälften enthalten.
 
 Zusätzlich gibt es noch die Hilfsmethode `split`, die alternierend die Elemente der unsortierten Collection in zwei Hälften schreibt.
 
@@ -197,30 +101,7 @@ Visualisierung in @complete-sort-flowchart.
   caption: [Flowchart der `complete_sort` Methode: Aufteilung und wiederholtes zusammenführen von immer größeren Chunks.],
 ) <complete-sort-flowchart>
 
-```cpp
-template <typename T>
-void merge_sorter::complete_sort(
-    std::unique_ptr<IMergeReader<T>> &unsorted_source,
-    std::unique_ptr<IMergeWriter<T>> buffer1, ... buffer4)
-{
-    // Split the unsorted source into two halves
-    auto total_size = split(*unsorted_source, *buffer1, *buffer2);
-
-    // Sort the two halves
-    auto reader_l = buffer1->into_reader();
-    auto reader_r = buffer2->into_reader();
-    sort<T>(reader_l, reader_r, buffer3, buffer4, total_size);
-
-    // Merge the two sorted halves into the soure
-    auto sorted_l = buffer3->into_reader();
-    auto sorted_r = buffer4->into_reader();
-    auto sorted_full = unsorted_source->into_writer();
-    merge_step<T>(*sorted_l, *sorted_r, *sorted_full, total_size);
-
-    // re-seat the source => reset the cursor to 0
-    unsorted_source = sorted_full->into_reader();
-}
-```
+Hinweis: Der finale Zusammenführungsschritt schreibt die sortierten Hälften zurück in die Quelle und setzt deren Cursor auf den Anfang zurück (Re‑Seating).
 
 ==== `stream_reader` Fixes
 
@@ -264,29 +145,7 @@ inline std::optional<T> stream_reader<T>::next() {
 
 ==== File Handling <file-handling-task-01>
 
-Dateien werden mittels der `stream_reader` Klasse gelesen. Folgender Code wird dazu im Projekt verwendet:
-
-```cpp
-std::ifstream read_file(file_name);
-stream_reader<std::string> reader(read_file);
-std::vector<std::string> data;
-while (reader.has_next())
-{
-    data.push_back(reader.get());
-}
-read_file.close();
-```
-
-Dateien werden folgendermaßen mit neuer Datenfolge beschrieben:
-
-```cpp
-std::ofstream write_file(file_name);
-for (const auto &entry : data)
-{
-    write_file << entry << " ";
-}
-write_file.close();
-```
+Dateien werden ausschließlich über `>>`/`<<` verarbeitet (Anforderung). Zum Einlesen wird `stream_reader<T>` benutzt, der tokenweise liest; zum Schreiben werden die Tokens mit Trennzeichen in einen `std::ofstream` ausgegeben. Fehler beim Öffnen werden abgefangen und führen zu aussagekräftigen Exceptions.
 
 ==== In-Memory Buffers
 
@@ -296,90 +155,11 @@ Die Reader haben einen Cursor, der auf das aktuelle Element zeigt und bei jedem 
 
 Wird der Writer zurück in einen Reader konvertiert, wird der Cursor auf 0 gesetzt und der backing Vector ebenfalls per `shared_ptr` an den entstehenden Reader übergeben.
 
-```cpp
-template<typename T>
-class InMemoryReader : public IMergeReader<T> {
-private:
-    std::shared_ptr<std::vector<T>> _data;
-    size_t _cursor;
-
-public:
-    explicit InMemoryReader(std::shared_ptr<std::vector<T>> data, size_t cursor = 0)
-        : _data(data), _cursor(cursor) {}
-
-    T get() override {
-        if (is_exhausted()) {
-            throw std::underflow_error("No more elements to read");
-        }
-        return (*_data)[_cursor];
-    }
-
-    bool advance() override {
-        if (is_exhausted()) {
-            return false;
-        }
-        _cursor++;
-        // Return true if we can further advance once more
-        return _cursor < _data->size();
-    }
-
-    bool is_exhausted() override {
-        return _cursor >= _data->size();
-    }
-
-    std::unique_ptr<IMergeWriter<T>> into_writer() override {
-        _data->clear();
-        return std::make_unique<InMemoryWriter<T>>(_data);
-    }
-};
-
-template<typename T>
-class InMemoryWriter : public IMergeWriter<T> {
-private:
-    std::shared_ptr<std::vector<T>> _data;
-
-public:
-    explicit InMemoryWriter(std::shared_ptr<std::vector<T>> data = nullptr)
-        : _data(data ? data : std::make_shared<std::vector<T>>()) {}
-
-    bool append(const T& value) override {
-        _data->push_back(value);
-        return true;
-    }
-
-    std::unique_ptr<IMergeReader<T>> into_reader() override {
-        return std::make_unique<InMemoryReader<T>>(_data, 0);
-    }
-};
-```
-
 ==== Zusammenfügen
 
 Die komplette In-Memory Sortierung wird in der `sort_vec_in_memory` Methode zusammengeführt. Die `sort_file_in_memory` Methode liest mit den in @file-handling-task-01 gezeigten Methoden die Datei in einen `std::vector<std::string>` und führt dann die Sortierung mit `sort_vec_in_memory` durch, bevor sie die sortierte Datenfolge wieder in die Datei schreibt.
 
-```cpp
-void merge_sorter::sort_vec_in_memory(std::vector<value_t> &data)
-{
-    std::unique_ptr<IMergeReader<value_t>> input_reader(
-      std::make_unique<InMemoryReader<value_t>>(
-        std::make_shared<std::vector<value_t>>(data)
-      )
-    );
-
-    complete_sort<value_t>(
-        input_reader,
-        std::make_unique<InMemoryWriter<value_t>>(),
-        ...);
-
-    // Write the data from input_reader back to data vector
-    data.clear();
-    while (!input_reader->is_exhausted())
-    {
-        data.push_back(input_reader->get());
-        input_reader->advance();
-    }
-}
-```
+Die Implementierung konvertiert die Eingabe in einen Reader, orchestriert `complete_sort` mit vier Puffern und schreibt das Ergebnis zurück in die Quelle. Dadurch bleibt die Kernlogik identisch zu On‑Disk.
 
 == Testfälle <task-01-test-cases>
 
@@ -469,68 +249,15 @@ Die On-Disk Implementierung erfolgt über zwei Klassen in `file_merge_buffer.cpp
 
 Beide Klassen unterstützen die `into_reader()`/`into_writer()` Konvertierung, die für das Wechseln zwischen Lese- und Schreibmodus auf derselben Datei erforderlich ist. Dies ermöglicht es, dass die Buffer-Dateien sowohl als Eingabe als auch als Ausgabe in verschiedenen Phasen des Merge-Sort-Algorithmus verwendet werden können.
 
-```cpp
-template<typename T>
-class FileMergeReader : public IMergeReader<T> {
-private:
-    std::string _filename;
-    std::unique_ptr<stream_reader<T>> _reader;
-    std::unique_ptr<std::ifstream> _file;
-
-public:
-    T get() override {
-        if (is_exhausted()) {
-            throw std::underflow_error("No more elements to read");
-        }
-        return _reader->peek();
-    }
-
-    bool advance() override {
-        if (is_exhausted()) {
-            return false;
-        }
-        _reader->get(); // consume current element
-        return _reader->has_next();
-    }
-
-    bool is_exhausted() override {
-        return !_reader->has_next();
-    }
-};
-
-template<typename T>
-class FileMergeWriter : public IMergeWriter<T> {
-private:
-    std::string _filename;
-    std::unique_ptr<std::ofstream> _file;
-public:
-    bool append(const T& value) override {
-        if (!_file->is_open()) {
-            return false;
-        }
-        file_manipulator::append(*_file, value);
-        return true;
-    }
-};
-```
+Wesentliche Verantwortung:
+- FileMergeReader<T>: Öffnet Datei, liest tokenweise über `stream_reader<T>`, validiert Verfügbarkeit (`has_next()`), liefert `peek()`/`get()`‑Semantik.
+- FileMergeWriter<T>: Trunkiert/erstellt Zieldatei, hängt Tokens über `file_manipulator::append()` an.
 
 == Tests
 
 Wir setzen auch in diesem Beispiel auf den etablierten Standard-Testfall aus @task-01-test-cases. Dabei werden die Testfälle für On-Disk Sortierung hinzugefügt. Wir erzeugen beim Testfall $"string_length" = 100$ und $"array_length = 1000000"$ eine Datei mit knapp unter $100 "MB"$ Daten. Mit dem zusätzlichen Speichervorbauch der vier Buffer sind das insgesamt $\~300 "MB"$ Speicher.
 
-Zusätzlich testen wir die Fehlerbehandlung für nicht vorhandene Dateien:
-
-```cpp
-TEST(MergeSortTest, TestNonexistentFileOnDiskThrows) {
-    // Arrange
-    std::string filename = "__no_such_file_exists__.txt";
-    remove(filename.c_str());
-
-    // Act + Assert
-    merge_sorter sorter;
-    ASSERT_THROW(sorter.sort_file_on_disk(filename), std::runtime_error);
-}
-```
+Zusätzlich testen wir die Fehlerbehandlung für nicht vorhandene Dateien (Erwartung: `std::runtime_error`).
 
 == Ergebnisse
 

@@ -18,12 +18,12 @@ int random_int(const int min, const int max);
 double random_real();
 
 /// <summary>
-/// Produce a random character in the range 'a'..'z'
+/// Produce a random alphabetic character in the range 'a'..'z' or 'A'..'Z'.
 /// </summary>
 char random_char();
 
 /// <summary>
-/// Produce a random string.
+/// Produce a random alphabetic string.
 /// </summary>
 /// <param name="len">length of random string</param>
 std::string random_string(const int len = 4);

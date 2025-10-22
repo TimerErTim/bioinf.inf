@@ -10,6 +10,9 @@
 template<typename T> class FileMergeReader;
 template<typename T> class FileMergeWriter;
 
+/// <summary>
+/// IMergeReader implementation backed by a file; reads tokens via stream_reader<T>.
+/// </summary>
 template<typename T>
 class FileMergeReader : public IMergeReader<T> {
 private:
@@ -18,6 +21,10 @@ private:
     std::unique_ptr<std::ifstream> _file;
 
 public:
+    /// <summary>
+    /// Open a file for reading tokens; throws if file cannot be opened.
+    /// </summary>
+    /// <param name="filename">Path to input file.</param>
     explicit FileMergeReader(const std::string& filename)
         : _filename(filename) {
         // Open source file for reading; throw if unavailable
@@ -28,6 +35,9 @@ public:
         _reader = std::make_unique<stream_reader<T>>(*_file);
     }
 
+    /// <summary>
+    /// Return current token without consuming; throws on exhaustion.
+    /// </summary>
     T get() override {
         if (is_exhausted()) {
             throw std::underflow_error("No more elements to read");
@@ -35,6 +45,9 @@ public:
         return _reader->peek();
     }
 
+    /// <summary>
+    /// Consume current token and advance; returns whether another token is available.
+    /// </summary>
     bool advance() override {
         if (is_exhausted()) {
             return false;
@@ -43,10 +56,16 @@ public:
         return _reader->has_next();
     }
 
+    /// <summary>
+    /// True if no further tokens are available.
+    /// </summary>
     bool is_exhausted() override {
         return !_reader->has_next();
     }
 
+    /// <summary>
+    /// Close reader and return a writer for the same file.
+    /// </summary>
     std::unique_ptr<IMergeWriter<T>> into_writer() override {
         _file->close();
         _reader.reset();
@@ -55,6 +74,9 @@ public:
     }
 };
 
+/// <summary>
+/// IMergeWriter implementation backed by a file; appends tokens via file_manipulator::append.
+/// </summary>
 template<typename T>
 class FileMergeWriter : public IMergeWriter<T> {
 private:
@@ -62,6 +84,10 @@ private:
     std::unique_ptr<std::ofstream> _file;
 
 public:
+    /// <summary>
+    /// Create or truncate target file for writing tokens; throws if file cannot be opened.
+    /// </summary>
+    /// <param name="filename">Path to output file.</param>
     explicit FileMergeWriter(const std::string& filename)
         : _filename(filename) {
         // Make sure the file is empty
@@ -73,6 +99,9 @@ public:
         }
     }
 
+    /// <summary>
+    /// Append token to the file; returns false if stream not open.
+    /// </summary>
     bool append(const T& value) override {
         if (!_file->is_open()) {
             return false;
@@ -81,6 +110,9 @@ public:
         return true;
     }
 
+    /// <summary>
+    /// Close writer and return a reader for the same file.
+    /// </summary>
     std::unique_ptr<IMergeReader<T>> into_reader() override {
         _file->close();
         _file.reset();
