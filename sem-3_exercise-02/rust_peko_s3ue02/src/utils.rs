@@ -4,7 +4,7 @@ use std::fs::{self, File};
 use std::io::{self, BufRead, BufReader, BufWriter, Write};
 use std::path::Path;
 use std::sync::Arc;
-use sysinfo::System;
+use sysinfo::{ProcessRefreshKind, ProcessesToUpdate, RefreshKind, System};
 
 pub fn random_string(len: usize) -> String {
     rand::rng()
@@ -90,21 +90,31 @@ impl PeakMemTracker {
         let peak_clone = Arc::clone(&peak_used_kb);
         let stop_clone = Arc::clone(&stop_flag);
         
-        let pid = std::process::id();
-        let _handle = std::thread::spawn(move || {            
+        let pid = sysinfo::get_current_pid().unwrap();
+        let _handle = std::thread::spawn(move || {   
+            let mut sys = sysinfo::System::new_with_specifics(
+                RefreshKind::nothing().with_processes(
+                    ProcessRefreshKind::nothing().with_memory()
+                )
+            );         
             while !stop_clone.load(std::sync::atomic::Ordering::Relaxed) {
-                let uss_kb = get_uss_kb(pid).unwrap();
+                sys.refresh_processes(ProcessesToUpdate::Some(&[pid]), true);
+                let process_kb = if let Some(process) = sys.process(pid) {
+                    process.memory() / 1024
+                } else {
+                    continue;
+                };
                 
-                let mut peak_uss_kb = peak_clone.load(std::sync::atomic::Ordering::Relaxed);
-                while uss_kb > peak_uss_kb {
+                let mut peak_process_kb = peak_clone.load(std::sync::atomic::Ordering::Relaxed);
+                while process_kb > peak_process_kb {
                     match peak_clone.compare_exchange_weak(
-                        peak_uss_kb,
-                        uss_kb,
+                        peak_process_kb,
+                        process_kb,
                         std::sync::atomic::Ordering::Relaxed,
                         std::sync::atomic::Ordering::Relaxed
                     ) {
                         Ok(_) => break,
-                        Err(actual) => peak_uss_kb = actual,
+                        Err(actual) => peak_process_kb = actual,
                     }
                 }
                 
@@ -134,29 +144,6 @@ impl Drop for PeakMemTracker {
     }
 }
 
-/// Returns USS (unique memory) in kilobytes for the given PID.
-/// Falls back to /proc/<pid>/smaps if smaps_rollup is unavailable.
-pub fn get_uss_kb(pid: u32) -> io::Result<u64> {
-    let rollup_path = format!("/proc/{}/smaps_rollup", pid);
-    let smaps_path = format!("/proc/{}/smaps", pid);
-
-    let file = File::open(&rollup_path).or_else(|_| File::open(&smaps_path))?;
-    let reader = BufReader::new(file);
-
-    let mut private_kb = 0;
-
-    for line in reader.lines().flatten() {
-        if line.starts_with("Private_Clean:") || line.starts_with("Private_Dirty:") {
-            if let Some(value_str) = line.split_whitespace().nth(1) {
-                if let Ok(value) = value_str.parse::<u64>() {
-                    private_kb += value;
-                }
-            }
-        }
-    }
-
-    Ok(private_kb)
-}
 
 pub fn write_metrics<P: AsRef<Path>>(path: P, metrics: &[RunMetrics<'_>]) -> io::Result<()> {
     if let Some(parent) = path.as_ref().parent() { fs::create_dir_all(parent)?; }
