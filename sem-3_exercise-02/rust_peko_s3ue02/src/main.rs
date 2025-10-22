@@ -77,8 +77,8 @@ fn bench_on_disk(n: usize, len: usize) -> io::Result<(Duration, u64)> {
 }
 
 fn main() -> io::Result<()> {
-    let sizes = [100000, 1000000, 10000000];
-    let string_lens = [10, 100];
+    let sizes = [1_000_000, 2_000_000, 3_000_000, 4_000_000, 5_000_000];
+    let string_lens = [10, 200];
 
     let mut results: Vec<RunMetrics> = Vec::new();
     for &len in &string_lens {
