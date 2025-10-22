@@ -1,144 +1,144 @@
 {
   "entries": [
     {
-      "elapsed_ms": 2399,
+      "elapsed_ms": 4022,
       "len": 10,
       "mode": "in_memory",
       "n": 1000000,
-      "peak_mem_kb": 165788
+      "peak_mem_kb": 168320
     },
     {
-      "elapsed_ms": 5239,
+      "elapsed_ms": 7451,
       "len": 10,
       "mode": "in_memory",
       "n": 2000000,
-      "peak_mem_kb": 330992
+      "peak_mem_kb": 333660
     },
     {
-      "elapsed_ms": 8207,
+      "elapsed_ms": 12375,
       "len": 10,
       "mode": "in_memory",
       "n": 3000000,
-      "peak_mem_kb": 538296
+      "peak_mem_kb": 541332
     },
     {
-      "elapsed_ms": 10350,
+      "elapsed_ms": 14901,
       "len": 10,
       "mode": "in_memory",
       "n": 4000000,
-      "peak_mem_kb": 661392
+      "peak_mem_kb": 664348
     },
     {
-      "elapsed_ms": 15029,
+      "elapsed_ms": 21220,
       "len": 10,
       "mode": "in_memory",
       "n": 5000000,
-      "peak_mem_kb": 870048
+      "peak_mem_kb": 873148
     },
     {
-      "elapsed_ms": 4845,
+      "elapsed_ms": 2559,
       "len": 200,
       "mode": "in_memory",
       "n": 1000000,
-      "peak_mem_kb": 681980
+      "peak_mem_kb": 685280
     },
     {
-      "elapsed_ms": 16582,
+      "elapsed_ms": 7507,
       "len": 200,
       "mode": "in_memory",
       "n": 2000000,
-      "peak_mem_kb": 1362244
+      "peak_mem_kb": 1365528
     },
     {
-      "elapsed_ms": 79219,
+      "elapsed_ms": 12611,
       "len": 200,
       "mode": "in_memory",
       "n": 3000000,
-      "peak_mem_kb": 2064232
+      "peak_mem_kb": 2067472
     },
     {
-      "elapsed_ms": 136580,
+      "elapsed_ms": 15703,
       "len": 200,
       "mode": "in_memory",
       "n": 4000000,
-      "peak_mem_kb": 2723892
+      "peak_mem_kb": 2727196
     },
     {
-      "elapsed_ms": 264538,
+      "elapsed_ms": 20369,
       "len": 200,
       "mode": "in_memory",
       "n": 5000000,
-      "peak_mem_kb": 3448176
+      "peak_mem_kb": 3451572
     },
     {
-      "elapsed_ms": 2579,
+      "elapsed_ms": 2692,
       "len": 10,
       "mode": "on_disk",
       "n": 1000000,
-      "peak_mem_kb": 1294312
+      "peak_mem_kb": 1722908
     },
     {
-      "elapsed_ms": 5312,
+      "elapsed_ms": 6099,
       "len": 10,
       "mode": "on_disk",
       "n": 2000000,
-      "peak_mem_kb": 1294312
+      "peak_mem_kb": 1722908
     },
     {
-      "elapsed_ms": 8669,
+      "elapsed_ms": 8428,
       "len": 10,
       "mode": "on_disk",
       "n": 3000000,
-      "peak_mem_kb": 1294312
+      "peak_mem_kb": 1722908
     },
     {
-      "elapsed_ms": 10560,
+      "elapsed_ms": 10925,
       "len": 10,
       "mode": "on_disk",
       "n": 4000000,
-      "peak_mem_kb": 1294312
+      "peak_mem_kb": 1722908
     },
     {
-      "elapsed_ms": 12945,
+      "elapsed_ms": 17090,
       "len": 10,
       "mode": "on_disk",
       "n": 5000000,
-      "peak_mem_kb": 1294312
+      "peak_mem_kb": 1722908
     },
     {
-      "elapsed_ms": 19250,
+      "elapsed_ms": 21383,
       "len": 200,
       "mode": "on_disk",
       "n": 1000000,
-      "peak_mem_kb": 1294312
+      "peak_mem_kb": 1722908
     },
     {
-      "elapsed_ms": 46271,
+      "elapsed_ms": 45327,
       "len": 200,
       "mode": "on_disk",
       "n": 2000000,
-      "peak_mem_kb": 1294312
+      "peak_mem_kb": 1722908
     },
     {
-      "elapsed_ms": 71379,
+      "elapsed_ms": 89656,
       "len": 200,
       "mode": "on_disk",
       "n": 3000000,
-      "peak_mem_kb": 1294312
+      "peak_mem_kb": 1722908
     },
     {
-      "elapsed_ms": 109336,
+      "elapsed_ms": 125002,
       "len": 200,
       "mode": "on_disk",
       "n": 4000000,
-      "peak_mem_kb": 1294312
+      "peak_mem_kb": 1722908
     },
     {
-      "elapsed_ms": 156496,
+      "elapsed_ms": 149070,
       "len": 200,
       "mode": "on_disk",
       "n": 5000000,
-      "peak_mem_kb": 1294256
+      "peak_mem_kb": 1722908
     }
   ],
   "system": {

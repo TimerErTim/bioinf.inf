@@ -33,8 +33,8 @@ Der Merge Sort Algorithmus ist
 - mit einer Platzkomplexität von $O(n)$ für den zusätzlichen Speicher.
 
 #figure(
-  box(stroke: black, inset: 10pt, visualize_mergesort_complexity()), 
-  caption: [Komplexität des Merge Sort Algorithmus]
+  box(stroke: black, inset: 10pt, visualize_mergesort_complexity()),
+  caption: [Komplexität des Merge Sort Algorithmus],
 ) <mergesort-complexity>
 
 === Implementierung In-Memory
@@ -152,9 +152,9 @@ void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, I
 ```
 
 #figure(
-    quote(block: true, attribution: "Übungsangabe", image("assets/merge_iteration_flowchart.png")),
-    caption: [Jeweils Chunks der Größe $n$ von A und B, werden zu einem Chunk der Größe $2n$ zusammengeführt. Die neuen
-Chunks werden abgechselnd in C und D geschrieben.]
+  quote(block: true, attribution: "Übungsangabe", image("assets/merge_iteration_flowchart.png")),
+  caption: [Jeweils Chunks der Größe $n$ von A und B, werden zu einem Chunk der Größe $2n$ zusammengeführt. Die neuen
+    Chunks werden abgechselnd in C und D geschrieben.],
 ) <merge-iteration-flowchart>
 
 Diese Schritte werden in der `sort` Methode so oft wiederholt und zwischen Quell- und Zielbuffern alterniert, bis die gesamte Collection sortiert ist. Dabei ist hier der finale merge Schritt noch ausständig.
@@ -179,7 +179,7 @@ void merge_sorter::sort(
 
         // Prepare next chunk sized merge run
         // Swap reader and writer buffer roles
-        ... 
+        ...
     }
 }
 ```
@@ -193,10 +193,9 @@ Die `complete_sort` Methode
 Visualisierung in @complete-sort-flowchart.
 
 #figure(
-    quote(block: true, attribution: "Übungsangabe", image("assets/complete_sort_flowchart.png")),
-    caption: [Flowchart der `complete_sort` Methode: Aufteilung und wiederholtes zusammenführen von immer größeren Chunks.]
+  quote(block: true, attribution: "Übungsangabe", image("assets/complete_sort_flowchart.png")),
+  caption: [Flowchart der `complete_sort` Methode: Aufteilung und wiederholtes zusammenführen von immer größeren Chunks.],
 ) <complete-sort-flowchart>
-
 
 ```cpp
 template <typename T>
@@ -291,7 +290,7 @@ write_file.close();
 
 ==== In-Memory Buffers
 
-Die `InMemoryReader` und `InMemoryWriter` Klassen werden verwendet, um In-Memory Datenfolgen zu lesen und zu schreiben. Sie verwenden einen `std::vector<T>` als Datenquelle und schreiben in diesen. 
+Die `InMemoryReader` und `InMemoryWriter` Klassen werden verwendet, um In-Memory Datenfolgen zu lesen und zu schreiben. Sie verwenden einen `std::vector<T>` als Datenquelle und schreiben in diesen.
 
 Die Reader haben einen Cursor, der auf das aktuelle Element zeigt und bei jedem Aufruf von `advance()` um eins erhöht wird. Bei einer Konvertierung zu einem Writer, wird der backing Vector geleert und per `shared_ptr` an den entstehenden Writer übergeben.
 
@@ -386,24 +385,24 @@ void merge_sorter::sort_vec_in_memory(std::vector<value_t> &data)
 
 Der Standard-Testfall
 + *Arrange* - Legt eine Datei mit zufälligen Strings an\ ```cpp
-    std::string filename = "test_file.txt";
-    file_manipulator::fill_randomly(filename, array_length, string_length);
-    ```
+      std::string filename = "test_file.txt";
+      file_manipulator::fill_randomly(filename, array_length, string_length);
+      ```
 + *Act* - Sortiert diese per `merge_sorter::sort_file_in_memory(...)`\ ```cpp
-    merge_sorter sorter;
-    sorter.sort_file_in_memory(filename);
-    ```
+      merge_sorter sorter;
+      sorter.sort_file_in_memory(filename);
+      ```
 + *Assert* - Verifiziert das Ergebnis hinsichtlich der Sortierung.\ ```cpp
-    std::ifstream file(filename);
-    stream_reader<std::string> reader(file);
+      std::ifstream file(filename);
+      stream_reader<std::string> reader(file);
 
-    std::string prev = reader.get();
-    while (reader.has_next()) {
-        std::string current = reader.get();
-        ASSERT_LE(prev, current) << "Elements are not in sorted order";
-        prev = current;
-    }
-    ```
+      std::string prev = reader.get();
+      while (reader.has_next()) {
+          std::string current = reader.get();
+          ASSERT_LE(prev, current) << "Elements are not in sorted order";
+          prev = current;
+      }
+      ```
 
 === Liste der abgedeckten Testfälle
 
@@ -441,8 +440,6 @@ Ein paar Implementierungshinweise:
   Streams sind nur `<<` und `>>`.
 + Die Klasse `stream_reader<value_type>` ...
 ]
-
-
 
 == Lösungsidee
 
@@ -541,36 +538,36 @@ TEST(MergeSortTest, TestNonexistentFileOnDiskThrows) {
 
 Die Tests verifizieren die korrekte Sortierung und robuste Fehlerbehandlung. Auch hier zeigt @task-02-test-results, dass die Laufzeit entsprechend mit der Größe der zu sortierenden Datenfolge wächst. Der Testlauf, der die $100 "MB"$ Datei sortiert, dauert \~10 Minuten. Die Struktur mit `IMergeReader`/`IMergeWriter` ermöglicht identische Kernlogik für In-Memory und On-Disk, was die Wartbarkeit verbessert.
 
-#figure(
-    image("assets/2025-10-16_test_results_task-02.png"),
-    caption: [Ergebnisse der Testfälle für Beispiel 2]
-) <task-02-test-results>
+#figure(image("assets/2025-10-16_test_results_task-02.png"), caption: [Ergebnisse der Testfälle für Beispiel 2]) <task-02-test-results>
 
 === Benchmark
 
 #let benchmark-data = json("assets/benchmarks_results.json")
 
-Final wurde ein gegenüberstellender Benchmark durchgeführt, der die Laufzeit $T(n)$ und den Speicherbedarf $S(n)$ des Merge Sort Algorithmus für In-Memory und On-Disk vergleicht. Die Implementierung dazu wurde in Rust geschrieben, da ich hierfür mit dem Benchmarking Ecosystem vertrauter bin. Die Ergebnisse sind in @task-02-benchmarks-results zu sehen. Sie zeigen, dass die Laufzeit für On-Disk deutlich höher ist als für In-Memory, da der Algorithmus auf der Festplatte arbeiten muss. Der RAM-Bedarf fällt bei gleicher Einzelelementlänge $="len"$ geringer aus, bleibt aber auch nicht konstant.
+Final wurde ein gegenüberstellender Benchmark durchgeführt, der die Laufzeit $T(n)$ und den Speicherbedarf $S(n)$ des Merge Sort Algorithmus für In-Memory und On-Disk vergleicht. Die Implementierung dazu wurde in Rust geschrieben, da ich hierfür mit dem Benchmarking Ecosystem vertrauter bin. Die Ergebnisse sind in @task-02-benchmarks-results zu sehen. Sie zeigen, dass die Laufzeit für On-Disk bei langen Zeichenketten deutlich höher ist, da der Algorithmus auf der Festplatte arbeiten muss. Der Prozessspeicherbedarf bleibt bei On-Disk konstant, bei In-Memory nimmt er mit der Größe der Datenfolge zu.
 
 Der Benchmark wurde auf folgender Hardware durchgeführt:
 #figure(
-    table(
-        columns: (auto, auto),
-        [*CPU*], [#benchmark-data.system.cpu_brand \@ #calc.round(benchmark-data.system.cpu_frequency_mhz / 1000, digits: 2) $"GHz"$],
-        [*Logical Cores*], [#benchmark-data.system.cpu_cores_logical],
-        [*RAM*], [#calc.round(benchmark-data.system.total_memory_kb / 1024 / 1024, digits: 2) $"GB"$],
-        [*Arch*], [#benchmark-data.system.arch],
-        [*Kernel*], [#benchmark-data.system.kernel_version],
-        [*OS*], [#benchmark-data.system.long_os_version],
-    ),
-    caption: [Hardware-Spezifikationen des Benchmark-Systems]
+  table(
+    columns: (auto, auto),
+    [*CPU*],
+    [#benchmark-data.system.cpu_brand \@ #calc.round(benchmark-data.system.cpu_frequency_mhz / 1000, digits: 2) $"GHz"$],
+    [*Logical Cores*],
+    [#benchmark-data.system.cpu_cores_logical],
+    [*RAM*],
+    [#calc.round(benchmark-data.system.total_memory_kb / 1024 / 1024, digits: 2) $"GB"$],
+    [*Arch*],
+    [#benchmark-data.system.arch],
+    [*Kernel*],
+    [#benchmark-data.system.kernel_version],
+    [*OS*],
+    [#benchmark-data.system.long_os_version],
+  ),
+  caption: [Hardware Spezifikationen des Benchmark Systems],
 )
 
 #figure(
-    box(stroke: black, inset: 10pt, 
-        visualize_mergesort_benchmarks_results(benchmark-data)
-    ),
-    caption: [Benchmark Ergebnisse des Merge Sort Algorithmus auf einer #benchmark-data.system.cpu_brand CPU]
+  box(stroke: black, inset: 10pt, visualize_mergesort_benchmarks_results(benchmark-data)),
+  caption: [Benchmark Ergebnisse des Merge Sort Algorithmus auf einer #benchmark-data.system.cpu_brand CPU],
 ) <task-02-benchmarks-results>
-
 
