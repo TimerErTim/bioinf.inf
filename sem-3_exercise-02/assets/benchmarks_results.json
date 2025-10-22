@@ -1,155 +1,155 @@
 {
   "entries": [
     {
-      "elapsed_ms": 4022,
+      "elapsed_ms": 2910,
       "len": 10,
       "mode": "in_memory",
       "n": 1000000,
-      "peak_mem_kb": 168320
+      "peak_mem_kb": 169596
     },
     {
-      "elapsed_ms": 7451,
+      "elapsed_ms": 6345,
       "len": 10,
       "mode": "in_memory",
       "n": 2000000,
-      "peak_mem_kb": 333660
+      "peak_mem_kb": 336508
     },
     {
-      "elapsed_ms": 12375,
+      "elapsed_ms": 10190,
       "len": 10,
       "mode": "in_memory",
       "n": 3000000,
-      "peak_mem_kb": 541332
+      "peak_mem_kb": 544812
     },
     {
-      "elapsed_ms": 14901,
+      "elapsed_ms": 13163,
       "len": 10,
       "mode": "in_memory",
       "n": 4000000,
-      "peak_mem_kb": 664348
+      "peak_mem_kb": 666372
     },
     {
-      "elapsed_ms": 21220,
+      "elapsed_ms": 18256,
       "len": 10,
       "mode": "in_memory",
       "n": 5000000,
-      "peak_mem_kb": 873148
+      "peak_mem_kb": 877836
     },
     {
-      "elapsed_ms": 2559,
+      "elapsed_ms": 2363,
       "len": 200,
       "mode": "in_memory",
       "n": 1000000,
-      "peak_mem_kb": 685280
+      "peak_mem_kb": 686560
     },
     {
-      "elapsed_ms": 7507,
+      "elapsed_ms": 5085,
       "len": 200,
       "mode": "in_memory",
       "n": 2000000,
-      "peak_mem_kb": 1365528
+      "peak_mem_kb": 1367512
     },
     {
-      "elapsed_ms": 12611,
+      "elapsed_ms": 9487,
       "len": 200,
       "mode": "in_memory",
       "n": 3000000,
-      "peak_mem_kb": 2067472
+      "peak_mem_kb": 2073636
     },
     {
-      "elapsed_ms": 15703,
+      "elapsed_ms": 12720,
       "len": 200,
       "mode": "in_memory",
       "n": 4000000,
-      "peak_mem_kb": 2727196
+      "peak_mem_kb": 2728984
     },
     {
-      "elapsed_ms": 20369,
+      "elapsed_ms": 16315,
       "len": 200,
       "mode": "in_memory",
       "n": 5000000,
-      "peak_mem_kb": 3451572
+      "peak_mem_kb": 3456044
     },
     {
-      "elapsed_ms": 2692,
+      "elapsed_ms": 2395,
       "len": 10,
       "mode": "on_disk",
       "n": 1000000,
-      "peak_mem_kb": 1722908
+      "peak_mem_kb": 1298900
     },
     {
-      "elapsed_ms": 6099,
+      "elapsed_ms": 5053,
       "len": 10,
       "mode": "on_disk",
       "n": 2000000,
-      "peak_mem_kb": 1722908
+      "peak_mem_kb": 1298904
     },
     {
-      "elapsed_ms": 8428,
+      "elapsed_ms": 7963,
       "len": 10,
       "mode": "on_disk",
       "n": 3000000,
-      "peak_mem_kb": 1722908
+      "peak_mem_kb": 1298916
     },
     {
-      "elapsed_ms": 10925,
+      "elapsed_ms": 10725,
       "len": 10,
       "mode": "on_disk",
       "n": 4000000,
-      "peak_mem_kb": 1722908
+      "peak_mem_kb": 1298916
     },
     {
-      "elapsed_ms": 17090,
+      "elapsed_ms": 13865,
       "len": 10,
       "mode": "on_disk",
       "n": 5000000,
-      "peak_mem_kb": 1722908
+      "peak_mem_kb": 1298924
     },
     {
-      "elapsed_ms": 21383,
+      "elapsed_ms": 21829,
       "len": 200,
       "mode": "on_disk",
       "n": 1000000,
-      "peak_mem_kb": 1722908
+      "peak_mem_kb": 1298924
     },
     {
-      "elapsed_ms": 45327,
+      "elapsed_ms": 45408,
       "len": 200,
       "mode": "on_disk",
       "n": 2000000,
-      "peak_mem_kb": 1722908
+      "peak_mem_kb": 1298932
     },
     {
-      "elapsed_ms": 89656,
+      "elapsed_ms": 73003,
       "len": 200,
       "mode": "on_disk",
       "n": 3000000,
-      "peak_mem_kb": 1722908
+      "peak_mem_kb": 1298932
     },
     {
-      "elapsed_ms": 125002,
+      "elapsed_ms": 93954,
       "len": 200,
       "mode": "on_disk",
       "n": 4000000,
-      "peak_mem_kb": 1722908
+      "peak_mem_kb": 1298936
     },
     {
-      "elapsed_ms": 149070,
+      "elapsed_ms": 123661,
       "len": 200,
       "mode": "on_disk",
       "n": 5000000,
-      "peak_mem_kb": 1722908
+      "peak_mem_kb": 1298944
     }
   ],
   "system": {
     "arch": "x86_64",
-    "cpu_brand": "13th Gen Intel(R) Core(TM) i5-1335U",
-    "cpu_cores_logical": 12,
-    "cpu_frequency_mhz": 2496,
-    "host_name": "Ultrabook-Tim",
-    "kernel_version": "6.6.87.2-microsoft-standard-WSL2",
-    "long_os_version": "Linux (openSUSE Tumbleweed 20251020)",
+    "cpu_brand": "AMD Ryzen 7 2700X Eight-Core Processor",
+    "cpu_cores_logical": 16,
+    "cpu_frequency_mhz": 4074,
+    "host_name": "workstation",
+    "kernel_version": "6.17.0-2-default",
+    "long_os_version": "Linux (openSUSE Tumbleweed 20251007)",
     "os": "linux",
-    "total_memory_kb": 7990476
+    "total_memory_kb": 32770420
   }
 }
