@@ -17,67 +17,50 @@
     })
   }
 
-  canvas({
-    import draw: *
+  canvas(
+    {
+      import draw: *
 
-    let flat_to_tree_data(list_) = {
-      if list_.len() == 1 {
-        return ((data: list_.at(0)),)
+      let flat_to_tree_data(list_) = {
+        if list_.len() == 1 {
+          return ((data: list_.at(0)),)
+        }
+
+        let (first, ..others) = list_
+        return ((data: first), flat_to_tree_data(others))
       }
 
-      let (first, ..others) = list_
-      return ((data: first), flat_to_tree_data(others))
-    }
+      let tree_data = flat_to_tree_data(((((1, (stroke: red)), 8), ((2, (stroke: orange)), 5), (text(fill: white.opacify(100%))[0],) * 4), (
+        ((1, (fill: gray.lighten(70%))), (8, (stroke: orange))),
+        ((2, (stroke: red)), 5),
+        (1,) + (text(fill: white.opacify(100%))[0],) * 3,
+      ), (
+        ((1, (fill: gray.lighten(70%))), (8, (stroke: orange))),
+        ((2, (fill: gray.lighten(70%))), (5, (stroke: red))),
+        (1, 2) + (text(fill: white.opacify(100%))[0],) * 2,
+      ), (
+        ((1, (fill: gray.lighten(70%))), (8, (stroke: red))),
+        ((2, (fill: gray.lighten(70%))), (5, (fill: gray.lighten(70%)))),
+        (1, 2, 5) + (text(fill: white.opacify(100%))[0],),
+      ), (
+        ((1, (fill: gray.lighten(70%))), (8, (fill: gray.lighten(70%)))),
+        ((2, (fill: gray.lighten(70%))), (5, (fill: gray.lighten(70%)))),
+        (1, 2, 5, 8),
+      ),))
 
-    let tree_data = flat_to_tree_data(
-      (
-        (
-          ((1, (stroke: red)), 8),
-          ((2, (stroke: orange)), 5),
-          (text(fill: white.opacify(100%))[0],) * 4
-        ),
-        (
-          ((1, (fill: gray.lighten(70%))), (8, (stroke: orange))),
-          ((2, (stroke: red)), 5),
-          (1,) + (text(fill: white.opacify(100%))[0],) * 3
-        ),
-        (
-          ((1, (fill: gray.lighten(70%))), (8, (stroke: orange))),
-          ((2, (fill: gray.lighten(70%))), (5, (stroke: red))),
-          (1, 2) + (text(fill: white.opacify(100%))[0],) * 2
-        ),
-        (
-          ((1, (fill: gray.lighten(70%))), (8, (stroke: red))),
-          ((2, (fill: gray.lighten(70%))), (5, (fill: gray.lighten(70%)))),
-          (1, 2, 5) + (text(fill: white.opacify(100%))[0],)
-        ),
-        (
-          ((1, (fill: gray.lighten(70%))), (8, (fill: gray.lighten(70%)))),
-          ((2, (fill: gray.lighten(70%))), (5, (fill: gray.lighten(70%)))),
-          (1, 2, 5, 8)
-        ),
-      )
-    )
-
-    tree.tree(
-      tree_data,
-      direction: "right",
-      grow: 3,
-      draw-node: (node, ..) => {
+      tree.tree(tree_data, direction: "right", grow: 3, draw-node: (node, ..) => {
         content((), column(..node.content.data))
-      },
-      draw-edge: (from, to, ..) => {
+      }, draw-edge: (from, to, ..) => {
         line((a: from, number: 1, b: to), (a: to, number: 1, b: from), mark: (end: ">"))
-      }
-    )
-  })
-  
+      })
+    },
+  )
+
   [
     #box(box_list((([], (stroke: red)),))) ... kleineres Element wird gewählt #h(2em)
     #box(box_list((([], (stroke: orange)),))) ... anderes Element als Kandidat
     #place(right + bottom, text(size: 0.5pt)[Fuck you, Sven!])
   ]
-   
 }
 
 #let visualize_mergesort(data) = {
@@ -148,38 +131,45 @@
   let data-dict = map_dict_values(collect_by_key(results.entries, it => it.mode), it => collect_by_key(it, it => it.len))
 
   let time-plots = (
-    data-dict.in_memory.pairs().map(((size, data)) => lq.plot(data.map(it => it.n), data.map(it => it.elapsed_ms / 1000), label: [in-memory $"len"=#size$], mark: "^")) 
-    +
-    data-dict.on_disk.pairs().map(((size, data)) => lq.plot(data.map(it => it.n), data.map(it => it.elapsed_ms / 1000), label: [on-disk $"len"=#size$], mark: "s"))
+    data-dict.in_memory.pairs().map(
+      ((size, data)) => lq.plot(data.map(it => it.n), data.map(it => it.elapsed_ms / 1000), label: [in-memory $"str-len"=#size$], mark: "^"),
+    ) + data-dict.on_disk.pairs().map(
+      ((size, data)) => lq.plot(data.map(it => it.n), data.map(it => it.elapsed_ms / 1000), label: [on-disk $"str-len"=#size$], mark: "s"),
+    )
   )
 
-  let space-plots = (
-    data-dict.in_memory.pairs().map(((size, data)) => lq.plot(data.map(it => it.n), data.map(it => it.peak_mem_kb / 1024), label: [in-memory $"len"=#size$], mark: "^")) 
-    +
-    data-dict.on_disk.pairs().map(((size, data)) => lq.plot(data.map(it => it.n), data.map(it => it.peak_mem_kb / 1024), label: [on-disk $"len"=#size$], mark: "s"))
-  )
+  let space-plots = (data-dict.in_memory.pairs().map(((size, data)) => lq.plot(
+    data.map(it => it.n),
+    data.map(it => it.peak_mem_kb / 1024 / 1024),
+    label: [in-memory $"str-len"=#size$],
+    mark: "^",
+  )) + data-dict.on_disk.pairs().map(((size, data)) => lq.plot(
+    data.map(it => it.n),
+    data.map(it => it.peak_mem_kb / 1024 / 1024),
+    label: [on-disk $"str-len"=#size$],
+    mark: "s",
+  )))
 
   block[
     #lq.diagram(
       width: 100%,
       height: 8cm,
       title: [$T(n)$ und $S(n)$ des Merge Sort Algorithmus mit größer werdender Datenmenge $n$],
-      ylabel: [Laufzeit in $s$],
+      ylabel: [Laufzeit],
       xaxis: (mirror: false),
-      yaxis: (mirror: false),
-
+      yaxis: (mirror: false, format-ticks: lq.format-ticks-linear.with(suffix: [$"s"$])),
+      legend: (position: left + top),
       ..time-plots,
     )
     #lq.diagram(
       width: 100%,
       height: 8cm,
       xaxis: (mirror: false),
-      yaxis: (mirror: false),
+      yaxis: (mirror: false, format-ticks: lq.format-ticks-linear.with(suffix: [ $"GB"$])),
       xlabel: [Datenmenge $n$],
-      ylabel: [Speicherbedarf in $"MB"$ USS],
+      ylabel: [Speicherbedarf],
       legend: none,
-
-      ..space-plots
+      ..space-plots,
     )
   ]
 }
