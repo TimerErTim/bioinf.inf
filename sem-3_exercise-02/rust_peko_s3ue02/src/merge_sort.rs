@@ -147,8 +147,8 @@ impl<T: Ord + Clone> MergeSorter<T> {
         mut unsorted_source: S,
         mut buffer1: S::Writer,
         mut buffer2: S::Writer,
-        mut buffer3: S::Writer,
-        mut buffer4: S::Writer,
+        buffer3: S::Writer,
+        buffer4: S::Writer,
     ) -> io::Result<S>
     where
         S: MergeReader<T>,
@@ -156,7 +156,7 @@ impl<T: Ord + Clone> MergeSorter<T> {
         let total_size = self.split(&mut unsorted_source, &mut buffer1, &mut buffer2)?;
         let reader_l = buffer1.into_reader()?;
         let reader_r = buffer2.into_reader()?;
-        let (mut reader_l, mut reader_r, mut writer_l, mut writer_r) = self.sort(reader_l, reader_r, buffer3, buffer4, total_size)?;
+        let (mut reader_l, mut reader_r, _, _) = self.sort(reader_l, reader_r, buffer3, buffer4, total_size)?;
         let mut sink = unsorted_source.into_writer()?;
         self.merge_step(&mut reader_l, &mut reader_r, &mut sink, total_size)?;
         sink.into_reader()

@@ -8,7 +8,7 @@ use std::io;
 use std::time::{Duration, Instant};
 use std::path::PathBuf;
 
-use merge_sort::{MergeSorter, MergeReader, MergeWriter};
+use merge_sort::{MergeSorter, MergeReader};
 use utils::{PeakMemTracker, RunMetrics, write_metrics};
 use tempfile::tempdir;
 
@@ -21,7 +21,7 @@ fn bench_in_memory(n: usize, len: usize) -> io::Result<(Duration, u64)> {
     let b4 = in_memory::InMemoryWriter::<String>::new();
     let sorter = MergeSorter::<String>::new();
 
-    let mut tracker = PeakMemTracker::start();
+    let tracker = PeakMemTracker::start();
     let start = Instant::now();
     let mut r = sorter.complete_sort(reader, b1, b2, b3, b4)?;
     let elapsed = start.elapsed();
