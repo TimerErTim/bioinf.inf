@@ -4,6 +4,7 @@
 #show: documentation-template.with(title: "SWE3 - Übung 2", semester-term: "WS 2025/26", author: "Tim Peko", aufwand-in-h: 12)
 
 #import "../common/visualization/mergesort.typ": *
+#import "@preview/suiji:0.4.0": *
 
 = Aufgabe: Merge Sort <chapter-task-01>
 
@@ -21,6 +22,23 @@ Um die gesamte Collection zu sortieren, brechen wir die Collection auf die klein
 #figure(box(stroke: black, inset: 10pt, visualize_mergesort(mergesort_demo_data)), caption: [
   Visualisierung des Merge Sort Algorithmus
 ]) <mergesort-visualization>
+
+@mergesort-distr-random und @mergesort-distr-reverse zeigen, wie die Datenordnung während des Sortiervorgangs nach jedem Merge Schritt verändert wird. Sortierte Teilbereiche werden dabei in gleicher Farbe markiert. Es fällt auf, dass die Bereiche der sortierten Chunks bei beiden Ausgangslagen gleich sind.
+
+#figure(
+  box(stroke: black, inset: 10pt, visualize_mergesort_process({
+    let rng = gen-rng-f(20)
+    let a
+    (rng, a) = shuffle-f(rng, range(64))
+    a
+  })),
+  caption: [Verteilung der Daten beim Sortiervorgang des Merge Sort Algorithmus mit zufälliger Ausgangsreihenfolge],
+) <mergesort-distr-random>
+
+#figure(
+  box(stroke: black, inset: 10pt, visualize_mergesort_process(range(64, 0, step: -1))),
+  caption: [Verteilung der Daten beim Sortiervorgang des Merge Sort Algorithmus mit umgekehrter Ausgangsreihenfolge],
+) <mergesort-distr-reverse>
 
 ==== Eigenschaften
 

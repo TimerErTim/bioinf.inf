@@ -111,6 +111,123 @@
   )
 }
 
+#let merge_sort(data, chunk_size) = {
+  let target = ()
+
+  // for c1_index in range(0, data.len(), step: chunk_size * 2) {
+  //   let c1_end = calc.min(c1_index + chunk_size, data.len())
+  //   let c2_index = c1_end
+  //   let c2_end = calc.min(c2_index + chunk_size, data.len())
+
+  //   while c1_index < c1_end and c2_index < c2_end {
+  //     let c1_value = data.at(c1_index)
+  //     let c2_value = data.at(c2_index)
+  //     if c1_value <= c2_value {
+  //       target.push(c1_value)
+  //       c1_index += 1
+  //     } else {
+  //       target.push(c2_value)
+  //       c2_index += 1
+  //     }
+  //   }
+
+  //   while c1_index < c1_end {
+  //     target.push(data.at(c1_index))
+  //     c1_index += 1
+  //   }
+
+  //   while c2_index < c2_end {
+  //     target.push(data.at(c2_index))
+  //     c2_index += 1
+  //   }
+  // }
+  // 
+  
+  for chunks in data.chunks(chunk_size).chunks(2) {
+    if chunks.len() == 1 {
+      for entry in chunks.at(0) {
+        target.push(entry)
+      }
+      continue
+    }
+    
+
+    let (left, right) = chunks
+    let left-index = 0
+    let right-index = 0
+    while left-index < left.len() and right-index < right.len() {
+      if left.at(left-index) <= right.at(right-index) {
+        target.push(left.at(left-index))
+        left-index += 1
+      } else {
+        target.push(right.at(right-index))
+        right-index += 1
+      }
+    }
+    
+    while left-index < left.len() {
+      target.push(left.at(left-index))
+      left-index += 1
+    }
+    while right-index < right.len() {
+      target.push(right.at(right-index))
+      right-index += 1
+    }
+  }
+
+  return target
+}
+
+#let visualize_sorted_list(data) = {
+  let normal-fill = gray.darken(25%)
+
+  // Colorize sorted chunks
+  let color-map = lq.color.map.okabe-ito
+  let color-index = 0
+  let fill = (normal-fill, )
+  for i in range(1, data.len()) {
+    let prev-entry = data.at(i - 1)
+    if prev-entry <= data.at(i) {
+      // Include prev in sorted chunk
+      fill.at(fill.len() - 1) = color-map.at(calc.rem(color-index, color-map.len()))
+    }
+
+    if data.at(i) >= data.at(i - 1) {
+      fill.push(color-map.at(calc.rem(color-index, color-map.len())))
+    } else {
+      fill.push(normal-fill)
+      color-index += 1
+    }
+  }
+  
+  lq.diagram(
+    width: 75%,
+    height: 1cm,
+    xaxis: (ticks: none),
+    yaxis: (ticks: none),
+    grid: none,
+    margin: 2%,
+ 
+    lq.bar(range(data.len()), data, fill: fill)
+  )
+}
+
+#let visualize_mergesort_process(data) = {
+  let chunk_size = 1
+  let data-steps = (
+    data,
+    ..while chunk_size < data.len() {
+      data = merge_sort(data, chunk_size)
+      chunk_size *= 2
+      (data,)
+    }
+  )
+
+  for entry in data-steps {
+    block(visualize_sorted_list(entry))
+  }
+}
+
 #let visualize_mergesort_complexity() = {
   lq.diagram(
     width: 75%,
