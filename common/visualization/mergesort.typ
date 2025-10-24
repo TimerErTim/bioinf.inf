@@ -113,35 +113,6 @@
 
 #let merge_sort(data, chunk_size) = {
   let target = ()
-
-  // for c1_index in range(0, data.len(), step: chunk_size * 2) {
-  //   let c1_end = calc.min(c1_index + chunk_size, data.len())
-  //   let c2_index = c1_end
-  //   let c2_end = calc.min(c2_index + chunk_size, data.len())
-
-  //   while c1_index < c1_end and c2_index < c2_end {
-  //     let c1_value = data.at(c1_index)
-  //     let c2_value = data.at(c2_index)
-  //     if c1_value <= c2_value {
-  //       target.push(c1_value)
-  //       c1_index += 1
-  //     } else {
-  //       target.push(c2_value)
-  //       c2_index += 1
-  //     }
-  //   }
-
-  //   while c1_index < c1_end {
-  //     target.push(data.at(c1_index))
-  //     c1_index += 1
-  //   }
-
-  //   while c2_index < c2_end {
-  //     target.push(data.at(c2_index))
-  //     c2_index += 1
-  //   }
-  // }
-  // 
   
   for chunks in data.chunks(chunk_size).chunks(2) {
     if chunks.len() == 1 {
@@ -150,7 +121,6 @@
       }
       continue
     }
-    
 
     let (left, right) = chunks
     let left-index = 0
