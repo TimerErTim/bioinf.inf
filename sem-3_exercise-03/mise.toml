@@ -8,7 +8,7 @@ run = [
 
 [tasks."package"]
 depends = ["build:documentation"]
-sources = ["SWE3_Peko_UE03/**/*"]
+sources = ["SWE3_Peko_UE03/**/*", "SWE3_Peko_UE03.pdf", "SWE3_Peko_UE03.typ"]
 outputs = ["SWE3_Peko_UE03.zip"]
 run = [
     "rm -f SWE3_Peko_UE03.zip",
