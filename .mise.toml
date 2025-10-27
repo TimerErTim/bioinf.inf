@@ -4,3 +4,32 @@ typst = "latest"
 [env]
 TYPST_FONT_PATHS = "{{config_root}}/common/fonts"
 TYPST_ROOT = "{{config_root}}"
+
+[tasks.package-into-zip]
+quiet = true
+description = "Package specified paths (excluding .git-ignored files) into a zip file"
+usage = '''
+arg "<zipfile>" help="Name of the target zip file"
+arg "<paths>" help="One or more paths (files or folders) to include" var=#true
+flag "-s --subdir <subdir>" help="Subpath inside the zip file" 
+'''
+dir = "{{cwd}}"
+run = '''
+#!/usr/bin/env bash
+
+zipfile=$(realpath "$usage_zipfile")
+IFS=' ' read -r -a paths <<< "$usage_paths"
+subdir="${usage_subdir:-}"
+
+# Create a temporary directory for optional subdir packaging
+tmpdir=$(mktemp -d)
+targetdir="$tmpdir/$subdir"
+mkdir -p "$targetdir"
+cleanup() { rm -rf "$tmpdir"; }
+trap cleanup EXIT
+
+git ls-files -z --cached --others --exclude-standard -- "${paths[@]}" | xargs -0 cp -t "$targetdir" --parents
+
+cd "$tmpdir"
+zip -r "$zipfile" .
+'''
