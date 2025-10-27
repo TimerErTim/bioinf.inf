@@ -40,7 +40,15 @@
       )
     ]
   } else {
-    it
+    h(2pt)
+    highlight(
+      fill: gray.lighten(80%),
+      radius: 4pt,
+      //baseline: margin,
+      extent: 2pt,
+      it
+    )
+    h(2pt)
   }
 }
 
@@ -64,6 +72,11 @@
 
 #let format-image(it) = {
   box(stroke: gray, it)
+}
+
+#let format-link(it) = {
+  set text(fill: blue.darken(25%))
+  underline(it, evade: true)
 }
 
 #let documentation-template(
@@ -112,6 +125,7 @@
   show image: format-image
   show math.equation: format-equation
   show figure: set align(start)
+  show link: format-link
 
   doc
 }
