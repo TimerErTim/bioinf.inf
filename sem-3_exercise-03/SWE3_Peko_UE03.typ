@@ -140,7 +140,26 @@ Die Implementierung des Euklidischen Algorithmus im Projekt verwendet Absolutwer
 
 == Teststrategie
 
-// TODO
+Die Unit-Tests folgen konsequent dem AAA-Prinzip (Arrange-Act-Assert). Jeder Test ist in maximal drei klar kommentierte Abschnitte strukturiert: Vorbereitung der Testdaten (Arrange), Ausführung der Operation (Act) und Überprüfung der Erwartungen (Assert). Mehrere eng verwandte Varianten innerhalb eines Tests werden über eigene Scopes `{ ... }` als Subcases getrennt, um Vorbedingungen sauber zu halten.
+
+Die Tests decken systematisch alle wesentlichen Aspekte der `rational_t`-Klasse ab:
+
+- *Konstruktion*\
+ Default-, `int`- und Paar-Konstruktion mit Normalisierung, Exception bei `d == 0`
+- *Prädikate*\
+ `is_negative()`, `is_positive()`, `is_zero()` für verschiedene Werte
+- *String/Streams*\
+ `as_string()`, `operator<<`/`operator>>` mit Fehlerbehandlung
+- *Arithmetik*\
+ Zusammengesetzte Operatoren (`+=`, `-=`, `*=`, `/=`) und gemischte Ausdrücke mit `int`
+- *Vergleiche*\
+ Alle Ordnungs- und Gleichheitsoperatoren unter Berücksichtigung der Normalisierung
+- *Randfälle*\
+ Null-Repräsentation, negative Nenner, Kopier-/Zuweisungssemantik
+
+Invarianten werden über Getter-Methoden und String-Repräsentation validiert, Exceptions mit `EXPECT_THROW` überprüft.
+
+Längere Ausdrucksketten werden in zwei Akten getestet (Act #sym.arrow.r Assert), um Lokalisierung von Regressionsursachen zu erleichtern.
 
 == Ergebnisse
 
@@ -162,3 +181,9 @@ Die Ausgabe der eigenen Implementierung ist einsehbar in @own-main-output und de
 
 === Testfälle
 
+Alle definierten Testfälle sind, wie in @test-cases-output dargestellt, erfolgreich.
+
+#figure(
+  image("assets/2025-10-28_test_results.png", width: 75%),
+  caption: [Ergebnisse der Testfälle]
+) <test-cases-output>
