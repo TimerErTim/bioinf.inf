@@ -3,60 +3,162 @@
 
 #show: documentation-template.with(title: "SWE3 - Übung 3", semester-term: "WS 2025/26", author: "Tim Peko", aufwand-in-h: "4")
 
+#import "../common/visualization/rational_numbers.typ": *
+
 = Aufgabe: Rationale Zahl als Datentyp
 
 == Lösungsidee
 
-Die Klasse `rational_t` repräsentiert rationale Zahlen als gekürzte Brüche `Zähler/ Nenner` mit `int` als `value_type`. Invarianten: Nenner ist nie 0, ist immer positiv; `0` wird als `0/1` repräsentiert. Konstruktion und alle Operationen rufen `normalize()` auf, welche mittels euklidischem Algorithmus kürzt und das Vorzeichen in den Zähler schiebt. Ungültige Eingaben (Nenner 0) lösen `invalid_rational_error` aus; Division durch 0 in `/=` löst `division_by_zero_error` aus. Vergleiche nutzen Kreuzmultiplikation, um Rundungsfehler zu vermeiden. Streams werden als `"<n/d>"` ausgegeben und `n` oder `n/d` eingelesen.
+Die Klasse `rational_t` repräsentiert rationale Zahlen als gekürzte Brüche $("Zähler" = space Z = "nominator" = space n)/("Nenner" = space N = "denominator" = space d)$ mit `int` als `value_type`. 
+
+Invarianten: 
+- Nenner ist nie 0, ist immer positiv.
+- $0$ wird als $0 / 1$ repräsentiert.
+
+Konstruktion und alle Operationen rufen `normalize()` auf, welche mittels euklidischem Algorithmus (beschrieben in @gcd-algorithmus) kürzt und das Vorzeichen in den Zähler schiebt.
+
+Fehlerbehandlung:
+- Ungültige Eingaben (Nenner 0) lösen `invalid_rational_error` aus.
+- Division durch 0 in `/=` löst `division_by_zero_error` aus.
+
+Vergleiche nutzen Kreuzmultiplikation, um Rundungsfehler zu vermeiden. Streams werden als #quote("<n/d>") ausgegeben und #quote("n") oder #quote("n/d") eingelesen.
+
+
 
 === Designentscheidungen
 
-- Datentyp: `int` als `value_type` gemäß Aufgabenstellung; API könnte später auf `long long`/`std::int64_t` erweitert werden. Um Überläufe zu vermeiden, werden Zwischenrechnungen in `long long` durchgeführt und anschließend normalisiert/gekürzt.
+*Datentyp*\
+`int` als `value_type` gemäß Aufgabenstellung; API könnte später auf `long long`/`std::int64_t` erweitert werden. Um Überläufe zu vermeiden, werden Zwischenrechnungen in `long long` durchgeführt und anschließend normalisiert/gekürzt.
+
 - Invariante Darstellung: Der Nenner ist stets positiv; das Vorzeichen liegt ausschließlich im Zähler. Die Null wird kanonisch als `0/1` gespeichert. Die Methode `normalize()` erzwingt diese Regeln und kürzt mit Euklidischem Algorithmus (`gcd`).
-- Ausnahmen: Konstruktion mit Nenner `0` ist ein Programmfehler in der Nutzung der API und wird als `invalid_rational_error` (Unterklasse von `std::invalid_argument` → logic_error-Kategorie) gewertet. Division durch eine rationale Null in `/=` ist ein Laufzeitproblem im konkreten Rechenschritt und wird als `division_by_zero_error` (Unterklasse von `std::domain_error` → runtime_error-Kategorie) gewertet. Diese Trennung erleichtert die Fehleranalyse.
-- Operatoren: Die zusammengesetzten Operatoren (`+=, -=, *=, /=`) bilden die zentrale Implementierung; die binären Operatoren (`+, -, *, /`) delegieren darauf, um Code-Duplikation zu vermeiden. Vergleichsoperatoren nutzen Kreuzmultiplikation (`a/b < c/d <=> ad < cb`) in `long long`, wodurch Rundung vermieden wird.
-- Interoperabilität mit `int`: Für Ausdrücke mit linkem `int`-Operand (z. B. `3 + rational_t(2,3)`) sind freie Operatoren definiert, um symmetrisches Verhalten zu gewährleisten.
-- Streams: `operator<<` gibt in der geforderten Form `"<n/d>"` bzw. `"<n>"` für ganze Zahlen aus. `operator>>` akzeptiert `n` oder `n/d` und setzt `failbit` bei ungültigem Format, wirft aber auch eine Ausnahme bei `n/0`.
 
-=== Komplexität und Korrektheit
+*Operatoren*\
+Die zusammengesetzten Operatoren (`+=, -=, *=, /=`) bilden die zentrale Implementierung; die binären Operatoren (`+, -, *, /`) delegieren darauf, um Code-Duplikation zu vermeiden. Vergleichsoperatoren nutzen Kreuzmultiplikation (`a/b < c/d <=> ad < cb`) in `long long`, wodurch Rundung vermieden wird.
 
-- `normalize()`: Der Euklidische Algorithmus terminiert in `O(log(min(|Z|,|N|)))`. Durch Normalisierung nach jeder arithmetischen Operation bleibt die Darstellung kanonisch; Gleichheit ist folglich strukturelle Gleichheit (`Z1==Z2 && N1==N2`).
-- Vergleich: Kreuzmultiplikation ist korrekt, solange das Produkt im `long long`-Bereich bleibt. Die anschließende Normalisierung begrenzt die Größe; realistisch innerhalb typischer Übungsdaten unkritisch.
-- Robustheit: Jede Methode, die potenziell die Invariante verletzen kann, ruft `normalize()` oder prüft mit `is_consistent()`.
+*Interoperabilität mit `int`*\
+Für Ausdrücke mit linkem `int`-Operand (z. B. `3 + rational_t(2,3)`) sind freie Operatoren definiert, um symmetrisches Verhalten zu gewährleisten.
 
-=== Teststrategie
+*Streams*\
+operator `<<` gibt in der geforderten Form #quote("<n/d>") bzw. #quote("<n>") für ganze Zahlen aus. Operator `>>` akzeptiert #quote("n") oder #quote("n/d") und setzt `failbit` bei ungültigem Format, wirft aber auch eine Ausnahme bei #quote("n/0").
 
-- Konstruktorfälle: Default, aus `int`, aus `(Z,N)` inkl. Kürzung, Vorzeichenführung, `0`-Repräsentation.
-- Prädikate: `is_negative`, `is_positive`, `is_zero` für repräsentative Randfälle.
-- Arithmetik: `+=, -=, *=, /=`; daraus abgeleitete `+, -, *, /`; Mischtypen (`int` links/rechts). Vergleich mit erwarteten kanonischen Strings (`as_string`).
-- Fehlerfälle: Konstruktion mit Nenner `0` (logic error), Division durch `0` (runtime error) – jeweils per Exception geprüft.
-- I/O: Ausgabeformat `"<...>"`, Basiseinlesen `n`/`n/d` und Fehlerbehandlung.
+=== Korrektheit
+
+*Vergleich*\
+Kreuzmultiplikation ist korrekt, solange das Produkt im `long long`-Bereich bleibt. Die anschließende Normalisierung begrenzt die Größe #sym.arrow.r realistisch innerhalb typischer Übungsdaten unkritisch.
+
+*Robustheit*\
+Jede Methode, die potenziell die Invariante verletzen kann, ruft `normalize()` auf oder prüft mit `is_consistent()`.
+
+*Ausnahmen/Exceptions*\
+- invalid_rational_error (#sym.arrow.l `std::invalid_argument` #sym.arrow.l `std::logic_error`):\
+ Tritt bei ungültiger Konstruktion auf (z. B. Nenner `0`). Das ist ein Verstoß gegen die API-Vertragsbedingungen und daher eine Logik- bzw. Argumentfehler-Kategorie.
+- division_by_zero_error (#sym.arrow.l `std::domain_error` #sym.arrow.l `std::logic_error`):\
+ Tritt zur Laufzeit beim `/=` mit einer rationalen `0` auf. Es entspricht einem Problem mit unserer Eingabedomäne und ist daher ein Logik-/Argumentfehler.\
+ #quote(
+  block: true,
+  attribution: [paxdiablo auf #link("https://stackoverflow.com/a/6121690", "Stack Overflow")]
+ )[
+  ...
+
+  The exceptions listed in the `[stdexcept.syn]` section of `ISO C++20` standard (the iteration used in this answer) are:
+
+  ```cpp
+  namespace std {
+      class logic_error;
+          class domain_error;
+          class invalid_argument;
+          class length_error;
+          class out_of_range;
+      class runtime_error;
+          class range_error;
+          class overflow_error;
+          class underflow_error;
+  }
+  ```
+
+  Now you _could_ argue quite cogently that either `overflow_error` (the infinity generated by IEEE754 floating point could be considered overflow) or `domain_error` (it is, after all, a problem with the input value) would be ideal for indicating a divide by zero.
+
+  ...
+ ]
+
+
+
+=== Euklidischer Algorithmus <gcd-algorithmus>
+
+Der Euklidische Algorithmus ist ein Algorithmus, der den größten gemeinsamen Teiler (ggT) zweier Zahlen berechnet. Er terminiert in $O(log(min(|Z|,|N|)))$.
+
+```cpp
+int gcd(int a, int b) {
+  while (b != 0) {
+    int t = b;
+    b = a % b;
+    a = t;
+  }
+  return a;
+}
+```
+
+Der Algorithmus basiert auf der Eigenschaft, dass $gcd(a, b) = gcd(b, a mod b)$. Durch wiederholte Anwendung dieser Regel wird das Problem auf kleinere Zahlen reduziert, bis eine der Zahlen 0 wird. Der ggT ist dann die andere Zahl.
+
+Beispiel für $gcd(48, 18)$:
++ $gcd(48, 18) => gcd(18, 48 mod 18)$
++ $gcd(18, 12) => gcd(12, 18 mod 12)$
++ $gcd(12, 6) => gcd(6, 12 mod 6)$
++ $gcd(6, 0) => 6$
+
+Das Verhalten des Euklidischen Algorithmus ist in @gcd-divergence-visualization dargestellt. Dabei wird die Divergenz des Algorithmus für verschiedene Eingaben visualisiert. In @gcd-steps-needed-visualization und @gcd-results-visualization wird die Anzahl der benötigten Schritte und die Ergebnisse des Euklidischen Algorithmus für $a, b in [0, 128]$ visualisiert. Die Zeitkomplexität wird in @gcd-complexity-visualization veranschaulicht, wobei sich gut das logarithmische Wachstum des Algorithmus erkennen lässt.
+
+#let x-samples = (48, 23)
+#let y-samples = (18, 36)
+#figure(
+  box(stroke: black, inset: 10pt, visualize_gcd_divergence(for x in x-samples {
+    for y in y-samples { ((x, y),) }
+  })),
+  caption: [Verschiedene Beispiele für die Divergenz des Euklidischen Algorithmus]
+) <gcd-divergence-visualization>
+
+#figure(
+  box(stroke: black, inset: 10pt, visualize_gcd_steps_needed(range(128), range(128))),
+  caption: [Anzahl Schritte des Euklidischen Algorithmus für $a, b in [0, 128]$]
+) <gcd-steps-needed-visualization>
+
+#figure(
+  box(stroke: black, inset: 10pt,
+    visualize_gcd_results(range(128), range(128))
+  ),
+  caption: [Ergebnisse des Euklidischen Algorithmus für $a, b in [0, 128]$]
+) <gcd-results-visualization>
+
+#figure(
+  box(stroke: black, inset: 10pt,
+    visualize_gcd_complexity(range(2, 512))
+  ),
+  caption: [Zeitkomplexität des Euklidischen Algorithmus $max()$]
+) <gcd-complexity-visualization>
+
+Die Implementierung des Euklidischen Algorithmus im Projekt verwendet Absolutwerte, um negative Eingaben zu handhaben, und gibt im Grenzfall beider Eingaben gleich 0 den Wert 1 zurück, damit die Normalisierung definiert bleibt.
+
+== Teststrategie
+
+// TODO
 
 == Ergebnisse
 
+=== Demo Output
+
+Die `main`-Funktion in der `main.cpp` Datei entspricht genau des in der Aufgabenstellung beschriebenen Beispiels. Die Musterausgabe in der Konsole ist wie folgt:
+
+#figure(
+  image("assets/2025-10-27_main_output_angabe.png", width: 75%),
+  caption: [Musterausgabe der `main`-Funktion in der Aufgabenstellung]
+) <angabe-main-output>
+
+Die Ausgabe der eigenen Implementierung ist einsehbar in @own-main-output und deckt sich prinzipiell mit der Musterausgabe. Beachte, dass die Ausgabe von $1/2 * -10$ faktisch nicht $5$ (wie in @angabe-main-output dargestellt) sondern $-5$ ist, was in meiner Konsole mit Ligatures (`<-5``>`) angezeigt wird.
+
+#figure(
+  image("assets/2025-10-27_main_console_output.png", width: 75%),
+  caption: [Ausgabe der `main`-Funktion unserer Übungsimplementierung]
+) <own-main-output>
+
 === Testfälle
 
-Getestet werden:
-- Konstruktion: Default, aus `int`, aus `(Z, N)`, Normalisierung und Vorzeichenlage
-- Prädikate: `is_negative`, `is_positive`, `is_zero`
-- Arithmetik: `+=, -=, *=, /=` und abgeleitete `+, -, *, /`, inkl. Mischung mit `int`
-- Ausnahmen: Konstruktion mit Nenner 0, Division durch 0
-- Vergleich: `==, !=, <, <=, >, >=`
-- Streams: `operator<<` (Format) und Grundlagen für `operator>>`
-
-Siehe Tests in `01_Beispiel_Test/test.cpp`.
-
-=== Implementierungsdetails
-
-- gcd (Euklidischer Algorithmus): Iterative Variante auf `int` mit Absolutwerten; Terminiert in `O(log min(|a|,|b|))`. Im Grenzfall `a=0,b=0` wird `1` zurückgegeben, damit `normalize()` definierte Ergebnisse liefert (Zero-Fall wird davor bereits zu `0/1` kanonisiert).
-- normalize():
-  - Erzwingt positiven Nenner (`-` auf Zähler/ Nenner flippen bei Bedarf)
-  - Kanonisiert `0` zu `0/1`
-  - Kürzt durch `gcd`
-- Vergleiche: Kreuzmultiplikation (`a.n * b.d` und `b.n * a.d`) in `long long`, um Überlauf-Spielräume zu erhöhen; vermeidet Fließkommafehler.
-- Streams: `<<` gibt `"<n/d>"` bzw. `"<n>"` aus. `>>` akzeptiert `n` oder `n/d`, setzt `failbit` bei Leseformatfehlern und wirft `invalid_rational_error` bei `n/0`.
-
-=== Exceptions: logic_error vs runtime_error
-
-- invalid_rational_error (von `std::invalid_argument`): Tritt bei ungültiger Konstruktion auf (z. B. Nenner `0`). Das ist ein Verstoß gegen die API-Vertragsbedingungen und daher eine Logik- bzw. Argumentfehler-Kategorie.
-- division_by_zero_error (von `std::domain_error`): Tritt zur Laufzeit beim `/=` mit einer rationalen Null auf. Das Eingabedomänen-Problem entsteht erst während der Berechnung und ist daher ein Laufzeit-/Domänenfehler.
