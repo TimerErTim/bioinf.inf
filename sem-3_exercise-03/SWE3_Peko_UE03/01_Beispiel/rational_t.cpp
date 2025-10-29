@@ -29,14 +29,12 @@ rational_t::rational_t() noexcept : numerator_(0), denominator_(1) {}
 
 rational_t::rational_t(value_type numerator) noexcept : numerator_(numerator), denominator_(1) {}
 
-rational_t::rational_t(value_type numerator, value_type denominator) {
+rational_t::rational_t(value_type numerator, value_type denominator): numerator_(numerator), denominator_(denominator) {
 	// Guard against invalid input at construction time. This is an API misuse
 	// (logic error), so we report via invalid_rational_error.
-	if (denominator == 0) {
+	if (!is_consistent()) {
 		throw invalid_rational_error("denominator must not be zero");
 	}
-	numerator_ = numerator;
-	denominator_ = denominator;
 	normalize();
 }
 

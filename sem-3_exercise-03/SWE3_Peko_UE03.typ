@@ -36,7 +36,7 @@ Vergleiche nutzen Kreuzmultiplikation, um Rundungsfehler zu vermeiden. Streams w
 Die zusammengesetzten Operatoren (`+=, -=, *=, /=`) bilden die zentrale Implementierung; die binären Operatoren (`+, -, *, /`) delegieren darauf, um Code-Duplikation zu vermeiden. Vergleichsoperatoren nutzen Kreuzmultiplikation (`a/b < c/d <=> ad < cb`) in `long long`, wodurch Rundung vermieden wird.
 
 *Interoperabilität mit `int`*\
-Für Ausdrücke mit linkem `int`-Operand (z. B. `3 + rational_t(2,3)`) sind freie Operatoren definiert, um symmetrisches Verhalten zu gewährleisten.
+Für Ausdrücke mit linkem `int`-Operand (z. B. `3 + rational_t(2,3)`) sind freie Operatoren definiert, um symmetrisches Verhalten zu gewährleisten. Zudem muss wegen dem nicht-`explicit` Konstruktor von `rational_t` keine explizite Konvertierung stattfinden, was uns die Möglichkeit gibt, `rational_t` einfach mit einem `int` bezüglich arithmetischer Operationen zu kombinieren.
 
 *Streams*\
 operator `<<` gibt in der geforderten Form #quote("<n/d>") bzw. #quote("<n>") für ganze Zahlen aus. Operator `>>` akzeptiert #quote("n") oder #quote("n/d") und setzt `failbit` bei ungültigem Format, wirft aber auch eine Ausnahme bei #quote("n/0").
