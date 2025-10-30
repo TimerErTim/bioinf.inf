@@ -1,0 +1,5 @@
+[vars]
+exercise_name = "SWE3_Peko_UE04"
+
+[task_config]
+includes = ["../common/tasks/sem-3.toml"]
