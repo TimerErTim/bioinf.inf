@@ -133,7 +133,7 @@ Das Verhalten des Euklidischen Algorithmus ist in @gcd-divergence-visualization 
   box(stroke: black, inset: 10pt,
     visualize_gcd_complexity(range(2, 512))
   ),
-  caption: [Zeitkomplexität des Euklidischen Algorithmus $max()$]
+  caption: [Zeitkomplexität des Euklidischen Algorithmus mit steigendem $a = b$]
 ) <gcd-complexity-visualization>
 
 Die Implementierung des Euklidischen Algorithmus im Projekt verwendet Absolutwerte, um negative Eingaben zu handhaben, und gibt im Grenzfall beider Eingaben gleich 0 den Wert 1 zurück, damit die Normalisierung definiert bleibt.
