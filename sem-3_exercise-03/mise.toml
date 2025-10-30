@@ -1,17 +1,5 @@
-[tasks."build:documentation"]
-description="Build the typst documentation"
-sources=["SWE3_Peko_UE03.typ", "assets/**/*"]
-outputs=["SWE3_Peko_UE03.pdf"]
-run = [
-    "typst compile SWE3_Peko_UE03.typ"
-]
+[vars]
+exercise_name = "SWE3_Peko_UE03"
 
-[tasks."package"]
-depends = ["build:documentation"]
-sources = ["SWE3_Peko_UE03/**/*", "SWE3_Peko_UE03.pdf", "SWE3_Peko_UE03.typ"]
-outputs = ["SWE3_Peko_UE03.zip"]
-run = [
-    "rm -f SWE3_Peko_UE03.zip",
-    { task = "package-into-zip SWE3_Peko_UE03.zip SWE3_Peko_UE03" },
-    { task = "package-into-zip SWE3_Peko_UE03.zip -s SWE3_Peko_UE03 SWE3_Peko_UE03.typ SWE3_Peko_UE03.pdf" }
-]
+[task_config]
+includes = ["../common/tasks/sem-3.toml"]

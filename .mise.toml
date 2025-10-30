@@ -6,6 +6,7 @@ TYPST_FONT_PATHS = "{{config_root}}/common/fonts"
 TYPST_ROOT = "{{config_root}}"
 
 [tasks.package-into-zip]
+hide = true
 quiet = true
 description = "Package specified paths (excluding .git-ignored files) into a zip file"
 usage = '''

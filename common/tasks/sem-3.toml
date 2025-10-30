@@ -1,0 +1,18 @@
+["build:documentation"]
+description="Build the typst documentation"
+sources=["{{vars.exercise_name}}.typ", "assets/**/*"]
+outputs=["{{vars.exercise_name}}.pdf"]
+run = [
+    "typst compile {{vars.exercise_name}}.typ"
+]
+
+["package"]
+description = "Package the documentation and the exercise"
+depends = ["build:documentation"]
+sources = ["{{vars.exercise_name}}/**/*", "{{vars.exercise_name}}.pdf", "{{vars.exercise_name}}.typ"]
+outputs = ["{{vars.exercise_name}}.zip"]
+run = [
+    "rm -f {{vars.exercise_name}}.zip",
+    "mise run package-into-zip {{vars.exercise_name}}.zip {{vars.exercise_name}}",
+    "mise run package-into-zip {{vars.exercise_name}}.zip -s {{vars.exercise_name}} {{vars.exercise_name}}.typ {{vars.exercise_name}}.pdf"
+]
