@@ -1,6 +1,6 @@
 ["build:documentation"]
 description="Build the typst documentation"
-sources=["{{vars.exercise_name}}.typ", "assets/**/*"]
+sources=["{{vars.exercise_name}}.typ", "../common/**/*", "assets/**/*"]
 outputs=["{{vars.exercise_name}}.pdf"]
 run = [
     "typst compile {{vars.exercise_name}}.typ"
