@@ -31,7 +31,7 @@
   for i in range(1, steps.len()) {
     let from = steps.at(i - 1)
     let to = steps.at(i)
-    line-plots.push(lq.line(from, to, stroke: color, tip: tiptoe.stealth, toe: tiptoe.bar))    
+    line-plots.push(lq.line(from, to, stroke: color, tip: tiptoe.stealth, toe: tiptoe.bar))
   }
 
   let start = steps.at(0)
@@ -61,34 +61,81 @@
     ylabel: lq.label([$b$], angle: 0deg),
     xlim: (0, auto),
     ylim: (0, auto),
-    ..line-plots
+    ..line-plots,
   )
+}
+
+#let visualize_gcd_divergence_distribution(a-range, b-range) = {
+  let x-end = a-range.reduce(calc.max)
+  let y-end = b-range.reduce(calc.max)
+  let size = calc.max(x-end, y-end) + 1
+
+  let data = for a in range(size) {
+    (for b in range(size) {
+      (0,)
+    },)
+  }
+
+  for a in a-range {
+    for b in b-range {
+      let steps = gcd_steps(a, b)
+      for step in steps {
+        data.at(step.at(1)).at(step.at(0)) += 1
+      }
+    }
+  }
+
+  let force-field = lq.quiver(
+    a-range,
+    b-range,
+    (a, b) => {
+      if b == 0 {
+        return (0, 0)
+      }
+
+      let next_gcd = gcd_step(a, b)
+      let step = lq.vec.subtract(next_gcd, (a, b))
+      // normalize
+      lq.vec.multiply(step, 1 / calc.norm(..step))
+    },
+    map: lq.color.map.viridis,
+    color: (x, y, u, v) => calc.norm(..lq.vec.subtract(if y == 0 { (0, 0) } else { gcd_step(x, y) }, (x, y))),
+    scale: 1,
+    pivot: start,
+  )
+
+  show: lq.set-diagram(height: 9cm, width: 9cm)
+  lq.diagram(
+    xlabel: [$a$],
+    ylabel: lq.label([$b$], angle: 0deg),
+    title: [Divergenzfeld des Euklidischen Algorithmus],
+    xaxis: (mirror: false, stroke: color.white.transparentize(100%)),
+    yaxis: (mirror: false, stroke: color.white.transparentize(100%)),
+    force-field,
+  )
+  h(5pt)
+  lq.colorbar(force-field)
 }
 
 #let visualize_gcd_steps_needed(x-coordinates, y-coordinates) = {
-  let color-mesh = lq.colormesh(
-      x-coordinates,
-      y-coordinates,
-      (x, y) => gcd_steps_needed(x, y),
-      map: lq.color.map.viridis,
-    )
-  
+  let color-mesh = lq.colormesh(x-coordinates, y-coordinates, (x, y) => gcd_steps_needed(x, y), map: lq.color.map.viridis)
+
+  show: lq.set-diagram(height: 9cm, width: 9cm)
   lq.diagram(
-    width: 9cm,
-    height: 9cm,
     xlabel: [$a$],
     ylabel: lq.label([$b$], angle: 0deg),
-    title: [Anzahl Schritte des Euklidischen Algorithmus],
+    title: [Benötigte Schritte des Euklidischen Algorithmus],
     xaxis: (mirror: false, stroke: color.white.transparentize(100%)),
     yaxis: (mirror: false, stroke: color.white.transparentize(100%)),
-
-    color-mesh
+    color-mesh,
   )
   h(5pt)
-  lq.colorbar(height: 9cm, color-mesh)
+  lq.colorbar(color-mesh, label: [Anzahl Schritte = $T(a, b)$])
 }
 
 #let visualize_gcd_results(x-coordinates, y-coordinates) = {
+  show: lq.set-diagram(height: 9cm, width: 9cm)
+
   let color-mesh = lq.colormesh(
     x-coordinates,
     y-coordinates,
@@ -96,20 +143,17 @@
     map: lq.color.map.viridis,
     norm: "log",
   )
-  
+
   lq.diagram(
-    width: 9cm,
-    height: 9cm,
     xlabel: [$a$],
     ylabel: lq.label([$b$], angle: 0deg),
-    title: [Ergebnis des Euklidischen Algorithmus = $gcd(a, b)$],
+    title: [Ergebnis des Euklidischen Algorithmus],
     xaxis: (mirror: false, stroke: color.white.transparentize(100%)),
     yaxis: (mirror: false, stroke: color.white.transparentize(100%)),
-
-    color-mesh
+    color-mesh,
   )
   h(5pt)
-  lq.colorbar(height: 9cm, color-mesh)
+  lq.colorbar(color-mesh, label: [$gcd(a, b)$])
 }
 
 #let visualize_gcd_complexity(a-range) = {
@@ -119,7 +163,6 @@
     title: [Zeitkomplexität des Euklidischen Algorithmus],
     xlabel: [$a$],
     ylabel: [Anzahl Schritte = $limits(max)_(i=0)^(a-1) T(a, i)$],
-    
-    lq.plot(a-range, a => range(a).map(b => gcd_steps_needed(a, b)).reduce(calc.max))
+    lq.plot(a-range, a => range(a).map(b => gcd_steps_needed(a, b)).reduce(calc.max)),
   )
 }

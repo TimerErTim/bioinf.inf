@@ -106,7 +106,8 @@ Beispiel für $gcd(48, 18)$:
 + $gcd(12, 6) => gcd(6, 12 mod 6)$
 + $gcd(6, 0) => 6$
 
-Das Verhalten des Euklidischen Algorithmus ist in @gcd-divergence-visualization dargestellt. Dabei wird die Divergenz des Algorithmus für verschiedene Eingaben visualisiert. In @gcd-steps-needed-visualization und @gcd-results-visualization wird die Anzahl der benötigten Schritte und die Ergebnisse des Euklidischen Algorithmus für $a, b in [0, 128]$ visualisiert. Die Zeitkomplexität wird in @gcd-complexity-visualization veranschaulicht, wobei sich gut das logarithmische Wachstum des Algorithmus erkennen lässt.
+Das Verhalten des Euklidischen Algorithmus ist in @gcd-divergence-visualization dargestellt. Dabei wird die Divergenz des Algorithmus für verschiedene Eingaben visualisiert. In @gcd-steps-needed-visualization und @gcd-results-visualization wird die Anzahl der benötigten Schritte und die Ergebnisse des Euklidischen Algorithmus für $a, b in [0, 128]$ visualisiert. @gcd-divergence-distribution-visualization zeigt ein Vektorfeld, das die Schrittrichtung (ähnlich wie in @gcd-divergence-visualization) über einen größeren Bereich visualisiert. Die einzelnen Richtungspfeile sind farblich entsprechend ihrer Länge gekennzeichnet. Zur besseren Übersicht werden die einzelnen Pfeile mit normalisierter Länge angezeigt. 
+Die Zeitkomplexität wird in @gcd-complexity-visualization veranschaulicht, wobei sich gut das logarithmische Wachstum des Algorithmus erkennen lässt.
 
 #let x-samples = (48, 23)
 #let y-samples = (18, 36)
@@ -128,6 +129,13 @@ Das Verhalten des Euklidischen Algorithmus ist in @gcd-divergence-visualization 
   ),
   caption: [Ergebnisse des Euklidischen Algorithmus für $a, b in [0, 128]$]
 ) <gcd-results-visualization>
+
+#figure(
+  box(stroke: black, inset: 10pt,
+    visualize_gcd_divergence_distribution(range(32 + 1), range(32 + 1))
+  ),
+  caption: [Schrittrichtungen des Euklidischen Algorithmus dargestellt als Richtungsvektoren mit farblicher Längenmarkierung]
+) <gcd-divergence-distribution-visualization>
 
 #figure(
   box(stroke: black, inset: 10pt,
