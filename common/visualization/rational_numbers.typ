@@ -2,7 +2,7 @@
 
 #import "@preview/cetz:0.3.4": canvas, draw, tree
 #import "@preview/suiji:0.4.0": *
-#import "@preview/lilaq:0.5.0" as lq
+#import "@local/lilaq:0.5.1" as lq
 #import "@preview/tiptoe:0.3.1"
 
 #let gcd_step(a, b) = {
