@@ -3,9 +3,9 @@
 #include "matrix_t.hpp"
 #include <sstream>
 
-using swe3::invalid_rational_error;
-using swe3::division_by_zero_error;
-using R = swe3::rational_t<int>;
+using invalid_rational_error = ::invalid_rational_error;
+using division_by_zero_error = ::division_by_zero_error;
+using R = ::rational_t<int>;
 
 TEST(Rational_Construct, Defaults) {
 	// Arrange & Act
@@ -287,9 +287,10 @@ TEST(Rational_Inverse, InvertNormalAndErrors) {
 	EXPECT_THROW(z.inverse(), division_by_zero_error);
 }
 
+
 TEST(Rational_Matrix, BasicOpsAndInverse) {
-	using M = swe3::matrix_t<int>;
-	using RM = swe3::rational_t<M>;
+	using M = ::matrix_t<int>;
+	using RM = ::rational_t<M>;
 	RM r{ M{2}, M{3} };
 	EXPECT_EQ(r.as_string(), "[2]/[3]");
 	r.inverse();

@@ -3,8 +3,6 @@
 #include <stdexcept>
 #include <string>
 
-namespace swe3 {
-
 class invalid_rational_error : public std::invalid_argument {
 public:
 	explicit invalid_rational_error(const std::string& message)
@@ -17,6 +15,5 @@ public:
 		: std::domain_error(message) {}
 };
 
-} // namespace swe3
 
 

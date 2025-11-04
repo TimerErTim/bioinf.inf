@@ -8,9 +8,7 @@
 #include <utility>
 
 // forward declare matrix_t for trait
-namespace swe3 { template <typename> class matrix_t; }
-
-namespace swe3 {
+template <typename> class matrix_t;
 
 #include "errors.hpp"
 
@@ -18,7 +16,11 @@ namespace swe3 {
 #include "operations.h"
 #include "rational_concepts.hpp"
 
-template <typename T> requires swe3::RationalElement<T>
+// helper trait to detect matrix_t specializations
+template <typename X> struct is_matrix : std::false_type {};
+template <typename U> struct is_matrix<matrix_t<U>> : std::true_type {};
+
+template <typename T> requires RationalElement<T>
 class rational_t {
 public:
 	using value_type = T;
@@ -158,7 +160,7 @@ private:
 				numerator_ /= g;
 				denominator_ /= g;
 			}
-		} else if constexpr (std::is_same_v<T, matrix_t<typename T::value_type>>) {
+		} else if constexpr (is_matrix<T>::value) {
 			auto g = ops::gcd(numerator_, denominator_);
 			if (!ops::equals(g, T{1})) {
 				numerator_ = numerator_ / g;
@@ -176,7 +178,5 @@ inline rational_t<int> operator+(int lhs, const rational_t<int>& rhs) noexcept {
 inline rational_t<int> operator-(int lhs, const rational_t<int>& rhs) noexcept { return rational_t<int>(lhs) - rhs; }
 inline rational_t<int> operator*(int lhs, const rational_t<int>& rhs) noexcept { return rational_t<int>(lhs) * rhs; }
 inline rational_t<int> operator/(int lhs, const rational_t<int>& rhs) { return rational_t<int>(lhs) / rhs; }
-
-} // namespace swe3
 
 

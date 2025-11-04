@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <cmath>
 
-namespace swe3 { template <typename> class matrix_t; }
+template <typename> class matrix_t;
 
 namespace ops {
 
@@ -50,13 +50,13 @@ inline int gcd(int a, int b) {
 
 // Forward declarations for matrix overloads
 template <typename T>
-bool divides(swe3::matrix_t<T> const& a, swe3::matrix_t<T> const& b);
+bool divides(::matrix_t<T> const& a, ::matrix_t<T> const& b);
 
 template <typename T>
-swe3::matrix_t<T> remainder(swe3::matrix_t<T> const& a, swe3::matrix_t<T> const& b);
+::matrix_t<T> remainder(::matrix_t<T> const& a, ::matrix_t<T> const& b);
 
 template <typename T>
-swe3::matrix_t<T> gcd(swe3::matrix_t<T> a, swe3::matrix_t<T> b);
+::matrix_t<T> gcd(::matrix_t<T> a, ::matrix_t<T> b);
 
 } // namespace ops
 
