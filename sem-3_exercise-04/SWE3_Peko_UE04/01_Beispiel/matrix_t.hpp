@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iosfwd>
-#include <stdexcept>
 
 template <typename T>
 class matrix_t {

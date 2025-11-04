@@ -3,9 +3,7 @@
 #include "matrix_t.hpp"
 #include <sstream>
 
-using invalid_rational_error = ::invalid_rational_error;
-using division_by_zero_error = ::division_by_zero_error;
-using R = ::rational_t<int>;
+using R = rational_t<int>;
 
 TEST(Rational_Construct, Defaults) {
 	// Arrange & Act
@@ -51,7 +49,7 @@ TEST(Rational_Construct, ZeroDenThrows) {
 	// Arrange
 	auto act = [] { R x{1, 0}; };
 	// Assert
-	EXPECT_THROW(act(), invalid_rational_error);
+	EXPECT_THROW(act(), ::invalid_rational_error);
 }
 
 TEST(Rational_Predicates, Signs) {

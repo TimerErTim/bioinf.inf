@@ -14,13 +14,12 @@ template <typename> class matrix_t;
 
 // generic ops used by rational_t
 #include "operations.h"
-#include "rational_concepts.hpp"
 
 // helper trait to detect matrix_t specializations
 template <typename X> struct is_matrix : std::false_type {};
 template <typename U> struct is_matrix<matrix_t<U>> : std::true_type {};
 
-template <typename T> requires RationalElement<T>
+template <typename T>
 class rational_t {
 public:
 	using value_type = T;
