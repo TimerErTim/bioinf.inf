@@ -12,22 +12,13 @@ namespace swe3 { template <typename> class matrix_t; }
 
 namespace swe3 {
 
-class invalid_rational_error : public std::invalid_argument {
-public:
-	explicit invalid_rational_error(const std::string& message)
-		: std::invalid_argument(message) {}
-};
-
-class division_by_zero_error : public std::domain_error {
-public:
-	explicit division_by_zero_error(const std::string& message)
-		: std::domain_error(message) {}
-};
+#include "errors.hpp"
 
 // generic ops used by rational_t
 #include "operations.h"
+#include "rational_concepts.hpp"
 
-template <typename T>
+template <typename T> requires swe3::RationalElement<T>
 class rational_t {
 public:
 	using value_type = T;

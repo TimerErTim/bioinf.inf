@@ -59,3 +59,17 @@ Jeder Test enthält aussagekräftige Namen und prüft erwarteten gegen tatsächl
 
 Die Klasse kapselt die notwendigen Operationen über eine dünne `ops`-Schicht, sodass die Anforderungen an `T` minimal bleiben. Normalisierung ist zweistufig: (1) Vorzeichen und Null-Kanonisierung für alle `T`; (2) optionale Reduktion über `gcd` dort, wo dies sinnvoll definiert ist (`int`, 1×1-Matrix mit Einheits-gcd). Die Operatoren sind als zweistellige `friend`-Funktionen realisiert (Barton–Nackman), um symmetrische Auflösung und Inlining zu fördern.
 
+== Variante 2: Concept-basierte Einschränkung
+
+Zusätzlich ist ein Concept `RationalElement` implementiert (`rational_concepts.hpp`). `rational_t<T>` wird darauf constrained. Das Concept beschreibt die minimal nötigen Operationen:
+
+```
+// Auszug der Anforderungen
+ops::is_zero(T), ops::is_negative(T), ops::negate(T), ops::equals(T,T), ops::gcd(T,T)
+T + T, T - T, T * T, T / T, T < T
+std::ostream << T, std::istream >> T
+T{0}, T{1}
+```
+
+Damit wird Variante 2 der Angabe erfüllt, ohne die Anforderungen über das Notwendige hinaus zu vergrößern. Für `int` und `matrix_t<int>` sind die Bedingungen erfüllt.
+
