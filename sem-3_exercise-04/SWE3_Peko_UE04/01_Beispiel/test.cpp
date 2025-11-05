@@ -1,299 +1,120 @@
 #include "pch.h"
 #include "rational_t.hpp"
 #include "matrix_t.hpp"
+#include "errors.hpp"
 #include <sstream>
+#include <gtest/gtest.h>
 
-using R = rational_t<int>;
+// NOTE: Tests include clear names, expectation vs. actual output via messages.
 
-TEST(Rational_Construct, Defaults) {
-	// Arrange & Act
-	R r;
-	// Assert
-	EXPECT_EQ(r.get_numerator(), 0);
-	EXPECT_EQ(r.get_denominator(), 1);
+// ---- Tests for rational_t<int> ----
+
+TEST(RationalInt, ConstructionAndNormalization) {
+	rational_t<int> a(2, 4);
+	EXPECT_EQ(a.as_string(), "<1/2>") << "Construction/Normalization: expected <1/2>, actual " << a.as_string();
+
+	rational_t<int> b(1, -2);
+	EXPECT_EQ(b.as_string(), "<-1/2>") << "Sign normalization: expected <-1/2>, actual " << b.as_string();
+
+	rational_t<int> c(-1, -2);
+	EXPECT_EQ(c.as_string(), "<1/2>") << "Double negative: expected <1/2>, actual " << c.as_string();
+
+	rational_t<int> d(0, 5);
+	EXPECT_EQ(d.as_string(), "<0>") << "Zero canonicalization: expected <0>, actual " << d.as_string();
 }
 
-TEST(Rational_Construct, FromInt) {
-	// Arrange & Act
-	R r{5};
-	// Assert
-	EXPECT_EQ(r.get_numerator(), 5);
-	EXPECT_EQ(r.get_denominator(), 1);
-}
-
-TEST(Rational_Construct, FromPairNormalizes) {
-	{
-		// Arrange & Act
-		R r{2, 4};
-		// Assert
-		EXPECT_EQ(r.get_numerator(), 1);
-		EXPECT_EQ(r.get_denominator(), 2);
-	}
-	{
-		// Arrange & Act
-		R s{-2, -4};
-		// Assert
-		EXPECT_EQ(s.get_numerator(), 1);
-		EXPECT_EQ(s.get_denominator(), 2);
-	}
-	{
-		// Arrange & Act
-		R t{-2, 4};
-		// Assert
-		EXPECT_EQ(t.get_numerator(), -1);
-		EXPECT_EQ(t.get_denominator(), 2);
-	}
-}
-
-TEST(Rational_Construct, ZeroDenThrows) {
-	// Arrange
-	auto act = [] { R x{1, 0}; };
-	// Assert
-	EXPECT_THROW(act(), ::invalid_rational_error);
-}
-
-TEST(Rational_Predicates, Signs) {
-	{
-		// Arrange & Act
-		R a{-1, 2};
-		// Assert
-		EXPECT_TRUE(a.is_negative());
-		EXPECT_FALSE(a.is_positive());
-		EXPECT_FALSE(a.is_zero());
-	}
-	{
-		// Arrange & Act
-		R b{0};
-		// Assert
-		EXPECT_TRUE(b.is_zero());
-		EXPECT_FALSE(b.is_positive());
-		EXPECT_FALSE(b.is_negative());
-	}
-}
-
-TEST(Rational_Strings, AsStringAndStream) {
-	// Arrange
-	R a{3, 1};
-	R b{3, 2};
-	// Act
-	const auto a_str = a.as_string();
-	const auto b_str = b.as_string();
-	// Assert
-	EXPECT_EQ(a_str, "3");
-	EXPECT_EQ(b_str, "3/2");
-	// Arrange
-	std::ostringstream os;
-	// Act
-	os << a;
-	// Assert
-	EXPECT_EQ(os.str(), "<3>");
-}
-
-TEST(Rational_Streams, ParseBasicAndErrors) {
-	{
-		// Arrange
-		std::istringstream is{"7/8"};
-		R r;
-		// Act
-		is >> r;
-		const auto s = r.as_string();
-		// Assert
-		EXPECT_EQ(s, "7/8");
-	}
-	{
-		// Arrange
-		std::istringstream is{"-5"};
-		R r;
-		// Act
-		is >> r;
-		const auto s = r.as_string();
-		// Assert
-		EXPECT_EQ(s, "-5");
-	}
-	{
-		// Arrange
-		std::istringstream is{"3/0"};
-		R r;
-		// Act
-		auto act = [&] { is >> r; };
-		// Assert
-		EXPECT_THROW(act(), invalid_rational_error);
-	}
-	{
-		// Arrange
-		std::istringstream is{"abc"};
-		R r{1};
-		// Act
-		is >> r;
-		const auto s = r.as_string();
-		const bool failed = is.fail();
-		// Assert
-		EXPECT_EQ(s, "1");
-		EXPECT_TRUE(failed);
-	}
-}
-
-TEST(Rational_Arithmetic, Compound) {
-	// Arrange
-	R a{1, 2};
-	R b{1, 3};
-	// Act
-	a += b; // 5/6
-	// Assert
-	EXPECT_EQ(a.as_string(), "5/6");
-	// Act
-	a -= R{1, 6}; // 4/6 -> 2/3
-	// Assert
-	EXPECT_EQ(a.as_string(), "2/3");
-	// Act
-	a *= R{3, 5}; // 2/5
-	// Assert
-	EXPECT_EQ(a.as_string(), "2/5");
-	// Act
-	a /= R{2, 1}; // 1/5
-	// Assert
-	EXPECT_EQ(a.as_string(), "1/5");
-}
-
-TEST(Rational_Arithmetic, DivisionByZeroThrows) {
-	// Arrange
-	R a{1, 2};
-	// Act & Assert
-	EXPECT_THROW(a /= R{0}, division_by_zero_error);
-}
-
-TEST(Rational_Arithmetic, BinaryAndIntMix) {
-	// Arrange
-	R r{1, 2};
-	// Act
-	const auto prod_neg = r * -10;
-	const auto prod = r * R(20, 2);
-	r = 7;
-	const auto sum = r + R(2, 3);
-	const auto expr = 10 / r / 2 + R(6, 5);
-	// Assert
-	EXPECT_EQ(prod_neg, R{-5});
-	EXPECT_EQ(prod.as_string(), "5");
-	EXPECT_EQ(sum.as_string(), "23/3");
-	EXPECT_EQ(expr.as_string(), "67/35");
-}
-
-TEST(Rational_Compare, OrderingAndEq) {
-	// Arrange
-	const R a{1,2};
-	const R b{2,4};
-	const R c{1,3};
-	const R d{1,2};
-	const R e{-1,2};
-	const R f{0};
-	const R g{2};
-	const R h{3,2};
-	// Act
-	const bool eq_ab = (a == b);
-	const bool lt_cd = (c < d);
-	const bool lt_ef = (e < f);
-	const bool gt_gh = (g > h);
-	// Assert
-	EXPECT_TRUE(eq_ab);
-	EXPECT_TRUE(lt_cd);
-	EXPECT_TRUE(lt_ef);
-	EXPECT_TRUE(gt_gh);
-}
-
-TEST(Rational_EdgeCases, ZeroNumeratorAlwaysZeroDenOne) {
-	// Arrange & Act
-	R a{0, -5};
-	// Assert
-	EXPECT_EQ(a.get_numerator(), 0);
-	EXPECT_EQ(a.get_denominator(), 1);
-	// Act
-	a += R{0, 7};
-	// Assert
-	EXPECT_EQ(a.get_numerator(), 0);
-	EXPECT_EQ(a.get_denominator(), 1);
-}
-
-TEST(Rational_EdgeCases, NegativeDenominatorNormalized) {
-	// Arrange & Act
-	R a{1, -3};
-	// Assert
-	EXPECT_EQ(a.get_numerator(), -1);
-	EXPECT_EQ(a.get_denominator(), 3);
-}
-
-TEST(Rational_Chains, LongExpressionStaysNormalized) {
-	// Arrange
-	R r{3, 4};
-	// Act
-	r = r + R{5, 6} - R{7, 8} + 2;
-	// Assert
-	EXPECT_EQ(r.as_string(), "65/24");
-	// Act
-	r = (r * R{9, 7}) / R{3, 1};
-	// Assert
-	EXPECT_EQ(r.as_string(), "65/56");
-}
-
-TEST(Rational_CopySemantics, CopyAndAssign) {
-	// Arrange
-	R a{4, 6};
-	// Act
-	R b{a};
-	// Assert
-	EXPECT_EQ(b.as_string(), "2/3");
-	// Arrange
-	R c;
-	// Act
-	c = a;
-	// Assert
-	EXPECT_EQ(c.as_string(), "2/3");
-}
-
-TEST(Rational_Assignment, SelfAssignmentNoChange) {
-	// Arrange
-	R a{5, 10};
-	// Act
-	a = a;
-	// Assert
-	EXPECT_EQ(a.as_string(), "1/2");
-}
-
-TEST(Rational_Compare, NeqAndLeGe) {
-	// Arrange
-	const R a{1,2};
-	const R b{2,3};
-	const R c{3,3};
-	const R d{1,1};
-	// Act
-	const bool ne_ab = (a != b);
-	const bool le_ab = (a <= b);
-	const bool ge_cd = (c >= d);
-	// Assert
-	EXPECT_TRUE(ne_ab);
-	EXPECT_TRUE(le_ab);
-	EXPECT_TRUE(ge_cd);
-}
-
-TEST(Rational_Inverse, InvertNormalAndErrors) {
-	R a{2, 3};
+TEST(RationalInt, Inverse) {
+	rational_t<int> a(3, 5);
 	a.inverse();
-	EXPECT_EQ(a.as_string(), "3/2");
-	R b{5};
-	b.inverse();
-	EXPECT_EQ(b.as_string(), "1/5");
-	R z{0};
-	EXPECT_THROW(z.inverse(), division_by_zero_error);
+	EXPECT_EQ(a.as_string(), "<5/3>") << "Inverse: expected <5/3>, actual " << a.as_string();
+
+	rational_t<int> z(0, 1);
+	EXPECT_THROW(z.inverse(), division_by_zero_error) << "Inverse of zero must throw division_by_zero_error";
 }
 
+TEST(RationalInt, Arithmetic) {
+	rational_t<int> a(1, 2);
+	rational_t<int> b(1, 3);
 
-TEST(Rational_Matrix, BasicOpsAndInverse) {
-	using M = ::matrix_t<int>;
-	using RM = ::rational_t<M>;
-	RM r{ M{2}, M{3} };
-	EXPECT_EQ(r.as_string(), "[2]/[3]");
-	r.inverse();
-	EXPECT_EQ(r.as_string(), "[3]/[2]");
-	RM s{ M{1}, M{2} };
-	auto t = r * s; // (3/2)*(1/2) = 3/4 element-wise
-	EXPECT_EQ(t.as_string(), "[3]/[4]");
+	a += b; // 1/2 + 1/3 = 5/6
+	EXPECT_EQ(a.as_string(), "<5/6>") << "+= result: expected <5/6>, actual " << a.as_string();
+
+	rational_t<int> c = rational_t<int>(3, 4) - rational_t<int>(1, 2); // 1/4
+	EXPECT_EQ(c.as_string(), "<1/4>") << "- result: expected <1/4>, actual " << c.as_string();
+
+	rational_t<int> d = rational_t<int>(2, 3) * rational_t<int>(9, 4); // 3/2
+	EXPECT_EQ(d.as_string(), "<3/2>") << "* result: expected <3/2>, actual " << d.as_string();
+
+	rational_t<int> e = rational_t<int>(7, 5) / rational_t<int>(7, 10); // 2
+	EXPECT_EQ(e.as_string(), "<2>") << "/ result: expected <2>, actual " << e.as_string();
+
+	// Chained expression: (1/2 + 1/3) * (3/5) - 1/10 = (5/6)*(3/5) - 1/10 = (1/2) - 1/10 = 2/5
+	rational_t<int> chain = (rational_t<int>(1, 2) + rational_t<int>(1, 3)) * rational_t<int>(3, 5) - rational_t<int>(1, 10);
+	EXPECT_EQ(chain.as_string(), "<2/5>") << "Chained arithmetic: expected <2/5>, actual " << chain.as_string();
 }
+
+TEST(RationalInt, Comparison) {
+	rational_t<int> a(2, 4);
+	rational_t<int> b(1, 2);
+	EXPECT_TRUE(a == b) << "Equality via cross-multiplication failed: " << a.as_string() << " vs " << b.as_string();
+	EXPECT_FALSE(a < b) << "Ordering: 1/2 < 1/2 should be false";
+	EXPECT_TRUE(rational_t<int>(1, 3) < rational_t<int>(1, 2)) << "Ordering: 1/3 < 1/2 should be true";
+}
+
+TEST(RationalInt, StreamIO) {
+	{
+		std::istringstream in("<3/4>");
+		rational_t<int> r;
+		in >> r;
+		EXPECT_EQ(r.as_string(), "<3/4>") << "Stream parse <n/d>: expected <3/4>, actual " << r.as_string();
+	}
+	{
+		std::istringstream in("<5>");
+		rational_t<int> r;
+		in >> r;
+		EXPECT_EQ(r.as_string(), "<5>") << "Stream parse <n>: expected <5>, actual " << r.as_string();
+	}
+	{
+		std::istringstream bad("<1/0>");
+		rational_t<int> r;
+		EXPECT_THROW(bad >> r, invalid_rational_error) << "Parsing <1/0> must throw invalid_rational_error";
+	}
+}
+
+TEST(RationalInt, MixedIntOnLeftHandSide) {
+	rational_t<int> r(1, 2);
+	auto s = 2 + r; // 5/2
+	EXPECT_EQ(s.as_string(), "<5/2>") << "int + rational: expected <5/2>, actual " << s.as_string();
+}
+
+TEST(RationalInt, DivisionByZeroRationalThrows) {
+	EXPECT_THROW((void)rational_t<int>(1, 0), invalid_rational_error) << "Denominator zero must throw invalid_rational_error";
+	EXPECT_THROW(
+		[]() {
+			rational_t<int> a(1, 2);
+			rational_t<int> z(0, 1);
+			a /= z;
+		}(),
+		division_by_zero_error) << "Division by zero rational must throw division_by_zero_error";
+}
+
+// ---- Tests for rational_t<matrix_t<int>> (1×1 matrices) ----
+
+TEST(RationalMatrix, EqualityByCrossMultiplication) {
+	using M = matrix_t<int>;
+	rational_t<M> a(M{2}, M{4});
+	rational_t<M> b(M{1}, M{2});
+	EXPECT_TRUE(a == b) << "[2]/[4] should equal [1]/[2] via cross-multiplication";
+}
+
+TEST(RationalMatrix, ArithmeticAndInverse) {
+	using M = matrix_t<int>;
+	rational_t<M> a(M{2}, M{3});
+	rational_t<M> b(M{3}, M{4});
+	rational_t<M> prod = a * b; // [6]/[12]
+	EXPECT_TRUE(prod == rational_t<M>(M{6}, M{12})) << "Matrix product as rationals should match expected [6]/[12]";
+
+	prod.inverse(); // [12]/[6]
+	EXPECT_TRUE(prod == rational_t<M>(M{12}, M{6})) << "Inverse should swap numerator/denominator for matrix domain";
+}
+

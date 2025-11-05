@@ -55,8 +55,8 @@ public:
   bool is_positive() const noexcept { return numerator_ > T{0}; }
   bool is_zero() const noexcept { return numerator_ == T{0}; }
 
-  // Replace this rational with its multiplicative inverse (swap
-  // numerator/denominator)
+  // Replace this rational with its multiplicative inverse. Swapping numerator
+  // and denominator preserves the invariant via normalize().
   void inverse() {
     if (is_zero()) {  // numerator is zero [would -> denominator is zero!]
       throw division_by_zero_error("cannot invert zero");
@@ -127,8 +127,8 @@ public:
 
   // Comparisons
   friend bool operator==(const rational_t &a, const rational_t &b) noexcept {
-    return ops::equals(a.numerator_, b.numerator_) &&
-           ops::equals(a.denominator_, b.denominator_);
+    // Cross-multiplication avoids reliance on prior reduction
+    return (a.numerator_ * b.denominator_) == (b.numerator_ * a.denominator_);
   }
   friend bool operator!=(const rational_t &a, const rational_t &b) noexcept {
     return !(a == b);
@@ -189,7 +189,7 @@ public:
     is.get();
     
     // Validate denominator
-    if (ops::is_zero(den)) {
+    if (den == T{0}) {
       is.setstate(std::ios::failbit);
       throw invalid_rational_error(
           "attempt to construct rational with zero denominator from stream");
