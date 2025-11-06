@@ -14,7 +14,6 @@ template <typename T>
 // Attempting recursive reference
 concept RationalElement =
     std::regular<T> &&         // copyable, assignable, equality comparable
-    std::totally_ordered<T> && // <, <=, >, >=, ==, !=
     std::constructible_from<T, int> && // must be constructible from int
                                        // literals like 0, 1
     requires(T a, T b, std::ostream os, std::istream is) {
@@ -27,6 +26,11 @@ concept RationalElement =
 
       // unary minus
       { -a } -> std::convertible_to<T>;
+
+      // comparisons
+      { a == b } -> std::same_as<bool>;
+      { a != b } -> std::same_as<bool>;
+      { a < b } -> std::same_as<bool>;
 
       // stream I/O
       { os << a } -> std::same_as<std::ostream&>;
@@ -41,7 +45,7 @@ public:
   rational_t() noexcept : numerator_(T{0}), denominator_(T{1}) {}
   rational_t(const value_type &numerator) noexcept : numerator_(numerator), denominator_(T{1}) {}
   rational_t(const value_type &numerator, const value_type &denominator) : numerator_(numerator), denominator_(denominator) {
-    if (denominator == T{0}) {
+    if (denominator_ == T{0}) {
       throw invalid_rational_error("denominator must not be zero");
     }
     normalize();
@@ -52,7 +56,7 @@ public:
   value_type const &get_denominator() const noexcept { return denominator_; }
 
   bool is_negative() const noexcept { return numerator_ < T{0}; }
-  bool is_positive() const noexcept { return numerator_ > T{0}; }
+  bool is_positive() const noexcept { return T{0} < numerator_; }
   bool is_zero() const noexcept { return numerator_ == T{0}; }
 
   // Replace this rational with its multiplicative inverse. Swapping numerator
@@ -214,13 +218,13 @@ private:
       return;
     }
 
-    // Reduce when a gcd is defined for T, a > 0 guarandeed
+    // Reduce with the gcd based on euclid algorithm, a > 0 guarandeed
     T a = is_positive() ? numerator_ : -numerator_;
     T b = denominator_;
-    while (b > T{0}) {
-        T c = a;
-        a = b % c;
-        b = c;
+    while (T{0} < b) {
+        T c = b;
+        b = a % b;
+        a = c;
     }
     numerator_ = numerator_ / a;
     denominator_ = denominator_ / a;
