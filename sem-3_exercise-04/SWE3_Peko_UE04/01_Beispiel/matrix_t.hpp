@@ -4,6 +4,7 @@
 // All operations reduce to operations on the single stored scalar value.
 
 #include <ostream>
+#include <istream>
 
 template <typename T>
 class matrix_t {
