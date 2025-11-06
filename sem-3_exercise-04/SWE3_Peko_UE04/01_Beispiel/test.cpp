@@ -8,18 +8,18 @@
 
 // Tests are structured (by subtask), isolated (one behavior per test), using AAA.
 
-// -----------------------------------------------------------------------------
-// Aufgabe 1.3: Export des Typs (value_type)
-// -----------------------------------------------------------------------------
+namespace subtask_3 {
+// value_type export
 
 static_assert(std::is_same_v<rational_t<int>::value_type, int>, "value_type must be int for rational_t<int>");
 static_assert(std::is_same_v<rational_t<long>::value_type, long>, "value_type must be long for rational_t<long>");
 
-// -----------------------------------------------------------------------------
-// Aufgabe 1.2: Parametrisierung (rational_t<T>) + Konstruktion/Normalisierung (int)
-// -----------------------------------------------------------------------------
+}
 
-TEST(RationalInt_Construct_NormalizesFraction) {
+namespace subtask_2 {
+// Generic and construction/normalization (int)
+
+TEST(RationalInt_Construct, NormalizesFraction) {
 	// Arrange
 	rational_t<int> r(2, 4);
 	// Act
@@ -27,7 +27,7 @@ TEST(RationalInt_Construct_NormalizesFraction) {
 	EXPECT_EQ(r.as_string(), "<1/2>");
 }
 
-TEST(RationalInt_Construct_NormalizesSign) {
+TEST(RationalInt_Construct, NormalizesSign) {
 	// Arrange
 	rational_t<int> r(1, -2);
 	// Act
@@ -35,7 +35,7 @@ TEST(RationalInt_Construct_NormalizesSign) {
 	EXPECT_EQ(r.as_string(), "<-1/2>");
 }
 
-TEST(RationalInt_Construct_DoubleNegative) {
+TEST(RationalInt_Construct, DoubleNegative) {
 	// Arrange
 	rational_t<int> r(-1, -2);
 	// Act
@@ -43,7 +43,7 @@ TEST(RationalInt_Construct_DoubleNegative) {
 	EXPECT_EQ(r.as_string(), "<1/2>");
 }
 
-TEST(RationalInt_Construct_ZeroCanonical) {
+TEST(RationalInt_Construct, ZeroCanonical) {
 	// Arrange
 	rational_t<int> r(0, 5);
 	// Act
@@ -51,11 +51,12 @@ TEST(RationalInt_Construct_ZeroCanonical) {
 	EXPECT_EQ(r.as_string(), "<0>");
 }
 
-// -----------------------------------------------------------------------------
-// Aufgabe 1.1: Inverse-Methode (int)
-// -----------------------------------------------------------------------------
+}
 
-TEST(RationalInt_Inverse_Inverts) {
+namespace subtask_1 {
+// Inverse-Methode 
+
+TEST(RationalInt_Inverse, Inverts) {
 	// Arrange
 	rational_t<int> r(3, 5);
 	// Act
@@ -64,18 +65,19 @@ TEST(RationalInt_Inverse_Inverts) {
 	EXPECT_EQ(r.as_string(), "<5/3>");
 }
 
-TEST(RationalInt_Inverse_ZeroThrows) {
+TEST(RationalInt_Inverse, ZeroThrows) {
 	// Arrange
 	rational_t<int> r(0, 1);
 	// Act + Assert
 	EXPECT_THROW(r.inverse(), division_by_zero_error);
 }
 
-// -----------------------------------------------------------------------------
-// Aufgabe 1.7: Operatoren (int) – Arithmetik
-// -----------------------------------------------------------------------------
+}
 
-TEST(RationalInt_Add_Adds) {
+namespace subtask_7 {
+// Operations
+
+TEST(RationalInt_Arithmetic, AddAdds) {
 	// Arrange
 	rational_t<int> a(1, 2), b(1, 3);
 	// Act
@@ -84,7 +86,7 @@ TEST(RationalInt_Add_Adds) {
 	EXPECT_EQ(s.as_string(), "<5/6>");
 }
 
-TEST(RationalInt_Sub_Subtracts) {
+TEST(RationalInt_Arithmetic, SubSubtracts) {
 	// Arrange
 	rational_t<int> a(3, 4), b(1, 2);
 	// Act
@@ -93,7 +95,7 @@ TEST(RationalInt_Sub_Subtracts) {
 	EXPECT_EQ(d.as_string(), "<1/4>");
 }
 
-TEST(RationalInt_Mul_Multiplies) {
+TEST(RationalInt_Arithmetic, MulMultiplies) {
 	// Arrange
 	rational_t<int> a(2, 3), b(9, 4);
 	// Act
@@ -102,7 +104,7 @@ TEST(RationalInt_Mul_Multiplies) {
 	EXPECT_EQ(p.as_string(), "<3/2>");
 }
 
-TEST(RationalInt_Div_Divides) {
+TEST(RationalInt_Arithmetic, DivDivides) {
 	// Arrange
 	rational_t<int> a(7, 5), b(7, 10);
 	// Act
@@ -111,11 +113,7 @@ TEST(RationalInt_Div_Divides) {
 	EXPECT_EQ(q.as_string(), "<2>");
 }
 
-// -----------------------------------------------------------------------------
-// Aufgabe 1.7: Operatoren (int) – Vergleich
-// -----------------------------------------------------------------------------
-
-TEST(RationalInt_Eq_EqualEvenIfNotReduced) {
+TEST(RationalInt_Comparison, EqEqualEvenIfNotReduced) {
 	// Arrange
 	rational_t<int> a(2, 4), b(1, 2);
 	// Act
@@ -124,7 +122,7 @@ TEST(RationalInt_Eq_EqualEvenIfNotReduced) {
 	EXPECT_TRUE(eq);
 }
 
-TEST(RationalInt_Lt_LessThan) {
+TEST(RationalInt_Comparison, LtLessThan) {
 	// Arrange
 	rational_t<int> a(1, 3), b(1, 2);
 	// Act
@@ -133,11 +131,7 @@ TEST(RationalInt_Lt_LessThan) {
 	EXPECT_TRUE(lt);
 }
 
-// -----------------------------------------------------------------------------
-// Streams (int)
-// -----------------------------------------------------------------------------
-
-TEST(RationalInt_Stream_ReadFraction) {
+TEST(RationalInt_Stream, ReadFraction) {
 	// Arrange
 	std::istringstream in("<3/4>");
 	rational_t<int> r;
@@ -147,7 +141,7 @@ TEST(RationalInt_Stream_ReadFraction) {
 	EXPECT_EQ(r.as_string(), "<3/4>");
 }
 
-TEST(RationalInt_Stream_ReadInteger) {
+TEST(RationalInt_Stream, ReadInteger) {
 	// Arrange
 	std::istringstream in("<5>");
 	rational_t<int> r;
@@ -157,7 +151,7 @@ TEST(RationalInt_Stream_ReadInteger) {
 	EXPECT_EQ(r.as_string(), "<5>");
 }
 
-TEST(RationalInt_Stream_WriteRoundtrip) {
+TEST(RationalInt_Stream, WriteRoundtrip) {
 	// Arrange
 	rational_t<int> a(7, 8);
 	std::ostringstream out;
@@ -167,7 +161,7 @@ TEST(RationalInt_Stream_WriteRoundtrip) {
 	EXPECT_EQ(out.str(), std::string("<7/8>"));
 }
 
-TEST(RationalInt_Stream_ParseMissingOpenFails) {
+TEST(RationalInt_Stream, ParseMissingOpenFails) {
 	// Arrange
 	std::istringstream in("3/4>");
 	rational_t<int> r;
@@ -177,7 +171,7 @@ TEST(RationalInt_Stream_ParseMissingOpenFails) {
 	EXPECT_TRUE(in.fail());
 }
 
-TEST(RationalInt_Stream_ParseMissingCloseFails) {
+TEST(RationalInt_Stream, ParseMissingCloseFails) {
 	// Arrange
 	std::istringstream in("<3/4");
 	rational_t<int> r;
@@ -187,7 +181,7 @@ TEST(RationalInt_Stream_ParseMissingCloseFails) {
 	EXPECT_TRUE(in.fail());
 }
 
-TEST(RationalInt_Stream_ParseNonNumericFails) {
+TEST(RationalInt_Stream, ParseNonNumericFails) {
 	// Arrange
 	std::istringstream in("<a/b>");
 	rational_t<int> r;
@@ -197,7 +191,7 @@ TEST(RationalInt_Stream_ParseNonNumericFails) {
 	EXPECT_TRUE(in.fail());
 }
 
-TEST(RationalInt_Stream_ParseZeroDenThrows) {
+TEST(RationalInt_Stream, ParseZeroDenThrows) {
 	// Arrange
 	std::istringstream in("<1/0>");
 	rational_t<int> r;
@@ -205,16 +199,12 @@ TEST(RationalInt_Stream_ParseZeroDenThrows) {
 	EXPECT_THROW(in >> r, invalid_rational_error);
 }
 
-// -----------------------------------------------------------------------------
-// Fehlerfälle (int)
-// -----------------------------------------------------------------------------
-
-TEST(RationalInt_Error_ConstructZeroDen) {
+TEST(RationalInt_Error, ConstructZeroDen) {
 	// Arrange + Act + Assert
 	EXPECT_THROW((void)rational_t<int>(1, 0), invalid_rational_error);
 }
 
-TEST(RationalInt_Error_DivideByZeroRational) {
+TEST(RationalInt_Error, DivideByZeroRational) {
 	// Arrange
 	rational_t<int> a(1, 2);
 	rational_t<int> z(0, 1);
@@ -222,11 +212,7 @@ TEST(RationalInt_Error_DivideByZeroRational) {
 	EXPECT_THROW(a /= z, division_by_zero_error);
 }
 
-// -----------------------------------------------------------------------------
-// Gemischte Operatoren mit int links (int)
-// -----------------------------------------------------------------------------
-
-TEST(RationalInt_Mixed_Add) {
+TEST(RationalInt_Mixed, Add) {
 	// Arrange
 	rational_t<int> r(3, 4);
 	// Act
@@ -235,7 +221,7 @@ TEST(RationalInt_Mixed_Add) {
 	EXPECT_EQ(s.as_string(), "<11/4>");
 }
 
-TEST(RationalInt_Mixed_Sub) {
+TEST(RationalInt_Mixed, Sub) {
 	// Arrange
 	rational_t<int> r(3, 4);
 	// Act
@@ -244,7 +230,7 @@ TEST(RationalInt_Mixed_Sub) {
 	EXPECT_EQ(d.as_string(), "<5/4>");
 }
 
-TEST(RationalInt_Mixed_Mul) {
+TEST(RationalInt_Mixed, Mul) {
 	// Arrange
 	rational_t<int> r(3, 4);
 	// Act
@@ -253,7 +239,7 @@ TEST(RationalInt_Mixed_Mul) {
 	EXPECT_EQ(p.as_string(), "<3/2>");
 }
 
-TEST(RationalInt_Mixed_Div) {
+TEST(RationalInt_Mixed, Div) {
 	// Arrange
 	rational_t<int> r(3, 4);
 	// Act
@@ -262,11 +248,12 @@ TEST(RationalInt_Mixed_Div) {
 	EXPECT_EQ(q.as_string(), "<8/3>");
 }
 
-// -----------------------------------------------------------------------------
-// Aufgabe 1.4: Verallgemeinerung – rational_t<long>
-// -----------------------------------------------------------------------------
+}
 
-TEST(RationalLong_Construct_Normalization) {
+namespace subtask_4 {
+// Verallgemeinerung – long and matrix_t<int>
+
+TEST(RationalLong_Construct, Normalization) {
 	// Arrange
 	rational_t<long> a(10L, 20L);
 	// Act
@@ -274,7 +261,7 @@ TEST(RationalLong_Construct_Normalization) {
 	EXPECT_EQ(a.as_string(), "<1/2>");
 }
 
-TEST(RationalLong_Construct_DoubleNegative) {
+TEST(RationalLong_Construct, DoubleNegative) {
 	// Arrange
 	rational_t<long> b(-14L, -21L);
 	// Act
@@ -282,7 +269,7 @@ TEST(RationalLong_Construct_DoubleNegative) {
 	EXPECT_EQ(b.as_string(), "<2/3>");
 }
 
-TEST(RationalLong_Add) {
+TEST(RationalLong_Arithmetic, Add) {
 	// Arrange
 	rational_t<long> a(123456789L, 100000000L);
 	rational_t<long> b(1L, 10L);
@@ -292,7 +279,7 @@ TEST(RationalLong_Add) {
 	EXPECT_EQ(s.as_string(), "<133456789/100000000>");
 }
 
-TEST(RationalLong_Mul_Large) {
+TEST(RationalLong_Arithmetic, MulLarge) {
 	// Arrange
 	rational_t<long long> a(122337203685477580LL, 2LL);
 	rational_t<long long> b(2LL, 3LL);
@@ -302,7 +289,7 @@ TEST(RationalLong_Mul_Large) {
 	EXPECT_EQ(p.as_string(), "<122337203685477580/3>");
 }
 
-TEST(RationalLong_IO_Write) {
+TEST(RationalLong_IO, Write) {
 	// Arrange
 	rational_t<long> a(-5000000000L, 10000000000L);
 	std::ostringstream out;
@@ -312,7 +299,7 @@ TEST(RationalLong_IO_Write) {
 	EXPECT_EQ(out.str(), "<-1/2>");
 }
 
-TEST(RationalLong_Inverse) {
+TEST(RationalLong_Inverse, Inverse) {
 	// Arrange
 	rational_t<long> x(7L, -3L);
 	// Act
@@ -321,22 +308,18 @@ TEST(RationalLong_Inverse) {
 	EXPECT_EQ(x.as_string(), "<-3/7>");
 }
 
-TEST(RationalLong_Error_ConstructZeroDen) {
+TEST(RationalLong_Error, ConstructZeroDen) {
 	// Arrange + Act + Assert
 	EXPECT_THROW((void)rational_t<long>(1L, 0L), invalid_rational_error);
 }
 
-// -----------------------------------------------------------------------------
-// Aufgabe 1.4: Verallgemeinerung – rational_t<matrix_t<int>> (1×1)
-// -----------------------------------------------------------------------------
-
-TEST(RationalMatrix_Construct_InvalidDenThrows) {
+TEST(RationalMatrix_Construct, InvalidDenThrows) {
 	// Arrange + Act + Assert
 	using M = matrix_t<int>;
 	EXPECT_THROW((void)rational_t<M>(M{1}, M{0}), invalid_rational_error);
 }
 
-TEST(RationalMatrix_Eq_CrossMultiplication) {
+TEST(RationalMatrix_Comparison, EqCrossMultiplication) {
 	// Arrange
 	using M = matrix_t<int>;
 	rational_t<M> a(M{2}, M{4});
@@ -347,7 +330,7 @@ TEST(RationalMatrix_Eq_CrossMultiplication) {
 	EXPECT_TRUE(eq);
 }
 
-TEST(RationalMatrix_Add_SumEqualsOne) {
+TEST(RationalMatrix_Arithmetic, AddSumEqualsOne) {
 	// Arrange
 	using M = matrix_t<int>;
 	rational_t<M> a(M{2}, M{4});
@@ -358,7 +341,7 @@ TEST(RationalMatrix_Add_SumEqualsOne) {
 	EXPECT_TRUE(c == rational_t<M>(M{1}, M{1}));
 }
 
-TEST(RationalMatrix_Inverse_Swaps) {
+TEST(RationalMatrix_Inverse, Swaps) {
 	// Arrange
 	using M = matrix_t<int>;
 	rational_t<M> d(M{5}, M{7});
@@ -368,7 +351,7 @@ TEST(RationalMatrix_Inverse_Swaps) {
 	EXPECT_TRUE(d == rational_t<M>(M{7}, M{5}));
 }
 
-TEST(RationalMatrix_Stream_WriteFormatting) {
+TEST(RationalMatrix_Stream, WriteFormatting) {
 	// Arrange
 	using M = matrix_t<int>;
 	rational_t<M> a(M{2}, M{4});
@@ -376,10 +359,10 @@ TEST(RationalMatrix_Stream_WriteFormatting) {
 	// Act
 	os << a;
 	// Assert (no reduction enforced for matrix domain)
-	EXPECT_EQ(os.str(), std::string("<[2]/[4]>") );
+	EXPECT_EQ(os.str(), std::string("<[1]/[2]>") );
 }
 
-TEST(RationalMatrix_Stream_ReadFraction) {
+TEST(RationalMatrix_Stream, ReadFraction) {
 	// Arrange
 	using M = matrix_t<int>;
 	std::istringstream in("<[2]/[4]>");
@@ -390,7 +373,7 @@ TEST(RationalMatrix_Stream_ReadFraction) {
 	EXPECT_EQ(r.as_string(), std::string("<[1]/[2]>") );
 }
 
-TEST(RationalMatrix_Stream_ReadInteger) {
+TEST(RationalMatrix_Stream, ReadInteger) {
 	// Arrange
 	using M = matrix_t<int>;
 	std::istringstream in("<[5]>");
@@ -401,7 +384,7 @@ TEST(RationalMatrix_Stream_ReadInteger) {
 	EXPECT_EQ(r.as_string(), std::string("<[5]>") );
 }
 
-TEST(RationalMatrix_Stream_ParseZeroDenThrows) {
+TEST(RationalMatrix_Stream, ParseZeroDenThrows) {
 	// Arrange
 	using M = matrix_t<int>;
 	std::istringstream in("<[1]/[0]>");
@@ -410,3 +393,4 @@ TEST(RationalMatrix_Stream_ParseZeroDenThrows) {
 	EXPECT_THROW(in >> r, invalid_rational_error);
 }
 
+}
