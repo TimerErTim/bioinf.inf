@@ -14,10 +14,10 @@ In `01_Beispiel` wurde die bisherige, auf `int` spezialisierte Klasse durch eine
 - `rational_t<T>` ist vollständig als Template im Header `rational_t.hpp` implementiert (inline), inklusive:
   - `value_type`-Export (`using value_type = T`)
   - Methode `inverse()` (Kehrwert mit Fehler bei Null)
-  - Normalisierung: Vorzeichen am Nenner wird nach oben gezogen, `0/x -> 0/1`. Eine Reduktion auf Normalform erfolgt für `T = int` mittels `std::gcd`. Für andere Bereiche (z. B. Matrizen) wird keine GGT-Reduktion erzwungen.
-  - Operatoren als zweistellige `friend`-Funktionen (Barton–Nackman): `+,-,*,/` sowie Vergleiche über Kreuzmultiplikation (`==,!=,<,<=,>,>=`), außerdem `<<`/`>>`.
+  - Normalisierung: Vorzeichen am Nenner wird nach oben gezogen, `0/x -> 0/1`. Eine Reduktion auf Normalform erfolgt für `T = int` mittels `ops::gcd`. Für Matrizen (1×1) wird auf Einheits-GGT (`[1]`) normalisiert.
+  - Operatoren als zweistellige `friend`-Funktionen (Barton–Nackman): `+,-,*,/` sowie `==,!=,<,<=,>,>=`, außerdem `<<`/`>>`.
 
-- Variante 2 (Concept): Ein Concept beschreibt die Minimalanforderungen an `T` (siehe unten). Es wird bewusst keine `ops`-Schicht verwendet.
+- Abstraktionsschicht `operations.h` (Variante 1 der Angabe): generische Inline-Funktionen im Namensraum `ops` und explizite Überladungen für `int`. Spezielle Überladungen für `matrix_t<T>` sind in `matrix_t.hpp` implementiert.
 
 - `matrix_t<T>`: zu Testzwecken als 1×1-Matrix umgesetzt (`matrix_t.hpp`). Die Operatoren sind als zweistellige `friend`-Funktionen inline implementiert. `matrix_t<T>::one()` und `::zero()` liefern Einheits- bzw. Nullmatrix.
 
@@ -25,23 +25,25 @@ In `01_Beispiel` wurde die bisherige, auf `int` spezialisierte Klasse durch eine
 
 == Anforderungen an den Typ T
 
-Damit `rational_t<T>` funktioniert, stellt die Implementierung möglichst geringe Anforderungen an `T`. Das Concept fordert nur:
+Damit `rational_t<T>` funktioniert, stellt die Implementierung möglichst geringe Anforderungen an `T`. Verwendet werden ausschließlich die Funktionen aus `ops` (Variante 1):
 
-- Konstruktion aus `int` (`T{0}`, `T{1}`)
-- Arithmetik: `+`, `-`, `*`, `/`, unäres `-`
-- Vergleich: `==`, `<` (andere Relationen werden daraus abgeleitet)
-- Streams: `<<`, `>>`
+```
+T abs(T const& a)
+bool divides(T const& a, T const& b)
+bool equals(T const& a, T const& b)
+T gcd(T a, T b)
+bool is_negative(T const& a)
+bool is_zero(T const& a)
+T negate(T const& a)
+T remainder(T const& a, T const& b)
+```
 
-Zusätzlich gilt:
-
-- Für `T` vom ganzzahligen Typ (z. B. `int`) wird auf Normalform reduziert (`std::gcd`).
-- Für allgemeine Bereiche ohne Euklidische Division (z. B. `matrix_t<T>`) erfolgt nur Vorzeichen-/Null-Kanonisierung; Gleichheit und Ordnung funktionieren korrekt über Kreuzmultiplikation.
-
+- Für `int` sind alle Funktionen überladen (Euclidischer Algorithmus, `%`, etc.).
 - Für `matrix_t<T>` (1×1):
   - Addition, Subtraktion, Multiplikation, Division und Vergleich leiten auf den enthaltenen Skalar `T` weiter.
-  - Damit kann `rational_t<matrix_t<T>>` Kehrwerte bilden und Ausdrücke auswerten, ohne zusätzliche algebraische Anforderungen an allgemeine Matrizen zu stellen.
+  - `ops::gcd` liefert die Einheitsmatrix `[1]`. `remainder` ist `[0]`. Damit kann `rational_t<matrix_t<T>>` Kehrwerte bilden und Ausdrücke auswerten, ohne zusätzliche algebraische Anforderungen an allgemeine Matrizen zu stellen.
 
-Hinweis: Eine echte Reduktion auf vollständig gekürzte Form erfordert in allgemeinen Bereichen eine Division durch den gcd. Für `int` ist dies gegeben; anderenfalls wird nur Vorzeichen-/Null-Normalisierung angewandt und Vergleiche erfolgen über Kreuzmultiplikation.
+Hinweis: Eine echte Reduktion auf vollständig gekürzte Form erfordert in allgemeinen Bereichen eine Division durch den gcd. Für `int` und die 1×1-Matrix über teilbaren Skalaren ist dies gegeben; anderenfalls wird nur Vorzeichen-/Null-Normalisierung angewandt.
 
 == Tests
 
@@ -57,5 +59,5 @@ Jeder Test enthält aussagekräftige Namen und prüft erwarteten gegen tatsächl
 
 Die Klasse kapselt die notwendigen Operationen über eine dünne `ops`-Schicht, sodass die Anforderungen an `T` minimal bleiben. Normalisierung ist zweistufig: (1) Vorzeichen und Null-Kanonisierung für alle `T`; (2) optionale Reduktion über `gcd` dort, wo dies sinnvoll definiert ist (`int`, 1×1-Matrix mit Einheits-gcd). Die Operatoren sind als zweistellige `friend`-Funktionen realisiert (Barton–Nackman), um symmetrische Auflösung und Inlining zu fördern.
 
-// Variante 2 mit Concepts wird verwendet; es gibt keine `ops`-Abstraktionsschicht.
+// Variante 2 mit Concepts wurde verworfen; die Implementierung nutzt ausschließlich die `ops`-Abstraktion (Variante 1 der Angabe).
 
