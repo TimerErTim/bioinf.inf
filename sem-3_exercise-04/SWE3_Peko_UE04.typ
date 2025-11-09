@@ -25,8 +25,6 @@ Die Klasse definiert minimale Anforderungen an `T` über ein Concept. Invariante
 
 - `matrix_t<T>`: zu Testzwecken als $1 times 1$-Matrix umgesetzt (`matrix_t.hpp`). Die Operatoren sind als zweistellige `friend`-Funktionen inline implementiert. `matrix_t<T>::one()` und `::zero()` liefern Einheits- bzw. Nullmatrix. Streams verwenden die Form `[x]`.
 
-- Gemischte Operatoren mit `int` links sind für `rational_t<int>` definiert (`int + rational_t<int>` etc.).
-
 == Anforderungen an den Typ T
 
 Damit `rational_t<T>` funktioniert, stellt die Implementierung möglichst geringe Anforderungen an `T`. Das Concept fordert:

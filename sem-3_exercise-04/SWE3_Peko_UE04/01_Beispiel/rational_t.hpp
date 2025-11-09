@@ -303,21 +303,3 @@ private:
   value_type numerator_;
   value_type denominator_;
 };
-
-// Convenience overloads for mixing with int on the LHS for rational_t<int>
-/** @brief int + rational */
-inline rational_t<int> operator+(int lhs, const rational_t<int> &rhs) noexcept {
-  return rational_t<int>(lhs) + rhs;
-}
-/** @brief int - rational */
-inline rational_t<int> operator-(int lhs, const rational_t<int> &rhs) noexcept {
-  return rational_t<int>(lhs) - rhs;
-}
-/** @brief int * rational */
-inline rational_t<int> operator*(int lhs, const rational_t<int> &rhs) noexcept {
-  return rational_t<int>(lhs) * rhs;
-}
-/** @brief int / rational */
-inline rational_t<int> operator/(int lhs, const rational_t<int> &rhs) {
-  return rational_t<int>(lhs) / rhs;
-}

@@ -341,6 +341,17 @@ TEST(RationalMatrix_Arithmetic, AddSumEqualsOne) {
 	EXPECT_TRUE(c == rational_t<M>(M{1}, M{1}));
 }
 
+TEST(RationalMatrix_Arithmetic, AddLhsBareMatrix) {
+	// Arrange
+	using M = matrix_t<int>;
+	M a{ 1 };
+	rational_t<M> b(M{ 1 }, M{ 2 });
+	// Act
+	rational_t<M> c = a + b;
+	// Assert
+	EXPECT_EQ(c, rational_t<M>(M{ 3 }, M{ 2 }));
+}
+
 TEST(RationalMatrix_Inverse, Swaps) {
 	// Arrange
 	using M = matrix_t<int>;
