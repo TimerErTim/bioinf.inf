@@ -52,6 +52,9 @@ TEST(FlugTests, ConstructsAndStreams) {
 }
 
 TEST(FlugTests, ThrowsOnSameOriginDestination) {
+	// Arrange
+	// (All fields valid except origin == destination)
+	// Act & Assert
 	EXPECT_THROW((Flug("LH1", "LH", "Linz", "Linz", "08:00", "09:00", 60)), std::invalid_argument);
 }
 
@@ -94,116 +97,162 @@ TEST(FlugreiseTests, RejectsBrokenConnectivity) {
 }
 
 TEST(PersonTests, BoundaryAgesValidAndInvalid) {
-	// Arrange + Act + Assert
-	EXPECT_NO_THROW((Person("A", "B", Gender::Male, 0, "Addr", "4111111111111111")));
-	EXPECT_NO_THROW((Person("A", "B", Gender::Female, 130, "Addr", "4111111111111111")));
-	EXPECT_THROW((Person("A", "B", Gender::Diverse, -1, "Addr", "4111111111111111")), std::invalid_argument);
-	EXPECT_THROW((Person("A", "B", Gender::Diverse, 131, "Addr", "4111111111111111")), std::invalid_argument);
+	// Arrange
+	std::string cc = "4111111111111111";
+
+	// Act & Assert
+	EXPECT_NO_THROW((Person("A", "B", Gender::Male, 0, "Addr", cc)));
+	EXPECT_NO_THROW((Person("A", "B", Gender::Female, 130, "Addr", cc)));
+	EXPECT_THROW((Person("A", "B", Gender::Diverse, -1, "Addr", cc)), std::invalid_argument);
+	EXPECT_THROW((Person("A", "B", Gender::Diverse, 131, "Addr", cc)), std::invalid_argument);
 }
 
 TEST(PersonTests, ThrowsOnEmptyFields) {
-	// Empty first/last/address
-	EXPECT_THROW((Person("", "B", Gender::Male, 10, "Addr", "4111111111111111")), std::invalid_argument);
-	EXPECT_THROW((Person("A", "", Gender::Male, 10, "Addr", "4111111111111111")), std::invalid_argument);
-	EXPECT_THROW((Person("A", "B", Gender::Male, 10, "", "4111111111111111")), std::invalid_argument);
+	// Arrange
+	std::string cc = "4111111111111111";
+
+	// Act & Assert (Empty first/last/address)
+	EXPECT_THROW((Person("", "B", Gender::Male, 10, "Addr", cc)), std::invalid_argument);
+	EXPECT_THROW((Person("A", "", Gender::Male, 10, "Addr", cc)), std::invalid_argument);
+	EXPECT_THROW((Person("A", "B", Gender::Male, 10, "", cc)), std::invalid_argument);
 }
 
 TEST(PersonTests, CreditCardDigitsOnlyRequired) {
-	// Non-digit characters should be rejected
-	EXPECT_THROW((Person("A", "B", Gender::Male, 10, "Addr", "4111 1111 1111 1111")), std::invalid_argument);
-	EXPECT_THROW((Person("A", "B", Gender::Male, 10, "Addr", "4111-1111-1111-1111")), std::invalid_argument);
-	EXPECT_THROW((Person("A", "B", Gender::Male, 10, "Addr", "abcd")), std::invalid_argument);
+	// Arrange
+	std::string first = "A", last = "B", addr = "Addr";
+	int age = 10;
+
+	// Act & Assert (Non-digit characters should be rejected)
+	EXPECT_THROW((Person(first, last, Gender::Male, age, addr, "4111 1111 1111 1111")), std::invalid_argument);
+	EXPECT_THROW((Person(first, last, Gender::Male, age, addr, "4111-1111-1111-1111")), std::invalid_argument);
+	EXPECT_THROW((Person(first, last, Gender::Male, age, addr, "abcd")), std::invalid_argument);
 }
 
 TEST(PersonTests, MaskedCreditCardShortAndLong) {
 	// Arrange
 	Person p_long("A", "B", Gender::Male, 20, "Addr", "4242424242424242");
-	// Act + Assert
-	EXPECT_EQ(p_long.maskedCreditCard().size(), std::string("4242424242424242").size());
-	EXPECT_EQ(p_long.maskedCreditCard().substr(p_long.maskedCreditCard().size() - 4), "4242");
+	// Act
+	std::string masked_long = p_long.maskedCreditCard();
+	// Assert
+	EXPECT_EQ(masked_long.size(), std::string("4242424242424242").size());
+	EXPECT_EQ(masked_long.substr(masked_long.size() - 4), "4242");
 
-	// For length <= 4 → fully masked
+	// Arrange (length <= 4 → fully masked)
 	Person p_len4("A", "B", Gender::Male, 20, "Addr", "1234");
-	EXPECT_EQ(p_len4.maskedCreditCard(), "****");
 	Person p_len3("A", "B", Gender::Male, 20, "Addr", "123");
-	EXPECT_EQ(p_len3.maskedCreditCard(), "***");
+	// Act
+	std::string m4 = p_len4.maskedCreditCard();
+	std::string m3 = p_len3.maskedCreditCard();
+	// Assert
+	EXPECT_EQ(m4, "****");
+	EXPECT_EQ(m3, "***");
 }
 
 TEST(PersonTests, StreamsGenderVariants) {
+	// Arrange
 	Person pm("John", "Doe", Gender::Male, 30, "A", "4111111111111111");
 	Person pf("Jane", "Doe", Gender::Female, 30, "A", "4111111111111111");
 	Person pd("Alex", "Taylor", Gender::Diverse, 30, "A", "4111111111111111");
 
+	// Act
 	std::ostringstream osm, osf, osd;
 	osm << pm;
 	osf << pf;
 	osd << pd;
 
+	// Assert
 	EXPECT_NE(osm.str().find("Male"), std::string::npos);
 	EXPECT_NE(osf.str().find("Female"), std::string::npos);
 	EXPECT_NE(osd.str().find("Diverse"), std::string::npos);
 }
 
 TEST(PersonTests, LuhnKnownVectors) {
-	// Classic Luhn examples
-	EXPECT_TRUE(Person::isValidCreditCard("79927398713"));   // valid
-	EXPECT_FALSE(Person::isValidCreditCard("79927398714"));  // invalid
-	// Other common test PANs
-	EXPECT_TRUE(Person::isValidCreditCard("4242424242424242"));
-	EXPECT_TRUE(Person::isValidCreditCard("4012888888881881"));
+	// Arrange
+	std::string v1 = "79927398713";
+	std::string v1_bad = "79927398714";
+	std::string pan1 = "4242424242424242";
+	std::string pan2 = "4012888888881881";
+
+	// Act
+	bool ok1 = Person::isValidCreditCard(v1);
+	bool bad1 = Person::isValidCreditCard(v1_bad);
+	bool ok_pan1 = Person::isValidCreditCard(pan1);
+	bool ok_pan2 = Person::isValidCreditCard(pan2);
+
+	// Assert
+	EXPECT_TRUE(ok1);     // classic valid
+	EXPECT_FALSE(bad1);   // classic invalid
+	EXPECT_TRUE(ok_pan1);
+	EXPECT_TRUE(ok_pan2);
 }
 
 TEST(FlugTests, ThrowsOnEmptyFields) {
-	EXPECT_THROW((Flug("", "LH", "Linz", "Frankfurt", "08:00", "09:00", 60)), std::invalid_argument);
-	EXPECT_THROW((Flug("LH1", "", "Linz", "Frankfurt", "08:00", "09:00", 60)), std::invalid_argument);
-	EXPECT_THROW((Flug("LH1", "LH", "", "Frankfurt", "08:00", "09:00", 60)), std::invalid_argument);
-	EXPECT_THROW((Flug("LH1", "LH", "Linz", "", "08:00", "09:00", 60)), std::invalid_argument);
-	EXPECT_THROW((Flug("LH1", "LH", "Linz", "Frankfurt", "", "09:00", 60)), std::invalid_argument);
-	EXPECT_THROW((Flug("LH1", "LH", "Linz", "Frankfurt", "08:00", "", 60)), std::invalid_argument);
+	// Arrange
+	std::string fn = "LH1", al = "LH", o = "Linz", d = "Frankfurt", dep = "08:00", arr = "09:00";
+	int dur = 60;
+
+	// Act & Assert
+	EXPECT_THROW((Flug("", al, o, d, dep, arr, dur)), std::invalid_argument);
+	EXPECT_THROW((Flug(fn, "", o, d, dep, arr, dur)), std::invalid_argument);
+	EXPECT_THROW((Flug(fn, al, "", d, dep, arr, dur)), std::invalid_argument);
+	EXPECT_THROW((Flug(fn, al, o, "", dep, arr, dur)), std::invalid_argument);
+	EXPECT_THROW((Flug(fn, al, o, d, "", arr, dur)), std::invalid_argument);
+	EXPECT_THROW((Flug(fn, al, o, d, dep, "", dur)), std::invalid_argument);
 }
 
 TEST(FlugTests, ThrowsOnNonPositiveDuration) {
-	EXPECT_THROW((Flug("LH1", "LH", "Linz", "Frankfurt", "08:00", "09:00", 0)), std::invalid_argument);
-	EXPECT_THROW((Flug("LH1", "LH", "Linz", "Frankfurt", "08:00", "09:00", -10)), std::invalid_argument);
+	// Arrange
+	std::string fn = "LH1", al = "LH", o = "Linz", d = "Frankfurt", dep = "08:00", arr = "09:00";
+
+	// Act & Assert
+	EXPECT_THROW((Flug(fn, al, o, d, dep, arr, 0)), std::invalid_argument);
+	EXPECT_THROW((Flug(fn, al, o, d, dep, arr, -10)), std::invalid_argument);
 }
 
 TEST(FlugreiseTests, EmptyItineraryAggregates) {
+	// Arrange
 	Person p("X", "Y", Gender::Male, 25, "Addr", "4111111111111111");
 	Flugreise r(p);
 
+	// Act
+	std::ostringstream os;
+	os << r;
+	std::string s = os.str();
+
+	// Assert
 	EXPECT_TRUE(r.isValidItinerary());
 	EXPECT_EQ(r.totalFlightMinutes(), 0);
 	EXPECT_EQ(r.firstDepartureTime(), "");
 	EXPECT_EQ(r.lastArrivalTime(), "");
-
-	std::ostringstream os;
-	os << r;
-	std::string s = os.str();
 	EXPECT_NE(s.find("total_flight_time=0 min"), std::string::npos);
 	// No window printed for empty itinerary
 	EXPECT_EQ(s.find("window=") == std::string::npos, true);
 }
 
 TEST(FlugreiseTests, SingleLegWindow) {
+	// Arrange
 	Person p("X", "Y", Gender::Male, 25, "Addr", "4111111111111111");
 	Flugreise r(p);
-	r.addFlight(Flug("OS1", "Austrian", "Linz", "Frankfurt", "08:00", "09:00", 60));
 
+	// Act
+	r.addFlight(Flug("OS1", "Austrian", "Linz", "Frankfurt", "08:00", "09:00", 60));
+	std::ostringstream os;
+	os << r;
+
+	// Assert
 	EXPECT_TRUE(r.isValidItinerary());
 	EXPECT_EQ(r.totalFlightMinutes(), 60);
 	EXPECT_EQ(r.firstDepartureTime(), "08:00");
 	EXPECT_EQ(r.lastArrivalTime(), "09:00");
-
-	std::ostringstream os;
-	os << r;
 	EXPECT_NE(os.str().find("window=08:00 -> 09:00"), std::string::npos);
 }
 
 TEST(FlugreiseTests, LargeItineraryAggregation) {
+	// Arrange
 	Person p("Mass", "Test", Gender::Diverse, 33, "Addr", "4111111111111111");
 	Flugreise r(p);
 
-	// Create 50 connected legs with increasing duration
+	// Act (Create 50 connected legs with increasing duration)
 	int expected_total = 0;
 	std::string prev_city = "C0";
 	for (int i = 0; i < 50; ++i) {
@@ -214,6 +263,7 @@ TEST(FlugreiseTests, LargeItineraryAggregation) {
 		prev_city = next_city;
 	}
 
+	// Assert
 	EXPECT_TRUE(r.isValidItinerary());
 	EXPECT_EQ(r.totalFlightMinutes(), expected_total);
 	EXPECT_EQ(r.firstDepartureTime(), "T0");
@@ -221,11 +271,13 @@ TEST(FlugreiseTests, LargeItineraryAggregation) {
 }
 
 TEST(FlugreiseTests, CopySemanticsAndStreamingStable) {
+	// Arrange
 	Person p("Copy", "Check", Gender::Female, 29, "Addr", "4111111111111111");
 	Flugreise r1(p);
 	r1.addFlight(Flug("A1", "A", "L1", "L2", "08:00", "09:00", 60));
 	r1.addFlight(Flug("A2", "A", "L2", "L3", "10:00", "11:30", 90));
 
+	// Act
 	std::ostringstream os1;
 	os1 << r1;
 
@@ -233,18 +285,22 @@ TEST(FlugreiseTests, CopySemanticsAndStreamingStable) {
 	std::ostringstream os2;
 	os2 << r2;
 
+	// Assert
 	EXPECT_EQ(os1.str(), os2.str());
 	EXPECT_TRUE(r2.isValidItinerary());
 	EXPECT_EQ(r2.totalFlightMinutes(), 150);
 }
 
 TEST(FlugreiseTests, ConnectivityCheckedOnEachAdd) {
+	// Arrange
 	Person p("Conn", "Guard", Gender::Male, 44, "Addr", "4111111111111111");
 	Flugreise r(p);
 
+	// Act
 	r.addFlight(Flug("S1", "S", "A", "B", "08:00", "09:00", 60));
 	r.addFlight(Flug("S2", "S", "B", "C", "09:30", "10:20", 50)); // ok
 
+	// Assert
 	// Now break at third add
 	EXPECT_THROW(r.addFlight(Flug("S3", "S", "X", "Y", "10:30", "11:00", 30)), std::invalid_argument);
 
