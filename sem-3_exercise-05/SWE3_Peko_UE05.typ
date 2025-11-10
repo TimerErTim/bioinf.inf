@@ -22,6 +22,7 @@ Die Zeiten werden bewusst als Strings gehalten, um Date/Time-Abhängigkeiten (Ze
 - *Einfaches Zeitmodell*: Zeiten als Strings, Dauer als `int` Minuten. Dadurch einfache und robuste Ausgabe, ohne Plattformdetails.
 - *Formatierte Ausgaben*: `operator<<` für `Person`, `Flug`, `Flugreise` erzeugen kompakte, menschenlesbare Zeilen.
 - *Sicheres Logging*: Kreditkarten werden via `maskedCreditCard()` nur mit letzten vier Ziffern ausgegeben.
+- *Domänensprache*: Die Klassen sind nach der Domäne benannt, um die Lesbarkeit zu verbessern. Die Domäne wird in deutscher Sprache benannt und spiegelt sich auch so im Code wieder.
 
 == Validierung & Fehlerbehandlung
 
