@@ -2,3 +2,59 @@
 #import "../common/components.typ": *
 
 #show: documentation-template.with(title: "SWE3 - Übung 5", semester-term: "WS 2025/26", author: "Tim Peko", aufwand-in-h: "-")
+
+
+= Aufgabe: Flugreisen
+
+== Lösungsidee
+
+Die Domäne wird über drei Klassen modelliert:
+
+- *`Person`*: Vor- und Nachname, `Gender` (enum), Alter, Adresse, Kreditkarten-Nummer. Invarianten: Namen/Adresse nicht leer, Alter in `[0, 130]`, Kreditkarte nur Ziffern und Luhn-valide. Ausgabe maskiert die Karte (nur letzte 4 Ziffern sichtbar).
+- *`Flug`*: Flugnummer, Fluglinie, `origin`/`destination`, Abflug-/Ankunftszeit (als Strings für Portabilität), Flugdauer in Minuten (> 0). Invarianten: alle Strings nicht leer, `origin != destination`.
+- *`Flugreise`*: Reisende Person und Sequenz von `Flug`-Segmenten. Invariante: Itinerary ist verbunden (`destination[i] == origin[i+1]`). Aggregationen: gesamte Flugzeit (Summe) sowie Zeitfenster (erste Abflug-/letzte Ankunftszeit).
+
+Die Zeiten werden bewusst als Strings gehalten, um Date/Time-Abhängigkeiten (Zeitzonen/Locale/C++20) zu vermeiden; Validierung bezieht sich daher auf Nicht-Leere und Konsistenz der Orte. Für die Übungen genügt das und erlaubt portable Tests.
+
+== Designentscheidungen
+
+- *Kapselung*: Alle Klassen bieten lesende Getter, Validierung erfolgt in den Konstruktoren (Fehler → `std::invalid_argument`).
+- *Einfaches Zeitmodell*: Zeiten als Strings, Dauer als `int` Minuten. Dadurch einfache und robuste Ausgabe, ohne Plattformdetails.
+- *Formatierte Ausgaben*: `operator<<` für `Person`, `Flug`, `Flugreise` erzeugen kompakte, menschenlesbare Zeilen.
+- *Sicheres Logging*: Kreditkarten werden via `maskedCreditCard()` nur mit letzten vier Ziffern ausgegeben.
+
+== Validierung & Fehlerbehandlung
+
+- `Person` prüft Zwangsinvarianten inkl. Luhn-Check der Kreditkarte. Dazu existiert `static bool isValidCreditCard(...)`.
+- `Flug` verifiziert Pflichtfelder, ungleiche Orte und positive Dauer.
+- `Flugreise::addFlight(...)` erzwingt die Verbindung der Segmente (Exception bei Bruch).
+
+Alle Validierungsfehler werden als `std::invalid_argument` signalisiert und in den Unit-Tests explizit geprüft.
+
+== Teststrategie
+
+Die Tests folgen dem AAA-Prinzip (Arrange-Act-Assert).
+
+- *Person*: Konstruktion mit valider Testnummer (`4111 1111 1111 1111`), Maskierung, Luhn-Validierung; Negativfall (falsche Karte).
+- *Flug*: Konstruktion, Streaming, Negativfall bei `origin == destination`.
+- *Flugreise*: Hinzufügen mehrerer Segmente (Linz → Frankfurt → Denver → Las Vegas), Aggregation von Minuten, Zeitfenster, Streaming; Negativfall (gebrochene Konnektivität).
+
+Die `main.cpp` startet GoogleTest; alle Tests laufen automatisiert.
+
+== Ergebnisse
+
+- *Datenmodell*: ist klar, portabel und robust gegen ungültige Eingaben.
+- *Ausgaben*: sind kompakt und enthalten alle geforderten Informationen.
+- *Testfälle*: decken Konstruktion, Validierung, Formatierung und Reiserouten-Konnektivität ab.
+
+=== Beispielausgabe
+
+```txt
+TRIP[
+  Person[Jane Roe, Female, 28, Street 1, ************1111]
+  FLIGHT[OS1, Austrian, Linz -> Frankfurt, dep 08:00, arr 09:00, 60 min]
+  FLIGHT[UA2, United, Frankfurt -> Denver, dep 10:30, arr 18:00, 510 min]
+  FLIGHT[WN3, Southwest, Denver -> Las Vegas, dep 19:00, arr 20:30, 90 min]
+  total_flight_time=660 min, window=08:00 -> 20:30
+]
+```

@@ -124,11 +124,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="person.h" />
+    <ClInclude Include="flug.h" />
+    <ClInclude Include="flugreise.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="person.cpp" />
+    <ClCompile Include="flug.cpp" />
+    <ClCompile Include="flugreise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
