@@ -64,13 +64,16 @@ Die `main.cpp` startet GoogleTest; alle Tests laufen automatisiert.
 
 === Testfälle
 
-
+#figure(
+    image("assets/testcases-task1.png", width: 75%),
+    caption: "Testfälle der Aufgabe 1"
+)
 
 === Beispielausgabe
 
 ```txt
 TRIP[
-  Person[Jane Roe, Female, 28, Street 1, ************1111]
+  PERSON[Jane Roe, Female, 28, Street 1, ************1111]
   FLIGHT[OS1, Austrian, Linz -> Frankfurt, dep 08:00, arr 09:00, 60 min]
   FLIGHT[UA2, United, Frankfurt -> Denver, dep 10:30, arr 18:00, 510 min]
   FLIGHT[WN3, Southwest, Denver -> Las Vegas, dep 19:00, arr 20:30, 90 min]
