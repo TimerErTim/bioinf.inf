@@ -130,16 +130,16 @@ TEST(PersonTests, CreditCardDigitsOnlyRequired) {
 
 TEST(PersonTests, MaskedCreditCardShortAndLong) {
 	// Arrange
-	Person p_long("A", "B", Gender::Male, 20, "Addr", "4242424242424242");
+	Person p_long("A", "B", Gender::Male, 20, "Addr", "4111111111111111");
 	// Act
 	std::string masked_long = p_long.maskedCreditCard();
 	// Assert
-	EXPECT_EQ(masked_long.size(), std::string("4242424242424242").size());
-	EXPECT_EQ(masked_long.substr(masked_long.size() - 4), "4242");
+	EXPECT_EQ(masked_long.size(), std::string("4111111111111111").size());
+	EXPECT_EQ(masked_long, "************1111");
 
 	// Arrange (length <= 4 → fully masked)
-	Person p_len4("A", "B", Gender::Male, 20, "Addr", "1234");
-	Person p_len3("A", "B", Gender::Male, 20, "Addr", "123");
+	Person p_len4("A", "B", Gender::Male, 20, "Addr", "4242");
+	Person p_len3("A", "B", Gender::Male, 20, "Addr", "422");
 	// Act
 	std::string m4 = p_len4.maskedCreditCard();
 	std::string m3 = p_len3.maskedCreditCard();

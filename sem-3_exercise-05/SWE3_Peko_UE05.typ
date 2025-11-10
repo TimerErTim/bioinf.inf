@@ -36,8 +36,23 @@ Alle Validierungsfehler werden als `std::invalid_argument` signalisiert und in d
 Die Tests folgen dem AAA-Prinzip (Arrange-Act-Assert).
 
 - *Person*: Konstruktion mit valider Testnummer (`4111 1111 1111 1111`), Maskierung, Luhn-Validierung; Negativfall (falsche Karte).
+  - Boundary Ages: $"age" in [0, 130]$ valide; `-1`, `131` invalid.
+  - Empty Fields: Leere Vor-/Nachnamen und Adresse werden abgewiesen.
+  - Digits-Only Credit Card: Nummern mit Leerzeichen/Bindestrichen/Buchstaben → invalid.
+  - Luhn Vektoren: Klassiker `79927398713` (valid) vs. `79927398714` (invalid); gängige Test-PANs (`4242...`, `4012...`) validieren.
+  - Masking: Länge > 4 behält die letzten 4 Ziffern; Länge ≤ 4 vollständig maskiert.
+  - Streaming: Ausgabe enthält korrekten Gender-String (Male/Female/Diverse).
 - *Flug*: Konstruktion, Streaming, Negativfall bei `origin == destination`.
+  - Pflichtfelder: Leere Felder (Nummer, Airline, Orte, Zeiten) werden abgewiesen.
+  - Konnektivitätsregel (Segment): `origin != destination` wird erzwungen.
+  - Dauer: Nicht-positive Dauer (0, negativ) wird abgewiesen.
+  - Streaming: Ausgabe enthält Flugnummer, Route und Dauer in Minuten.
 - *Flugreise*: Hinzufügen mehrerer Segmente (Linz → Frankfurt → Denver → Las Vegas), Aggregation von Minuten, Zeitfenster, Streaming; Negativfall (gebrochene Konnektivität).
+  - Leere Reiseroute: `total_flight_time=0` und kein `window=` in der Ausgabe.
+  - Einzelnes Segment: Korrektes Zeitfenster `firstDepartureTime() -> lastArrivalTime()`.
+  - Große Reiseroute: 50 verbundene Segmente; Summe der Minuten, erstes/letztes Zeitfenster korrekt.
+  - Copy-Semantik: Streaming bleibt nach Kopie identisch; Invariante bleibt erfüllt.
+  - Konnektivität pro Hinzufügen: Bruch der Verbindung wird exakt bei der fehlerhaften `addFlight`-Operation erkannt (Exception); vorherige Segmente bleiben erhalten.
 
 Die `main.cpp` startet GoogleTest; alle Tests laufen automatisiert.
 
@@ -46,6 +61,10 @@ Die `main.cpp` startet GoogleTest; alle Tests laufen automatisiert.
 - *Datenmodell*: ist klar, portabel und robust gegen ungültige Eingaben.
 - *Ausgaben*: sind kompakt und enthalten alle geforderten Informationen.
 - *Testfälle*: decken Konstruktion, Validierung, Formatierung und Reiserouten-Konnektivität ab.
+
+=== Testfälle
+
+
 
 === Beispielausgabe
 
