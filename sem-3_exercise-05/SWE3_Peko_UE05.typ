@@ -81,3 +81,83 @@ TRIP[
   total_flight_time=660 min, window=08:00 -> 20:30
 ]
 ```
+
+#pagebreak(weak: true)
+= Aufgabe 2: Stücklistenverwaltung (`./partlists`)
+
+== Lösungsidee
+
+Die Aufgabe wird als klassisches Composite realisiert (`namespace` `PartLists`):
+
+- *`Part`* (abstrakt): Basisklasse mit Namen, `equalsTo(...)`, `clone()`, `accept(...)` und einfacher Persistenz (`store/load`).
+- *`CompositePart`*: Sammlung von `Part`-Kindern; besitzt und verwaltet Kind-Elemente. `equalsTo` vergleicht rekursiv Struktur und Namen.
+- *Formatter* (Strategie/Visitor):
+  - *`HierarchyFormatter`*: gibt die Hierarchie eingerückt aus.
+  - *`SetFormatter`*: zählt alle Blätter (Stückliste als Multiset) in Einfügereihenfolge.
+- *`Storable`* (Interface): definiert `store()`/`load()`; beide Methoden verwenden eine einfache, menschenlesbare Textrepräsentation.
+
+Wesentliche Entwurfsdetails:
+
+- *Klonen statt Kopieren*: `addPart(Part const&)` nutzt `clone()` zur Wahrung des dynamischen Typs (keine Slicing-Probleme).
+- *Eigentum*: `CompositePart` besitzt Kinder via `std::unique_ptr<Part>`. `getParts()` liefert konstante Rohzeiger zur sicheren Iteration.
+- *Persistenzformat*: 
+  - Blätter: `P|<name>`
+  - Composite: 
+    ```
+    C|<name>
+    {
+      ...
+    }
+    ```
+  `load()` verifiziert aktuell die Wurzel; ein vollständiger Rekonstruktionsparser wäre ein natürlicher Ausbau.
+
+=== Formatter
+
+- *HierarchyFormatter* (Preorder, 2 Leerzeichen pro Ebene):
+
+```txt
+Sitzgarnitur
+  Sessel
+    Bein (klein)
+    Bein (klein)
+    Bein (klein)
+    Bein (klein)
+    Sitzfläche
+  Sessel
+    Bein (klein)
+    Bein (klein)
+    Bein (klein)
+    Bein (klein)
+    Sitzfläche
+  Tisch
+    Bein (groß)
+    Bein (groß)
+    Bein (groß)
+    Bein (groß)
+    Tischfläche
+```
+
+- *SetFormatter* (Einfügereihenfolge der Blätter durch Traversierung):
+
+```txt
+Sitzgarnitur:
+  8 Bein (klein)
+  2 Sitzfläche
+  4 Bein (groß)
+  1 Tischfläche
+```
+
+== Teststrategie
+
+Die Tests folgen dem AAA-Prinzip und orientieren sich an den Best-Practices aus den vorigen Übungen:
+
+- *Validierung*: Leere Namen werden abgewiesen.
+- *Strukturgleichheit*: `equalsTo` vergleicht Namen und Reihenfolge/Struktur der Kinder.
+- *Formatter-Outputs*: exakte Stringvergleiche für Hierarchie; Teilmengenprüfung für Set-Formatter (Zählwerte).
+- *Persistenz-Sanity*: `store()`/`load()` werfen keine Exceptions (Formatprüfung der Wurzel).
+
+== Ergebnisse
+
+- *Composite-Modell*: klar, erweiterbar und speichersicher (Ownership bei `CompositePart`).
+- *Ausgaben*: Hierarchie- und Set-Ansicht decken die geforderten Beispielausgaben ab.
+- *Tests*: AAA, gut lesbar und robust gegenüber Implementierungsdetails (Set-Formatter toleriert Zeilenreihenfolge via Einfügereihenfolge).
