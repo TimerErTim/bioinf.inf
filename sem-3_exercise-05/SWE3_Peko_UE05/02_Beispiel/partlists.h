@@ -10,65 +10,89 @@
 namespace PartLists {
 
 	/**
-	 * Storable is an interface that defines persistence capabilities.
-	 * Concrete classes should decide on a suitable file format.
-	 *
-	 * Note:
-	 * - In this educational example, store()/load() use a default
-	 *   file path derived from the object's name (see Part::defaultFilePath()).
-	 * - The format is human-readable and simple. Robust production code
-	 *   would use a stable schema and error handling.
+	 * @brief Interface for persistence capabilities (store and load).
+	 * @note In this educational example, store()/load() use a default path derived from the object's name.
+	 *       The format is human-readable and intentionally simple.
 	 */
 	class Storable {
 	public:
 		virtual ~Storable() = default;
-		/// Persists the object to a default path derived from its name.
+		/**
+		 * @brief Persist the object to a default path.
+		 */
 		virtual void store() const = 0;
-		/// Loads the object from a default path derived from its name.
+		/**
+		 * @brief Load the object from a default path.
+		 */
 		virtual void load() = 0;
 	};
 
 	/**
-	 * Forward declarations.
+	 * @brief Forward declarations to decouple types where possible.
 	 */
 	class Part;
 	class Formatter;
 
 	/**
-	 * Part is the abstract root of the part hierarchy (Composite pattern).
-	 * It stores a name and provides polymorphic operations:
+	 * @brief Abstract root of the part hierarchy (Composite pattern).
+	 *
+	 * Stores a name and provides polymorphic operations:
 	 * - equalsTo: value-based equality (by name, overridable in subclasses)
-	 * - clone: to preserve dynamic type on insertion into composites
+	 * - clone: deep-copy preserving dynamic type
 	 * - accept: double dispatch for formatters
 	 */
 	class Part : public Storable {
 	public:
+		/**
+		 * @brief Construct a Part with a non-empty name.
+		 * @param name Non-empty name of the part.
+		 * @throws std::invalid_argument if name is empty.
+		 */
 		explicit Part(std::string name);
 		virtual ~Part() = default;
 
+		/**
+		 * @brief Get the part name.
+		 * @return const std::string& Part name.
+		 */
 		const std::string& getName() const noexcept { return m_name; }
 
 		/**
-		 * Value-based equality. Base implementation compares only names.
-		 * CompositePart overrides this to also compare contained parts.
+		 * @brief Value-based equality.
+		 * @param other Other part.
+		 * @return true if equal.
+		 * @details Base implementation compares only names. CompositePart overrides to compare children.
 		 */
 		virtual bool equalsTo(Part const& other) const;
 
 		/**
-		 * Creates a deep copy of the current dynamic type.
+		 * @brief Create a deep copy of the current dynamic type.
+		 * @return std::unique_ptr<Part> Newly allocated deep copy.
 		 */
 		virtual std::unique_ptr<Part> clone() const = 0;
 
 		/**
-		 * Accepts a formatter (Visitor-like) to print this part.
+		 * @brief Accept a formatter (Visitor-like) to print this part.
+		 * @param formatter Formatter instance.
+		 * @param os Output stream to write to.
+		 * @param depth Optional indentation depth (formatters may ignore).
 		 */
 		virtual void accept(Formatter& formatter, std::ostream& os, int depth = 0) const = 0;
 
-		// Storable defaults for leaves (a single-line format)
+		/**
+		 * @brief Default store for leaves (single-line format).
+		 */
 		void store() const override;
+		/**
+		 * @brief Default load for leaves (format verification only).
+		 */
 		void load() override;
 
 	protected:
+		/**
+		 * @brief Compute a default file path derived from the name (sanitized) with extension ".plist".
+		 * @return std::string File path.
+		 */
 		std::string defaultFilePath() const;
 
 	private:
@@ -76,8 +100,8 @@ namespace PartLists {
 	};
 
 	/**
-	 * CompositePart is a Part that aggregates other parts.
-	 * It owns its children and provides safe accessors for read-only traversal.
+	 * @brief Composite part that aggregates other parts.
+	 * @details Owns children and provides safe accessors for traversal.
 	 */
 	class CompositePart : public Part {
 	public:
@@ -85,18 +109,21 @@ namespace PartLists {
 		~CompositePart() override = default;
 
 		/**
-		 * Adds a copy of the given part. The dynamic type is preserved using clone().
+		 * @brief Add a copy of a part (preserves dynamic type via clone()).
+		 * @param p Part to copy.
 		 */
 		void addPart(Part const& p);
 
 		/**
-		 * Adds a part by transferring ownership. Prefer this overload when available.
+		 * @brief Add a part by transferring ownership.
+		 * @param p Unique pointer to part; must be non-null.
+		 * @throws std::invalid_argument if p is null.
 		 */
 		void addPart(std::unique_ptr<Part> p);
 
 		/**
-		 * Returns raw pointers to the owned children for read-only use.
-		 * The returned pointers are valid as long as this CompositePart lives.
+		 * @brief Get read-only raw pointers to owned children.
+		 * @return std::vector<Part*> Stable for the lifetime of this composite.
 		 */
 		std::vector<Part*> getParts() const;
 
@@ -104,8 +131,13 @@ namespace PartLists {
 		std::unique_ptr<Part> clone() const override;
 		void accept(Formatter& formatter, std::ostream& os, int depth = 0) const override;
 
-		// Persistence: bracketed recursive format for composites
+		/**
+		 * @brief Store using bracketed recursive text format.
+		 */
 		void store() const override;
+		/**
+		 * @brief Load verification of root record (simplified).
+		 */
 		void load() override;
 
 	private:

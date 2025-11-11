@@ -149,15 +149,25 @@ Sitzgarnitur:
 
 == Teststrategie
 
-Die Tests folgen dem AAA-Prinzip und orientieren sich an den Best-Practices aus den vorigen Übungen:
+Die Tests folgen dem AAA-Prinzip und orientieren sich an den Best-Practices aus den vorigen Übungen. Zusätzlich wurde die Abdeckung deutlich erweitert:
 
-- *Validierung*: Leere Namen werden abgewiesen.
-- *Strukturgleichheit*: `equalsTo` vergleicht Namen und Reihenfolge/Struktur der Kinder.
-- *Formatter-Outputs*: exakte Stringvergleiche für Hierarchie; Teilmengenprüfung für Set-Formatter (Zählwerte).
-- *Persistenz-Sanity*: `store()`/`load()` werfen keine Exceptions (Formatprüfung der Wurzel).
+- *Validierung*: Leere Namen werden abgewiesen (`Part`, `CompositePart`).
+- *Strukturgleichheit*: `equalsTo` vergleicht Namen und Reihenfolge/Struktur der Kinder; unterschiedliche Reihenfolge → `false`.
+- *Klonen*: Deep-Clones sind unabhängig; nach Mutation der Originalstruktur bleibt der Clone unverändert.
+- *Formatter-Outputs*:
+  - Hierarchie: exakter Stringvergleich inkl. Einrückung.
+  - Set: deterministische Reihenfolge über erste Auftretensreihenfolge; exakte Zählwerte.
+  - Leere Composite: nur Name bzw. Name mit Doppelpunkt (keine weiteren Zeilen).
+- *Persistenz*:
+  - Header-Prüfung: `P|<name>` für Blätter, `C|<name>` für Composite.
+  - Negativtest: Composite lädt nicht aus `P|...` (Exception).
+  - Sanity: `store()`/`load()` werfen keine Exceptions bei korrektem Format.
+- *Tiefe Strukturen*: 20 Ebenen tiefer Baum wird korrekt formatiert (Einrückung sichtbar).
 
 == Ergebnisse
 
 - *Composite-Modell*: klar, erweiterbar und speichersicher (Ownership bei `CompositePart`).
 - *Ausgaben*: Hierarchie- und Set-Ansicht decken die geforderten Beispielausgaben ab.
-- *Tests*: AAA, gut lesbar und robust gegenüber Implementierungsdetails (Set-Formatter toleriert Zeilenreihenfolge via Einfügereihenfolge).
+- *Persistenz*: einfaches, menschenlesbares Format; `load()` prüft die Kopfzeile.
+- *Dokumentation*: Doxygen-Stil mit `@brief`, `@param`, `@return` in `partlists.h`.
+- *Tests*: AAA, erweiterte Abdeckung (Reihenfolge, Klonen, Fehlerfälle, Tiefe).
