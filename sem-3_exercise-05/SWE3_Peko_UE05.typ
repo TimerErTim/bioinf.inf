@@ -166,8 +166,9 @@ Die Tests folgen dem AAA-Prinzip und orientieren sich an den Best-Practices aus 
 
 == Ergebnisse
 
-- *Composite-Modell*: klar, erweiterbar und speichersicher (Ownership bei `CompositePart`).
-- *Ausgaben*: Hierarchie- und Set-Ansicht decken die geforderten Beispielausgaben ab.
-- *Persistenz*: einfaches, menschenlesbares Format; `load()` prüft die Kopfzeile.
-- *Dokumentation*: Doxygen-Stil mit `@brief`, `@param`, `@return` in `partlists.h`.
-- *Tests*: AAA, erweiterte Abdeckung (Reihenfolge, Klonen, Fehlerfälle, Tiefe).
+Alle definierten Testfälle sind, wie in @testcases-2 dargestellt, erfolgreich.
+
+#figure(
+    image("assets/testcases-task2.png", width: 75%),
+    caption: "Testfälle der Aufgabe 2"
+) <testcases-2>
