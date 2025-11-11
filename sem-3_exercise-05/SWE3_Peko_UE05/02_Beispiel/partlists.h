@@ -145,26 +145,22 @@ namespace PartLists {
 	};
 
 	/**
-	 * Formatter provides a strategy/visitor for printing parts.
-	 * Implementations control the output format.
+	 * @brief Strategy/visitor interface for printing parts.
+	 * @details Implementations define the concrete output format.
 	 */
 	class Formatter {
 	public:
 		virtual ~Formatter() = default;
+		/**
+		 * @brief Print the given part using a concrete format.
+		 * @param p Part to print.
+		 * @param os Destination output stream.
+		 */
 		virtual void printParts(Part const& p, std::ostream& os) = 0;
 	};
 
 	/**
-	 * HierarchyFormatter prints the full hierarchy with indentation.
-	 *
-	 * Example:
-	 * Sitzgarnitur
-	 *   Sessel
-	 *     Bein (klein)
-	 *     ...
-	 *   Tisch
-	 *     Bein (groß)
-	 *     Tischfläche
+	 * @brief Formatter that prints the full hierarchy with indentation (2 spaces per level).
 	 */
 	class HierarchyFormatter : public Formatter {
 	public:
@@ -172,25 +168,34 @@ namespace PartLists {
 	};
 
 	/**
-	 * SetFormatter prints a flat "bill of materials" (multiset of leaves) with counts.
-	 *
-	 * Example:
-	 * Sitzgarnitur:
-	 *   8 Bein (klein)
-	 *   2 Sitzfläche
-	 *   4 Bein (groß)
-	 *   1 Tischfläche
+	 * @brief Formatter that prints a flat bill of materials (multiset of leaves) with counts.
 	 */
 	class SetFormatter : public Formatter {
 	public:
 		void printParts(Part const& p, std::ostream& os) override;
 	private:
+		/**
+		 * @brief Recursively collect counts for leaf parts.
+		 * @param p Part to traverse.
+		 * @param counts Output map: leaf-name -> count.
+		 * @param insertionOrder Stable order of first occurrence for deterministic printing.
+		 */
 		void collectLeafCounts(Part const& p, std::unordered_map<std::string, int>& counts,
 			std::vector<std::string>& insertionOrder) const;
 	};
 
 	// Utility factory helpers for concise test/usage code
+	/**
+	 * @brief Create a leaf part.
+	 * @param name Non-empty part name.
+	 * @return std::unique_ptr<Part> New leaf instance.
+	 */
 	std::unique_ptr<Part> makePart(std::string name);
+	/**
+	 * @brief Create a composite part.
+	 * @param name Non-empty part name.
+	 * @return std::unique_ptr<CompositePart> New composite instance.
+	 */
 	std::unique_ptr<CompositePart> makeComposite(std::string name);
 }
 
