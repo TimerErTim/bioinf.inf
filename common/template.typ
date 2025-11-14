@@ -3,11 +3,11 @@
 #let format-raw(it) = {
   set text(font: "JetBrains Mono")
 
-  let highlight-color = gray.lighten(90%)
+  let highlight-color = gray
   if it.block {
     block(
       stroke: highlight-color,
-      fill: highlight-color.lighten(75%),
+      fill: highlight-color.lighten(95%),
       radius: 5pt,
       width: 100%,
       inset: (top: 10pt, right: 20pt, bottom: 10pt, left: 5pt)
@@ -29,7 +29,7 @@
         column-gutter: 5pt,
         ..it.lines.map(line => {
           (
-            text(baseline: 1.5pt, size: 5pt, fill: gray.lighten(25%))[
+            text(baseline: 1.5pt, size: 5pt, fill: gray)[
               #line.number
             ], 
             text(size: 8pt)[
@@ -44,7 +44,6 @@
     highlight(
       fill: gray.lighten(80%),
       radius: 4pt,
-      //baseline: margin,
       extent: 2pt,
       it
     )
