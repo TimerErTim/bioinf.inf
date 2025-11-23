@@ -40,14 +40,14 @@
       )
     ]
   } else {
-    h(2pt)
+    h(3pt)
     highlight(
-      fill: gray.lighten(80%),
+      fill: gray.lighten(90%),
       radius: 4pt,
-      extent: 2pt,
-      it
+      extent: 3pt,
+      it//[#h(1pt)#it#h(1pt)]
     )
-    h(2pt)
+    h(3pt)
   }
 }
 
