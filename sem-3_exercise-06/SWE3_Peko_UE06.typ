@@ -12,14 +12,24 @@ Die Aufgabe besteht darin, eine generische doppelt verkettete Liste (`DoublyLink
 
 === Interne Struktur der Liste
 
-Die Liste verwendet eine Sentinel-Knoten-Architektur mit einem `head_`-Sentinel am Anfang und einem `tail_`-Sentinel am Ende. Zwischen diesen beiden befinden sich die eigentlichen Datenknoten, die jeweils über `prev` und `next` Zeiger verbunden sind.
+Die Liste verwendet eine klassische Sentinel-Knoten-Architektur:
+
+```txt
+     head_                                              tail_
+       |                                                  |
+       v                                                  v
+    +------+     +------+     +------+     +------+    +------+
+    |Sentl.|<--->| Node |<--->| Node |<--->| Node |<-->|Sentl.|
+    | head |     |  A   |     |  B   |     |  C   |    | tail |
+    +------+     +------+     +------+     +------+    +------+
+```
 
 Jeder Knoten (`Node<T>`) enthält:
 - `data`: Das gespeicherte Element vom Typ `T`
 - `prev`: Zeiger auf den vorherigen Knoten
 - `next`: Zeiger auf den nächsten Knoten
 
-Die Sentinel-Knoten sind immer vorhanden und enthalten keine echten Daten. Sie dienen als Markierungen für den Anfang und das Ende der Liste und vereinfachen die Implementierung von Einfüge- und Löschoperationen erheblich, da keine Sonderfälle behandelt werden müssen.
+Die Sentinel-Knoten (`head_` und `tail_`) sind immer vorhanden und enthalten keine echten Daten. Sie dienen als Markierungen für den Anfang und das Ende der Liste und vereinfachen die Implementierung von Einfüge- und Löschoperationen erheblich.
 
 === Designentscheidungen
 
@@ -48,14 +58,37 @@ Die Wahl eines *bidirektionalen Iterators* (`std::bidirectional_iterator_tag`) i
 
 === Iterator-Operationen
 
-Der Iterator unterstützt folgende Operationen:
-- `*it` - Dereferenzierung zum Zugriff auf das aktuelle Element
-- `it->member` - Zeigerzugriff für Memberaufruf
-- `++it, it++` - Inkrement (vorwärts bewegen)
-- `--it, it--` - Dekrement (rückwärts bewegen)
-- `it1 == it2, it1 != it2` - Vergleichsoperatoren
+```cpp
+// STL-konformer Iterator-Typ-Alias
+using iterator_category = std::bidirectional_iterator_tag;
+using value_type        = T;
+using difference_type   = std::ptrdiff_t;
+using pointer           = T*;
+using reference         = T&;
 
-Der Iterator speichert einen Zeiger auf den aktuellen Knoten (`current_`) und navigiert durch Zugriff auf `prev` und `next`.
+// Operationen
+*it         // Dereferenzierung
+it->member  // Zeigerzugriff
+++it, it++  // Inkrement (vorwärts)
+--it, it--  // Dekrement (rückwärts)
+it1 == it2  // Gleichheit
+it1 != it2  // Ungleichheit
+```
+
+=== Iterator-Struktur
+
+```txt
+            Node<T>* current_
+                   |
+                   v
+    +------+     +------+     +------+
+    | prev |<--->| Node |<--->| next |
+    +------+     +------+     +------+
+                 | data |
+                 +------+
+```
+
+Der Iterator speichert einen Zeiger auf den aktuellen Knoten und navigiert durch Zugriff auf `prev` und `next`.
 
 == Komplexitätsanalyse
 
@@ -105,7 +138,17 @@ Kann die Liste *während* der Iteration verändert werden? Insbesondere: Können
 
 === Analyse
 
-Bei einer naiven Implementierung würde das Löschen des Knotens, auf den der Iterator zeigt, zu einem *dangling pointer* führen. Der Iterator zeigt dann auf freigegebenen Speicher. Dies ist gefährlich und kann zu undefiniertem Verhalten führen.
+```txt
+GEFAHRENSITUATION:
+                   Iterator it
+                        |
+                        v
+    [A] <---> [B] <---> [C] <---> [D]
+               ^
+         erase(it) → it wird ungültig!
+```
+
+Bei einer naiven Implementierung würde das Löschen des Knotens, auf den der Iterator zeigt, zu einem *dangling pointer* führen. Der Iterator zeigt dann auf freigegebenen Speicher.
 
 === Sichere Lösung: remove_if-Muster
 
@@ -128,11 +171,29 @@ size_type remove_if(Predicate pred) {
 }
 ```
 
-*Schlüsselprinzip:* `erase()` gibt einen Iterator auf das *nächste gültige Element* zurück. Damit wird der Iterator nicht ungültig und wir können sicher weiteriterieren.
+*Schlüsselprinzip:* `erase()` gibt einen Iterator auf das *nächste gültige Element* zurück.
 
 === Alternative: Stabile Iteratoren
 
-Eine fortgeschrittenere Lösung wäre die Implementierung *stabiler Iteratoren*, bei der die Liste alle aktiven Iteratoren trackt und bei `erase()` alle betroffenen Iteratoren auf das nächste Element umleitet. Dies würde jedoch den Speicher-Overhead und die Komplexität deutlich erhöhen.
+Eine fortgeschrittenere Lösung wäre die Implementierung *stabiler Iteratoren*:
+
+```txt
+STABILE ITERATOR-ARCHITEKTUR:
+
+  DoublyLinkedList
+        |
+        v
+  +-------------+
+  | active_iter |---> Iterator 1 ---> Iterator 2 ---> ...
+  +-------------+           |              |
+                           v              v
+    [A] <---> [B] <---> [C] <---> [D]
+```
+
+Bei dieser Architektur würde:
+1. Die Liste alle aktiven Iteratoren tracken
+2. Bei `erase()` alle betroffenen Iteratoren auf das nächste Element umleiten
+3. Der Speicher-Overhead und die Komplexität deutlich steigen
 
 *Fazit:* Für die meisten Anwendungsfälle ist das `remove_if`-Muster ausreichend und effizienter.
 
@@ -209,7 +270,7 @@ Die Implementierung erfüllt alle geforderten Anforderungen:
 
 === Code-Metriken
 
-- *Header-Datei:* ~680 Zeilen (inkl. Dokumentation)
+- *Header-Datei:* ~600 Zeilen (inkl. Dokumentation)
 - *Test-Datei:* ~900 Zeilen
 - *Testfälle:* 70+ individuelle Tests
 
