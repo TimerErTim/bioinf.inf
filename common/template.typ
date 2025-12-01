@@ -42,7 +42,7 @@
   } else {
     h(3pt)
     highlight(
-      fill: gray.lighten(90%),
+      fill: gray.lighten(80%),
       radius: 4pt,
       extent: 3pt,
       it//[#h(1pt)#it#h(1pt)]
