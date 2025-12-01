@@ -1,3 +1,6 @@
+[tools]
+'cargo:tokei' = "13.0.0"
+
 [vars]
 exercise_name = "SWE3_Peko_UE06"
 
