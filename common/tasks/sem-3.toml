@@ -1,5 +1,8 @@
+#:schema https://mise.jdx.dev/schema/mise-task.json
+
 ["build:documentation"]
 description="Build the typst documentation"
+depends = ["{{vars.documentation_dependencies | default(value='noop')}}"]
 sources=["{{vars.exercise_name}}.typ", "../common/**/*", "assets/**/*"]
 outputs=["{{vars.exercise_name}}.pdf"]
 run = [
@@ -16,3 +19,8 @@ run = [
     "mise run package-into-zip {{vars.exercise_name}}.zip {{vars.exercise_name}}",
     "mise run package-into-zip {{vars.exercise_name}}.zip -s {{vars.exercise_name}} {{vars.exercise_name}}.typ {{vars.exercise_name}}.pdf"
 ]
+
+["noop"]
+hide = true
+silent = true
+description = "No operation"

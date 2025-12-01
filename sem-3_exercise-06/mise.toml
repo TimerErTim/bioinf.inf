@@ -3,6 +3,15 @@
 
 [vars]
 exercise_name = "SWE3_Peko_UE06"
+documentation_dependencies = "run:count-lines"
 
 [task_config]
 includes = ["../common/tasks/sem-3.toml"]
+
+[tasks."build:documentation"]
+depends = ["run:count-lines"]
+
+[tasks."run:count-lines"]
+description = "Count the lines of code in the exercise"
+sources = ["**/*.typ", "SWE3_Peko_UE06/**/*"]
+run = "tokei . --output json > assets/code_metrics.json"
