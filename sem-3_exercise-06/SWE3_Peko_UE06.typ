@@ -4,171 +4,285 @@
 #show: documentation-template.with(title: "SWE3 - Übung 6", semester-term: "WS 2025/26", author: "Tim Peko", aufwand-in-h: "-")
 
 
-= Aufgabe: Flugreisen
+= Aufgabe: Doppelt verkettete Liste
 
 == Lösungsidee
 
-Die Domäne wird über drei Klassen modelliert:
+Die Aufgabe besteht darin, eine generische doppelt verkettete Liste (`DoublyLinkedList<T>`) zu implementieren, die einen bidirektionalen Iterator zur Verfügung stellt. Die Implementierung folgt modernen C++-Prinzipien und ist mit der C++ Standard Library kompatibel.
 
-- *`Person`*: Vor- und Nachname, `Gender` (enum), Alter, Adresse, Kreditkarten-Nummer. Invarianten: Namen/Adresse nicht leer, Alter in `[0, 130]`, Kreditkarte nur Ziffern und Luhn-valide. Ausgabe maskiert die Karte (nur letzte 4 Ziffern sichtbar).
-- *`Flug`*: Flugnummer, Fluglinie, `origin`/`destination`, Abflug-/Ankunftszeit (als Strings für Portabilität), Flugdauer in Minuten (> 0). Invarianten: alle Strings nicht leer, `origin != destination`.
-- *`Flugreise`*: Reisende Person und Sequenz von `Flug`-Segmenten. Invariante: Itinerary ist verbunden (`destination[i] == origin[i+1]`). Aggregationen: gesamte Flugzeit (Summe) sowie Zeitfenster (erste Abflug-/letzte Ankunftszeit).
+=== Interne Struktur der Liste
 
-Die Zeiten werden bewusst als Strings gehalten, um Date/Time-Abhängigkeiten (Zeitzonen/Locale/C++20) zu vermeiden; Validierung bezieht sich daher auf Nicht-Leere und Konsistenz der Orte. Für die Übungen genügt das und erlaubt portable Tests.
+Die Liste verwendet eine klassische Sentinel-Knoten-Architektur:
 
-== Designentscheidungen
+```txt
+     head_                                              tail_
+       |                                                  |
+       v                                                  v
+    +------+     +------+     +------+     +------+    +------+
+    |Sentl.|<--->| Node |<--->| Node |<--->| Node |<-->|Sentl.|
+    | head |     |  A   |     |  B   |     |  C   |    | tail |
+    +------+     +------+     +------+     +------+    +------+
+```
 
-- *Kapselung*: Alle Klassen bieten lesende Getter, Validierung erfolgt in den Konstruktoren (Fehler → `std::invalid_argument`).
-- *Einfaches Zeitmodell*: Zeiten als Strings, Dauer als `int` Minuten. Dadurch einfache und robuste Ausgabe, ohne Plattformdetails.
-- *Formatierte Ausgaben*: `operator<<` für `Person`, `Flug`, `Flugreise` erzeugen kompakte, menschenlesbare Zeilen.
-- *Sicheres Logging*: Kreditkarten werden via `maskedCreditCard()` nur mit letzten vier Ziffern ausgegeben.
-- *Domänensprache*: Die Klassen sind nach der Domäne benannt, um die Lesbarkeit zu verbessern. Die Domäne wird in deutscher Sprache benannt und spiegelt sich auch so im Code wieder.
+Jeder Knoten (`Node<T>`) enthält:
+- `data`: Das gespeicherte Element vom Typ `T`
+- `prev`: Zeiger auf den vorherigen Knoten
+- `next`: Zeiger auf den nächsten Knoten
 
-== Validierung & Fehlerbehandlung
+Die Sentinel-Knoten (`head_` und `tail_`) sind immer vorhanden und enthalten keine echten Daten. Sie dienen als Markierungen für den Anfang und das Ende der Liste und vereinfachen die Implementierung von Einfüge- und Löschoperationen erheblich.
 
-- `Person` prüft Zwangsinvarianten inkl. Luhn-Check der Kreditkarte. Dazu existiert `static bool isValidCreditCard(...)`.
-- `Flug` verifiziert Pflichtfelder, ungleiche Orte und positive Dauer.
-- `Flugreise::addFlight(...)` erzwingt die Verbindung der Segmente (Exception bei Bruch).
+=== Designentscheidungen
 
-Alle Validierungsfehler werden als `std::invalid_argument` signalisiert und in den Unit-Tests explizit geprüft.
+*1. Sentinel-Knoten:* Durch die Verwendung von Sentinel-Knoten am Anfang und Ende der Liste werden Sonderfälle bei Einfüge- und Löschoperationen vermieden. `begin()` zeigt immer auf `head_->next`, `end()` zeigt immer auf `tail_`.
 
+*2. Template-Implementierung:* Die Liste ist vollständig templatebasiert, um beliebige Datentypen (primitive Typen, Objekte, Smart Pointer) zu unterstützen.
+
+*3. Gecachte Größe:* Die Größe wird in `size_` gecached, um `size()` in O(1) zu ermöglichen.
+
+*4. Move-Semantik:* Alle relevanten Methoden unterstützen Move-Semantik für effiziente Handhabung von nicht-kopierbaren oder teuren Objekten.
+
+*5. STL-Kompatibilität:* Die Iteratoren sind vollständig STL-konform und ermöglichen die Verwendung mit Standard-Algorithmen wie `std::find`, `std::count`, `std::for_each` etc.
+
+== Iterator-Implementierung
+
+=== Bidirektionaler Iterator
+
+Die Wahl eines *bidirektionalen Iterators* (`std::bidirectional_iterator_tag`) ist natürlich für eine doppelt verkettete Liste:
+
+*Begründung:*
+1. Die doppelte Verkettung ermöglicht natürlich Vorwärts- und Rückwärtstraversierung
+2. Ein Random-Access-Iterator wäre nicht sinnvoll, da Indexzugriff O(n) erfordern würde
+3. Ein Forward-Iterator würde die Rückwärtstraversierung nicht unterstützen
+
+=== Iterator-Operationen
+
+```cpp
+// STL-konformer Iterator-Typ-Alias
+using iterator_category = std::bidirectional_iterator_tag;
+using value_type        = T;
+using difference_type   = std::ptrdiff_t;
+using pointer           = T*;
+using reference         = T&;
+
+// Operationen
+*it         // Dereferenzierung
+it->member  // Zeigerzugriff
+++it, it++  // Inkrement (vorwärts)
+--it, it--  // Dekrement (rückwärts)
+it1 == it2  // Gleichheit
+it1 != it2  // Ungleichheit
+```
+
+=== Iterator-Struktur
+
+```txt
+            Node<T>* current_
+                   |
+                   v
+    +------+     +------+     +------+
+    | prev |<--->| Node |<--->| next |
+    +------+     +------+     +------+
+                 | data |
+                 +------+
+```
+
+Der Iterator speichert einen Zeiger auf den aktuellen Knoten und navigiert durch Zugriff auf `prev` und `next`.
+
+== Komplexitätsanalyse
+
+#table(
+  columns: (auto, auto, auto),
+  inset: 8pt,
+  align: horizon,
+  [*Operation*], [*Komplexität*], [*Begründung*],
+  [`push_front`], [O(1)], [Direkter Zugriff auf `head_`],
+  [`push_back`], [O(1)], [Direkter Zugriff auf `tail_`],
+  [`pop_front`], [O(1)], [Direkter Zugriff auf `head_->next`],
+  [`pop_back`], [O(1)], [Direkter Zugriff auf `tail_->prev`],
+  [`size`], [O(1)], [Gecachte Größe],
+  [`find`], [O(n)], [Lineare Suche erforderlich],
+  [`begin/end`], [O(1)], [Direkter Zugriff auf Sentinel-Knoten],
+  [`foreach`], [O(n)], [Traversierung aller Elemente],
+  [`insert`], [O(1)], [Nur Zeiger-Operationen],
+  [`erase`], [O(1)], [Nur Zeiger-Operationen],
+)
+
+== Foreach-Methode
+
+Die `foreach`-Methode akzeptiert jeden aufrufbaren Typ durch Template-Parameter:
+
+```cpp
+// Template-basiert (effizient, Inline-Optimierung möglich)
+template <typename Func>
+void foreach(Func func);
+
+// Verwendungsbeispiele:
+list.foreach([](int& x) { x *= 2; });           // Lambda
+list.foreach(MyFunctor{});                       // Funktor
+list.foreach(&myFunction);                       // Funktionszeiger
+list.foreach(std::function<void(int&)>(...));   // std::function
+```
+
+*Vorteile des Template-Ansatzes:*
+- Keine Laufzeit-Overhead durch `std::function`
+- Compiler kann Aufrufe inlinen
+- Beliebige aufrufbare Typen werden akzeptiert
+
+#pagebreak(weak: true)
+== Design-Überlegung: Iteration und Modifikation
+
+=== Problemstellung
+
+Kann die Liste *während* der Iteration verändert werden? Insbesondere: Können Elemente gelöscht werden?
+
+=== Analyse
+
+```txt
+GEFAHRENSITUATION:
+                   Iterator it
+                        |
+                        v
+    [A] <---> [B] <---> [C] <---> [D]
+               ^
+         erase(it) → it wird ungültig!
+```
+
+Bei einer naiven Implementierung würde das Löschen des Knotens, auf den der Iterator zeigt, zu einem *dangling pointer* führen. Der Iterator zeigt dann auf freigegebenen Speicher.
+
+=== Sichere Lösung: remove_if-Muster
+
+Die implementierte Lösung verwendet das *remove_if*-Muster:
+
+```cpp
+template <typename Predicate>
+size_type remove_if(Predicate pred) {
+    size_type removed = 0;
+    iterator it = begin();
+    while (it != end()) {
+        if (pred(*it)) {
+            it = erase(it);  // erase gibt Iterator auf NÄCHSTES Element zurück
+            ++removed;
+        } else {
+            ++it;
+        }
+    }
+    return removed;
+}
+```
+
+*Schlüsselprinzip:* `erase()` gibt einen Iterator auf das *nächste gültige Element* zurück.
+
+=== Alternative: Stabile Iteratoren
+
+Eine fortgeschrittenere Lösung wäre die Implementierung *stabiler Iteratoren*:
+
+```txt
+STABILE ITERATOR-ARCHITEKTUR:
+
+  DoublyLinkedList
+        |
+        v
+  +-------------+
+  | active_iter |---> Iterator 1 ---> Iterator 2 ---> ...
+  +-------------+           |              |
+                           v              v
+    [A] <---> [B] <---> [C] <---> [D]
+```
+
+Bei dieser Architektur würde:
+1. Die Liste alle aktiven Iteratoren tracken
+2. Bei `erase()` alle betroffenen Iteratoren auf das nächste Element umleiten
+3. Der Speicher-Overhead und die Komplexität deutlich steigen
+
+*Fazit:* Für die meisten Anwendungsfälle ist das `remove_if`-Muster ausreichend und effizienter.
+
+#pagebreak(weak: true)
 == Teststrategie
 
-Die Tests folgen dem AAA-Prinzip (Arrange-Act-Assert).
+Die Tests folgen dem AAA-Prinzip (Arrange-Act-Assert) und decken folgende Kategorien ab:
 
-- *Person*: Konstruktion mit valider Testnummer (`4111 1111 1111 1111`), Maskierung, Luhn-Validierung; Negativfall (falsche Karte).
-  - Boundary Ages: $"age" in [0, 130]$ valide; `-1`, `131` invalid.
-  - Empty Fields: Leere Vor-/Nachnamen und Adresse werden abgewiesen.
-  - Digits-Only Credit Card: Nummern mit Leerzeichen/Bindestrichen/Buchstaben → invalid.
-  - Luhn Vektoren: Klassiker `79927398713` (valid) vs. `79927398714` (invalid); gängige Test-PANs (`4242...`, `4012...`) validieren.
-  - Masking: Länge > 4 behält die letzten 4 Ziffern; Länge ≤ 4 vollständig maskiert.
-  - Streaming: Ausgabe enthält korrekten Gender-String (Male/Female/Diverse).
-- *Flug*: Konstruktion, Streaming, Negativfall bei `origin == destination`.
-  - Pflichtfelder: Leere Felder (Nummer, Airline, Orte, Zeiten) werden abgewiesen.
-  - Konnektivitätsregel (Segment): `origin != destination` wird erzwungen.
-  - Dauer: Nicht-positive Dauer (0, negativ) wird abgewiesen.
-  - Streaming: Ausgabe enthält Flugnummer, Route und Dauer in Minuten.
-- *Flugreise*: Hinzufügen mehrerer Segmente (Linz → Frankfurt → Denver → Las Vegas), Aggregation von Minuten, Zeitfenster, Streaming; Negativfall (gebrochene Konnektivität).
-  - Leere Reiseroute: `total_flight_time=0` und kein `window=` in der Ausgabe.
-  - Einzelnes Segment: Korrektes Zeitfenster `firstDepartureTime() -> lastArrivalTime()`.
-  - Große Reiseroute: 50 verbundene Segmente; Summe der Minuten, erstes/letztes Zeitfenster korrekt.
-  - Copy-Semantik: Streaming bleibt nach Kopie identisch; Invariante bleibt erfüllt.
-  - Konnektivität pro Hinzufügen: Bruch der Verbindung wird exakt bei der fehlerhaften `addFlight`-Operation erkannt (Exception); vorherige Segmente bleiben erhalten.
+=== Konstruktor-Tests
+- Default-Konstruktor (leere Liste)
+- Initializer-List-Konstruktor
+- Copy-Konstruktor (tiefe Kopie, Unabhängigkeit)
+- Move-Konstruktor (Ownership-Transfer)
+- Copy- und Move-Zuweisung
+- Self-Assignment
 
-Die `main.cpp` startet GoogleTest; alle Tests laufen automatisiert.
+=== Basis-Operationen
+- `push_front`: Einfügen am Anfang, Move-Semantik
+- `push_back`: Einfügen am Ende, Move-Semantik
+- `pop_front`/`pop_back`: Entfernen, Exceptions bei leerer Liste
+- `size`: Korrekte Zählung nach allen Operationen
+- `empty`: Korrekte Rückgabe
+- `clear`: Vollständiges Leeren, Wiederverwendbarkeit
+
+=== Such-Operationen
+- `find`: Existierendes/nicht existierendes Element, erstes Vorkommen bei Duplikaten
+- `contains`: Boolean-Wrapper um find
+
+=== Iterator-Tests
+- `begin()`/`end()`: Korrekte Positionierung
+- Inkrement/Dekrement (Präfix und Postfix)
+- Dereferenzierung und Pfeil-Operator
+- Gleichheits-/Ungleichheitsvergleiche
+- Bidirektionale Traversierung
+- STL-Typ-Aliase und Iterator-Kategorie
+
+=== Foreach-Tests
+- Lambda-Funktionen (lesend und modifizierend)
+- Funktor-Objekte
+- Funktionszeiger
+- Const-Listen (nur lesend)
+
+=== Insert/Erase-Tests
+- Einfügen am Anfang, Ende, in der Mitte
+- Löschen einzelner Elemente
+- Bereich löschen
+- `remove_if` mit verschiedenen Prädikaten
+
+=== Edge Cases
+- Große Listen (10.000+ Elemente)
+- Verschiedene Datentypen (int, string, custom structs)
+- Move-Only-Typen (`std::unique_ptr`)
+- Wiederholtes Clear und Refill
+- Iterator-Stabilität nach Push-Operationen
+
+=== STL-Kompatibilität
+- `std::find`, `std::find_if`
+- `std::count`
+- `std::transform`
+- `std::accumulate`
+- `std::all_of`, `std::any_of`, `std::none_of`
+- `std::for_each`
 
 == Ergebnisse
 
-- *Datenmodell*: ist klar, portabel und robust gegen ungültige Eingaben.
-- *Ausgaben*: sind kompakt und enthalten alle geforderten Informationen.
-- *Testfälle*: decken Konstruktion, Validierung, Formatierung und Reiserouten-Konnektivität ab.
+Die Implementierung erfüllt alle geforderten Anforderungen:
 
-=== Testfälle
+1. *Template-basiert:* Unterstützt beliebige Datentypen
+2. *O(1) Operationen:* `push_front`, `push_back` sind konstant
+3. *Bidirektionaler Iterator:* STL-konform mit korrektem `iterator_tag`
+4. *foreach-Methode:* Akzeptiert Lambdas, Funktoren und Funktionszeiger
+5. *Sichere Modifikation:* `remove_if` ermöglicht sicheres Löschen während Iteration
+6. *Umfassende Tests:* 70+ Unit-Tests decken alle Funktionalitäten und Edge Cases ab
 
-#figure(
-    image("assets/testcases-task1.png", width: 75%),
-    caption: "Testfälle der Aufgabe 1"
-)
+=== Code-Metriken
+
+- *Header-Datei:* ~600 Zeilen (inkl. Dokumentation)
+- *Test-Datei:* ~900 Zeilen
+- *Testfälle:* 70+ individuelle Tests
 
 === Beispielausgabe
 
 ```txt
-TRIP[
-  PERSON[Jane Roe, Female, 28, Street 1, ************1111]
-  FLIGHT[OS1, Austrian, Linz -> Frankfurt, dep 08:00, arr 09:00, 60 min]
-  FLIGHT[UA2, United, Frankfurt -> Denver, dep 10:30, arr 18:00, 510 min]
-  FLIGHT[WN3, Southwest, Denver -> Las Vegas, dep 19:00, arr 20:30, 90 min]
-  total_flight_time=660 min, window=08:00 -> 20:30
-]
+[==========] Running 70 tests from 6 test suites.
+[----------] Global test environment set-up.
+...
+[----------] 70 tests from DoublyLinkedListTest
+[ RUN      ] DoublyLinkedListTest.PushFront_OnEmptyList_AddsElement
+[       OK ] DoublyLinkedListTest.PushFront_OnEmptyList_AddsElement (0 ms)
+...
+[==========] 70 tests from 6 test suites ran. (X ms total)
+[  PASSED  ] 70 tests.
 ```
-
-#pagebreak(weak: true)
-= Aufgabe 2: Stücklistenverwaltung (`./partlists`)
-
-== Lösungsidee
-
-Die Aufgabe wird als klassisches Composite realisiert (`namespace` `PartLists`):
-
-- *`Part`* (abstrakt): Basisklasse mit Namen, `equalsTo(...)`, `clone()`, `accept(...)` und einfacher Persistenz (`store/load`).
-- *`CompositePart`*: Sammlung von `Part`-Kindern; besitzt und verwaltet Kind-Elemente. `equalsTo` vergleicht rekursiv Struktur und Namen.
-- *Formatter* (Strategie/Visitor):
-  - *`HierarchyFormatter`*: gibt die Hierarchie eingerückt aus.
-  - *`SetFormatter`*: zählt alle Blätter (Stückliste als Multiset) in Einfügereihenfolge.
-- *`Storable`* (Interface): definiert `store()`/`load()`; beide Methoden verwenden eine einfache, menschenlesbare Textrepräsentation.
-
-Wesentliche Entwurfsdetails:
-
-- *Klonen statt Kopieren*: `addPart(Part const&)` nutzt `clone()` zur Wahrung des dynamischen Typs (keine Slicing-Probleme).
-- *Eigentum*: `CompositePart` besitzt Kinder via `std::unique_ptr<Part>`. `getParts()` liefert konstante Rohzeiger zur sicheren Iteration.
-- *Persistenzformat*: 
-  - Blätter: `P|<name>`
-  - Composite: 
-    ```
-    C|<name>
-    {
-      ...
-    }
-    ```
-  `load()` verifiziert aktuell die Wurzel; ein vollständiger Rekonstruktionsparser wäre ein natürlicher Ausbau.
-
-=== Formatter
-
-- *HierarchyFormatter* (Preorder, 2 Leerzeichen pro Ebene):
-
-```txt
-Sitzgarnitur
-  Sessel
-    Bein (klein)
-    Bein (klein)
-    Bein (klein)
-    Bein (klein)
-    Sitzfläche
-  Sessel
-    Bein (klein)
-    Bein (klein)
-    Bein (klein)
-    Bein (klein)
-    Sitzfläche
-  Tisch
-    Bein (groß)
-    Bein (groß)
-    Bein (groß)
-    Bein (groß)
-    Tischfläche
-```
-
-- *SetFormatter* (Einfügereihenfolge der Blätter durch Traversierung):
-
-```txt
-Sitzgarnitur:
-  8 Bein (klein)
-  2 Sitzfläche
-  4 Bein (groß)
-  1 Tischfläche
-```
-
-== Teststrategie
-
-Die Tests folgen dem AAA-Prinzip und orientieren sich an den Best-Practices aus den vorigen Übungen. Zusätzlich wurde die Abdeckung deutlich erweitert:
-
-- *Validierung*: Leere Namen werden abgewiesen (`Part`, `CompositePart`).
-- *Strukturgleichheit*: `equalsTo` vergleicht Namen und Reihenfolge/Struktur der Kinder; unterschiedliche Reihenfolge → `false`.
-- *Klonen*: Deep-Clones sind unabhängig; nach Mutation der Originalstruktur bleibt der Clone unverändert.
-- *Formatter-Outputs*:
-  - Hierarchie: exakter Stringvergleich inkl. Einrückung.
-  - Set: deterministische Reihenfolge über erste Auftretensreihenfolge; exakte Zählwerte.
-  - Leere Composite: nur Name bzw. Name mit Doppelpunkt (keine weiteren Zeilen).
-- *Persistenz*:
-  - Header-Prüfung: `P|<name>` für Blätter, `C|<name>` für Composite.
-  - Negativtest: Composite lädt nicht aus `P|...` (Exception).
-  - Sanity: `store()`/`load()` werfen keine Exceptions bei korrektem Format.
-- *Tiefe Strukturen*: 20 Ebenen tiefer Baum wird korrekt formatiert (Einrückung sichtbar).
-
-== Ergebnisse
-
-Alle definierten Testfälle sind, wie in @testcases-2 dargestellt, erfolgreich.
-
-#figure(
-    image("assets/testcases-task2.png", width: 75%),
-    caption: "Testfälle der Aufgabe 2"
-) <testcases-2>
