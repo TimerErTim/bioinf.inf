@@ -1,0 +1,745 @@
+{
+  "tests": 114,
+  "failures": 0,
+  "disabled": 0,
+  "errors": 0,
+  "timestamp": "2025-12-02T09:09:39Z",
+  "time": "0.12s",
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "DoublyLinkedListConstructor",
+      "tests": 9,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "time": "0.004s",
+      "testsuite": [
+        {
+          "name": "DefaultConstructor_CreatesEmptyList",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListConstructor"
+        },
+        {
+          "name": "InitializerListConstructor_CreatesListWithElements",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListConstructor"
+        },
+        {
+          "name": "InitializerListConstructor_EmptyInitializerList",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListConstructor"
+        },
+        {
+          "name": "CopyConstructor_CreatesIndependentCopy",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListConstructor"
+        },
+        {
+          "name": "CopyConstructor_EmptyList",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListConstructor"
+        },
+        {
+          "name": "MoveConstructor_TransfersOwnership",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListConstructor"
+        },
+        {
+          "name": "CopyAssignment_CopiesToExistingList",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListConstructor"
+        },
+        {
+          "name": "CopyAssignment_SelfAssignment",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListConstructor"
+        },
+        {
+          "name": "MoveAssignment_TransfersOwnership",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListConstructor"
+        }
+      ]
+    },
+    {
+      "name": "DoublyLinkedListTest",
+      "tests": 93,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "time": "0.067s",
+      "testsuite": [
+        {
+          "name": "PushFront_OnEmptyList_AddsElement",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PushFront_OnNonEmptyList_AddsAtBeginning",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PushFront_MultipleElements_MaintainsOrder",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PushFront_MoveSemantics_MovesValue",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PushBack_OnEmptyList_AddsElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PushBack_OnNonEmptyList_AddsAtEnd",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PushBack_MultipleElements_MaintainsOrder",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PushBack_MoveSemantics_MovesValue",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Size_EmptyList_ReturnsZero",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Size_SingleElement_ReturnsOne",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Size_MultipleElements_ReturnsCorrectCount",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Size_AfterPushAndPop_ReturnsCorrectCount",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Empty_EmptyList_ReturnsTrue",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Empty_NonEmptyList_ReturnsFalse",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Empty_AfterClear_ReturnsTrue",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Find_ExistingElement_ReturnsValidIterator",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Find_NonExistingElement_ReturnsEndIterator",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Find_EmptyList_ReturnsEndIterator",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Find_FirstElement_ReturnsBeginIterator",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Find_LastElement_ReturnsValidIterator",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Find_DuplicateElements_ReturnsFirstOccurrence",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Find_WithStrings_FindsCorrectly",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Find_ConstList_ReturnsConstIterator",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Contains_ExistingElement_ReturnsTrue",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Contains_NonExistingElement_ReturnsFalse",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Contains_EmptyList_ReturnsFalse",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Front_NonEmptyList_ReturnsFirstElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Back_NonEmptyList_ReturnsLastElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Front_EmptyList_ThrowsException",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Back_EmptyList_ThrowsException",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Front_Modifiable_ChangesElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Back_Modifiable_ChangesElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PopFront_NonEmptyList_RemovesFirstElement",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PopBack_NonEmptyList_RemovesLastElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PopFront_SingleElement_MakesListEmpty",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PopBack_SingleElement_MakesListEmpty",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PopFront_EmptyList_ThrowsException",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "PopBack_EmptyList_ThrowsException",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Clear_NonEmptyList_MakesListEmpty",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Clear_EmptyList_RemainsEmpty",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Clear_ListCanBeReused",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Begin_NonEmptyList_ReturnsIteratorToFirstElement",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "End_NonEmptyList_ReturnsIteratorPastLastElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "BeginEnd_EmptyList_AreEqual",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "CBegin_ReturnsConstIterator",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Iterator_PreIncrement_MovesToNextElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Iterator_PostIncrement_MovesToNextElement",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Iterator_PreDecrement_MovesToPreviousElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Iterator_PostDecrement_MovesToPreviousElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Iterator_ArrowOperator_AccessesMember",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Iterator_Equality_ComparesCorrectly",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Iterator_BidirectionalTraversal_WorksCorrectly",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Iterator_Modification_ChangesListElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Iterator_Category_IsBidirectional",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Iterator_TypeAliases_AreCorrect",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "ConstIterator_TypeAliases_AreCorrect",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "RangeBasedFor_TraversesAllElements",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "RangeBasedFor_ModifiesElements",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "RangeBasedFor_EmptyList_NoIterations",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Foreach_Lambda_AppliesFunction",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Foreach_Lambda_ModifiesElements",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Foreach_EmptyList_NoInvocations",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Foreach_Functor_AppliesFunction",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Foreach_FunctionPointer_AppliesFunction",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Foreach_ConstList_OnlyReadsElements",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Foreach_WithCapturingLambda_AccessesExternalState",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Foreach_StdFunction_AppliesFunction",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Insert_AtBegin_AddsAtStart",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Insert_AtEnd_AddsAtEnd",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Insert_InMiddle_InsertsCorrectly",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Erase_FirstElement_RemovesCorrectly",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Erase_LastElement_RemovesCorrectly",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Erase_MiddleElement_RemovesCorrectly",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Erase_Range_RemovesMultipleElements",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "RemoveIf_RemovesMatchingElements",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "RemoveIf_NoMatches_RemovesNothing",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "RemoveIf_AllMatch_ClearsList",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "RemoveIf_EmptyList_ReturnsZero",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "RemoveIf_ConsecutiveElements_RemovesCorrectly",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Equality_SameLists_ReturnsTrue",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Equality_DifferentElements_ReturnsFalse",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Equality_DifferentSizes_ReturnsFalse",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "Equality_BothEmpty_ReturnsTrue",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "StdFind_FindsElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "StdCount_CountsElements",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "StdFindIf_FindsMatchingElement",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "StdTransform_ModifiesElements",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "StdAccumulate_SumsElements",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "StdAllOf_ChecksAllElements",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "StdAnyOf_ChecksSomeElements",
+          "status": "RUN",
+          "time": "0.002s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "StdNoneOf_ChecksNoElements",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "StdForEach_AppliesFunction",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        },
+        {
+          "name": "ConstList_AllowsReadOperations",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListTest"
+        }
+      ]
+    },
+    {
+      "name": "DoublyLinkedListEdgeCases",
+      "tests": 8,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "time": "0.021s",
+      "testsuite": [
+        {
+          "name": "LargeList_HandlesCorrectly",
+          "status": "RUN",
+          "time": "0.018s",
+          "classname": "DoublyLinkedListEdgeCases"
+        },
+        {
+          "name": "AlternatingPushFrontBack_MaintainsOrder",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListEdgeCases"
+        },
+        {
+          "name": "StringType_WorksCorrectly",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListEdgeCases"
+        },
+        {
+          "name": "CustomType_WorksCorrectly",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListEdgeCases"
+        },
+        {
+          "name": "UniquePtr_MoveOnlyType",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListEdgeCases"
+        },
+        {
+          "name": "RepeatedClearAndRefill_WorksCorrectly",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListEdgeCases"
+        },
+        {
+          "name": "IteratorInvalidation_AfterPush",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListEdgeCases"
+        },
+        {
+          "name": "BackwardIteration_FromEnd",
+          "status": "RUN",
+          "time": "0s",
+          "classname": "DoublyLinkedListEdgeCases"
+        }
+      ]
+    },
+    {
+      "name": "DoublyLinkedListMemory",
+      "tests": 2,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "time": "0.017s",
+      "testsuite": [
+        {
+          "name": "DestructorFreesAllMemory",
+          "status": "RUN",
+          "time": "0.005s",
+          "classname": "DoublyLinkedListMemory"
+        },
+        {
+          "name": "ClearFreesElementMemory",
+          "status": "RUN",
+          "time": "0.012s",
+          "classname": "DoublyLinkedListMemory"
+        }
+      ]
+    },
+    {
+      "name": "DoublyLinkedListStress",
+      "tests": 2,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "time": "0.006s",
+      "testsuite": [
+        {
+          "name": "ManyPushPop_MaintainsIntegrity",
+          "status": "RUN",
+          "time": "0.004s",
+          "classname": "DoublyLinkedListStress"
+        },
+        {
+          "name": "ManyCopies_WorkCorrectly",
+          "status": "RUN",
+          "time": "0.001s",
+          "classname": "DoublyLinkedListStress"
+        }
+      ]
+    }
+  ]
+}

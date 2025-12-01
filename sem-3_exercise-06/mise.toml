@@ -3,15 +3,24 @@
 
 [vars]
 exercise_name = "SWE3_Peko_UE06"
-documentation_dependencies = "run:count-lines"
+documentation_dependencies = "prepare:documentation"
 
 [task_config]
 includes = ["../common/tasks/sem-3.toml"]
 
-[tasks."build:documentation"]
-depends = ["run:count-lines"]
+[tasks."prepare:documentation"]
+description = "Prepares all dependency assets for the documentation"
+depends = ["run:count-lines", "run:test-cases"]
 
 [tasks."run:count-lines"]
 description = "Count the lines of code in the exercise"
 sources = ["**/*.typ", "SWE3_Peko_UE06/**/*"]
-run = "tokei . --output json > assets/code_metrics.json"
+run = "tokei SWE3_Peko_UE06/01_Beispiel/ --output json > assets/code_metrics.json"
+
+[tasks."run:test-cases"]
+description = "Runs the Testcases and stores them in a .json asset"
+sources = ["SWE3_Peko_UE06/x64/Debug/01_Beispiel.exe"]
+outputs = ["assets/test_results.json"]
+run = [
+    "SWE3_Peko_UE06/x64/Debug/01_Beispiel.exe --gtest_output=json:assets/test_resuls.json"
+]
