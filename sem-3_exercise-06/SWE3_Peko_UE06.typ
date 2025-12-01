@@ -12,24 +12,14 @@ Die Aufgabe besteht darin, eine generische doppelt verkettete Liste (`DoublyLink
 
 === Interne Struktur der Liste
 
-Die Liste verwendet eine klassische Sentinel-Knoten-Architektur:
-
-```txt
-     head_                                              tail_
-       |                                                  |
-       v                                                  v
-    +------+     +------+     +------+     +------+    +------+
-    |Sentl.|<--->| Node |<--->| Node |<--->| Node |<-->|Sentl.|
-    | head |     |  A   |     |  B   |     |  C   |    | tail |
-    +------+     +------+     +------+     +------+    +------+
-```
+Die Liste verwendet eine Sentinel-Knoten-Architektur mit einem `head_`-Sentinel am Anfang und einem `tail_`-Sentinel am Ende. Zwischen diesen beiden befinden sich die eigentlichen Datenknoten, die jeweils über `prev` und `next` Zeiger verbunden sind.
 
 Jeder Knoten (`Node<T>`) enthält:
 - `data`: Das gespeicherte Element vom Typ `T`
 - `prev`: Zeiger auf den vorherigen Knoten
 - `next`: Zeiger auf den nächsten Knoten
 
-Die Sentinel-Knoten (`head_` und `tail_`) sind immer vorhanden und enthalten keine echten Daten. Sie dienen als Markierungen für den Anfang und das Ende der Liste und vereinfachen die Implementierung von Einfüge- und Löschoperationen erheblich.
+Die Sentinel-Knoten sind immer vorhanden und enthalten keine echten Daten. Sie dienen als Markierungen für den Anfang und das Ende der Liste und vereinfachen die Implementierung von Einfüge- und Löschoperationen erheblich, da keine Sonderfälle behandelt werden müssen.
 
 === Designentscheidungen
 
@@ -42,6 +32,8 @@ Die Sentinel-Knoten (`head_` und `tail_`) sind immer vorhanden und enthalten kei
 *4. Move-Semantik:* Alle relevanten Methoden unterstützen Move-Semantik für effiziente Handhabung von nicht-kopierbaren oder teuren Objekten.
 
 *5. STL-Kompatibilität:* Die Iteratoren sind vollständig STL-konform und ermöglichen die Verwendung mit Standard-Algorithmen wie `std::find`, `std::count`, `std::for_each` etc.
+
+*6. Öffentlicher Namespace:* Die Klassen sind im globalen Namespace definiert, um die Verwendung zu vereinfachen.
 
 == Iterator-Implementierung
 
@@ -56,37 +48,14 @@ Die Wahl eines *bidirektionalen Iterators* (`std::bidirectional_iterator_tag`) i
 
 === Iterator-Operationen
 
-```cpp
-// STL-konformer Iterator-Typ-Alias
-using iterator_category = std::bidirectional_iterator_tag;
-using value_type        = T;
-using difference_type   = std::ptrdiff_t;
-using pointer           = T*;
-using reference         = T&;
+Der Iterator unterstützt folgende Operationen:
+- `*it` - Dereferenzierung zum Zugriff auf das aktuelle Element
+- `it->member` - Zeigerzugriff für Memberaufruf
+- `++it, it++` - Inkrement (vorwärts bewegen)
+- `--it, it--` - Dekrement (rückwärts bewegen)
+- `it1 == it2, it1 != it2` - Vergleichsoperatoren
 
-// Operationen
-*it         // Dereferenzierung
-it->member  // Zeigerzugriff
-++it, it++  // Inkrement (vorwärts)
---it, it--  // Dekrement (rückwärts)
-it1 == it2  // Gleichheit
-it1 != it2  // Ungleichheit
-```
-
-=== Iterator-Struktur
-
-```txt
-            Node<T>* current_
-                   |
-                   v
-    +------+     +------+     +------+
-    | prev |<--->| Node |<--->| next |
-    +------+     +------+     +------+
-                 | data |
-                 +------+
-```
-
-Der Iterator speichert einen Zeiger auf den aktuellen Knoten und navigiert durch Zugriff auf `prev` und `next`.
+Der Iterator speichert einen Zeiger auf den aktuellen Knoten (`current_`) und navigiert durch Zugriff auf `prev` und `next`.
 
 == Komplexitätsanalyse
 
@@ -112,15 +81,14 @@ Der Iterator speichert einen Zeiger auf den aktuellen Knoten und navigiert durch
 Die `foreach`-Methode akzeptiert jeden aufrufbaren Typ durch Template-Parameter:
 
 ```cpp
-// Template-basiert (effizient, Inline-Optimierung möglich)
+// Template-based (efficient, allows inlining)
 template <typename Func>
 void foreach(Func func);
 
-// Verwendungsbeispiele:
+// Usage examples:
 list.foreach([](int& x) { x *= 2; });           // Lambda
-list.foreach(MyFunctor{});                       // Funktor
-list.foreach(&myFunction);                       // Funktionszeiger
-list.foreach(std::function<void(int&)>(...));   // std::function
+list.foreach(MyFunctor{});                       // Functor
+list.foreach(&myFunction);                       // Function pointer
 ```
 
 *Vorteile des Template-Ansatzes:*
@@ -137,17 +105,7 @@ Kann die Liste *während* der Iteration verändert werden? Insbesondere: Können
 
 === Analyse
 
-```txt
-GEFAHRENSITUATION:
-                   Iterator it
-                        |
-                        v
-    [A] <---> [B] <---> [C] <---> [D]
-               ^
-         erase(it) → it wird ungültig!
-```
-
-Bei einer naiven Implementierung würde das Löschen des Knotens, auf den der Iterator zeigt, zu einem *dangling pointer* führen. Der Iterator zeigt dann auf freigegebenen Speicher.
+Bei einer naiven Implementierung würde das Löschen des Knotens, auf den der Iterator zeigt, zu einem *dangling pointer* führen. Der Iterator zeigt dann auf freigegebenen Speicher. Dies ist gefährlich und kann zu undefiniertem Verhalten führen.
 
 === Sichere Lösung: remove_if-Muster
 
@@ -160,7 +118,7 @@ size_type remove_if(Predicate pred) {
     iterator it = begin();
     while (it != end()) {
         if (pred(*it)) {
-            it = erase(it);  // erase gibt Iterator auf NÄCHSTES Element zurück
+            it = erase(it);  // erase returns iterator to NEXT element
             ++removed;
         } else {
             ++it;
@@ -170,29 +128,11 @@ size_type remove_if(Predicate pred) {
 }
 ```
 
-*Schlüsselprinzip:* `erase()` gibt einen Iterator auf das *nächste gültige Element* zurück.
+*Schlüsselprinzip:* `erase()` gibt einen Iterator auf das *nächste gültige Element* zurück. Damit wird der Iterator nicht ungültig und wir können sicher weiteriterieren.
 
 === Alternative: Stabile Iteratoren
 
-Eine fortgeschrittenere Lösung wäre die Implementierung *stabiler Iteratoren*:
-
-```txt
-STABILE ITERATOR-ARCHITEKTUR:
-
-  DoublyLinkedList
-        |
-        v
-  +-------------+
-  | active_iter |---> Iterator 1 ---> Iterator 2 ---> ...
-  +-------------+           |              |
-                           v              v
-    [A] <---> [B] <---> [C] <---> [D]
-```
-
-Bei dieser Architektur würde:
-1. Die Liste alle aktiven Iteratoren tracken
-2. Bei `erase()` alle betroffenen Iteratoren auf das nächste Element umleiten
-3. Der Speicher-Overhead und die Komplexität deutlich steigen
+Eine fortgeschrittenere Lösung wäre die Implementierung *stabiler Iteratoren*, bei der die Liste alle aktiven Iteratoren trackt und bei `erase()` alle betroffenen Iteratoren auf das nächste Element umleitet. Dies würde jedoch den Speicher-Overhead und die Komplexität deutlich erhöhen.
 
 *Fazit:* Für die meisten Anwendungsfälle ist das `remove_if`-Muster ausreichend und effizienter.
 
@@ -269,7 +209,7 @@ Die Implementierung erfüllt alle geforderten Anforderungen:
 
 === Code-Metriken
 
-- *Header-Datei:* ~600 Zeilen (inkl. Dokumentation)
+- *Header-Datei:* ~680 Zeilen (inkl. Dokumentation)
 - *Test-Datei:* ~900 Zeilen
 - *Testfälle:* 70+ individuelle Tests
 

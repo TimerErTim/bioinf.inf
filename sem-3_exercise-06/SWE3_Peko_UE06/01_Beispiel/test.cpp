@@ -1,11 +1,11 @@
 //
 // test.cpp
 //
-// Umfassende Unit-Tests für die DoublyLinkedList-Implementierung.
-// Tests folgen dem AAA-Prinzip (Arrange-Act-Assert).
+// Unit tests for the DoublyLinkedList implementation.
+// Uses Google Test framework and follows AAA pattern (Arrange-Act-Assert).
 //
-// Autor: Tim Peko
-// Datum: WS 2025/26
+// Author: Tim Peko
+// Date: WS 2025/26
 //
 
 #include "pch.h"
@@ -17,12 +17,8 @@
 #include <type_traits>
 #include <memory>
 
-using namespace DLL;
 
-// ============================================================================
-// TEST FIXTURE
-// ============================================================================
-
+// Test fixture class with some pre-made lists for convenience
 class DoublyLinkedListTest : public ::testing::Test {
 protected:
     DoublyLinkedList<int> emptyList;
@@ -40,9 +36,8 @@ protected:
     }
 };
 
-// ============================================================================
-// KONSTRUKTOR-TESTS
-// ============================================================================
+
+// --- Constructor Tests ---
 
 TEST(DoublyLinkedListConstructor, DefaultConstructor_CreatesEmptyList) {
     // Arrange & Act
@@ -83,7 +78,7 @@ TEST(DoublyLinkedListConstructor, CopyConstructor_CreatesIndependentCopy) {
     EXPECT_EQ(copy.size(), original.size());
     EXPECT_EQ(copy, original);
 
-    // Verifiziere Unabhängigkeit
+    // check that they're actually independent
     copy.push_back(4);
     EXPECT_NE(copy.size(), original.size());
 }
@@ -111,7 +106,7 @@ TEST(DoublyLinkedListConstructor, MoveConstructor_TransfersOwnership) {
     EXPECT_EQ(moved.size(), 3);
     EXPECT_EQ(moved.front(), 1);
     EXPECT_EQ(moved.back(), 3);
-    EXPECT_TRUE(original.empty()); // Ursprüngliche Liste ist jetzt leer
+    EXPECT_TRUE(original.empty()); // original should be empty now
 }
 
 TEST(DoublyLinkedListConstructor, CopyAssignment_CopiesToExistingList) {
@@ -134,7 +129,7 @@ TEST(DoublyLinkedListConstructor, CopyAssignment_SelfAssignment) {
     // Act
     list = list;
 
-    // Assert
+    // Assert - should not break anything
     EXPECT_EQ(list.size(), 3);
     EXPECT_EQ(list.front(), 1);
     EXPECT_EQ(list.back(), 3);
@@ -154,12 +149,11 @@ TEST(DoublyLinkedListConstructor, MoveAssignment_TransfersOwnership) {
     EXPECT_TRUE(original.empty());
 }
 
-// ============================================================================
-// PUSH_FRONT TESTS
-// ============================================================================
+
+// --- push_front Tests ---
 
 TEST_F(DoublyLinkedListTest, PushFront_OnEmptyList_AddsElement) {
-    // Arrange - emptyList ist bereits leer
+    // Arrange - emptyList is already empty
 
     // Act
     emptyList.push_front(42);
@@ -171,7 +165,7 @@ TEST_F(DoublyLinkedListTest, PushFront_OnEmptyList_AddsElement) {
 }
 
 TEST_F(DoublyLinkedListTest, PushFront_OnNonEmptyList_AddsAtBeginning) {
-    // Arrange - multiElementList hat bereits {1, 2, 3, 4, 5}
+    // Arrange - multiElementList has {1, 2, 3, 4, 5}
 
     // Act
     multiElementList.push_front(0);
@@ -207,15 +201,14 @@ TEST_F(DoublyLinkedListTest, PushFront_MoveSemantics_MovesValue) {
 
     // Assert
     EXPECT_EQ(list.front(), "Hello, World!");
-    EXPECT_TRUE(str.empty()); // String wurde verschoben
+    EXPECT_TRUE(str.empty()); // string should be moved
 }
 
-// ============================================================================
-// PUSH_BACK TESTS
-// ============================================================================
+
+// --- push_back Tests ---
 
 TEST_F(DoublyLinkedListTest, PushBack_OnEmptyList_AddsElement) {
-    // Arrange - emptyList ist bereits leer
+    // Arrange - emptyList is already empty
 
     // Act
     emptyList.push_back(42);
@@ -227,7 +220,7 @@ TEST_F(DoublyLinkedListTest, PushBack_OnEmptyList_AddsElement) {
 }
 
 TEST_F(DoublyLinkedListTest, PushBack_OnNonEmptyList_AddsAtEnd) {
-    // Arrange - multiElementList hat bereits {1, 2, 3, 4, 5}
+    // Arrange - multiElementList has {1, 2, 3, 4, 5}
 
     // Act
     multiElementList.push_back(6);
@@ -266,9 +259,8 @@ TEST_F(DoublyLinkedListTest, PushBack_MoveSemantics_MovesValue) {
     EXPECT_TRUE(str.empty());
 }
 
-// ============================================================================
-// SIZE TESTS
-// ============================================================================
+
+// --- size Tests ---
 
 TEST_F(DoublyLinkedListTest, Size_EmptyList_ReturnsZero) {
     EXPECT_EQ(emptyList.size(), 0);
@@ -300,9 +292,8 @@ TEST_F(DoublyLinkedListTest, Size_AfterPushAndPop_ReturnsCorrectCount) {
     EXPECT_EQ(list.size(), 0);
 }
 
-// ============================================================================
-// EMPTY TESTS
-// ============================================================================
+
+// --- empty Tests ---
 
 TEST_F(DoublyLinkedListTest, Empty_EmptyList_ReturnsTrue) {
     EXPECT_TRUE(emptyList.empty());
@@ -324,12 +315,11 @@ TEST_F(DoublyLinkedListTest, Empty_AfterClear_ReturnsTrue) {
     EXPECT_TRUE(list.empty());
 }
 
-// ============================================================================
-// FIND TESTS
-// ============================================================================
+
+// --- find Tests ---
 
 TEST_F(DoublyLinkedListTest, Find_ExistingElement_ReturnsValidIterator) {
-    // Arrange - multiElementList hat {1, 2, 3, 4, 5}
+    // Arrange - multiElementList has {1, 2, 3, 4, 5}
 
     // Act
     auto it = multiElementList.find(3);
@@ -340,7 +330,7 @@ TEST_F(DoublyLinkedListTest, Find_ExistingElement_ReturnsValidIterator) {
 }
 
 TEST_F(DoublyLinkedListTest, Find_NonExistingElement_ReturnsEndIterator) {
-    // Arrange - multiElementList hat {1, 2, 3, 4, 5}
+    // Arrange - multiElementList has {1, 2, 3, 4, 5}
 
     // Act
     auto it = multiElementList.find(42);
@@ -358,7 +348,7 @@ TEST_F(DoublyLinkedListTest, Find_EmptyList_ReturnsEndIterator) {
 }
 
 TEST_F(DoublyLinkedListTest, Find_FirstElement_ReturnsBeginIterator) {
-    // Arrange - multiElementList hat {1, 2, 3, 4, 5}
+    // Arrange - multiElementList has {1, 2, 3, 4, 5}
 
     // Act
     auto it = multiElementList.find(1);
@@ -369,7 +359,7 @@ TEST_F(DoublyLinkedListTest, Find_FirstElement_ReturnsBeginIterator) {
 }
 
 TEST_F(DoublyLinkedListTest, Find_LastElement_ReturnsValidIterator) {
-    // Arrange - multiElementList hat {1, 2, 3, 4, 5}
+    // Arrange - multiElementList has {1, 2, 3, 4, 5}
 
     // Act
     auto it = multiElementList.find(5);
@@ -390,7 +380,7 @@ TEST_F(DoublyLinkedListTest, Find_DuplicateElements_ReturnsFirstOccurrence) {
     EXPECT_NE(it, list.end());
     EXPECT_EQ(*it, 2);
 
-    // Verifiziere, dass es die erste Vorkommnis ist
+    // make sure it's the first one
     ++it;
     EXPECT_EQ(*it, 3);
 }
@@ -418,14 +408,13 @@ TEST_F(DoublyLinkedListTest, Find_ConstList_ReturnsConstIterator) {
     EXPECT_NE(it, constList.end());
     EXPECT_EQ(*it, 2);
     
-    // Statische Prüfung, dass es ein const_iterator ist
+    // static check to verify it's a const_iterator
     static_assert(std::is_same<decltype(it), DoublyLinkedList<int>::const_iterator>::value, 
-                  "find auf const Liste sollte const_iterator zurückgeben");
+                  "find on const list should return const_iterator");
 }
 
-// ============================================================================
-// CONTAINS TESTS
-// ============================================================================
+
+// --- contains Tests ---
 
 TEST_F(DoublyLinkedListTest, Contains_ExistingElement_ReturnsTrue) {
     EXPECT_TRUE(multiElementList.contains(3));
@@ -439,9 +428,8 @@ TEST_F(DoublyLinkedListTest, Contains_EmptyList_ReturnsFalse) {
     EXPECT_FALSE(emptyList.contains(1));
 }
 
-// ============================================================================
-// FRONT UND BACK TESTS
-// ============================================================================
+
+// --- front and back Tests ---
 
 TEST_F(DoublyLinkedListTest, Front_NonEmptyList_ReturnsFirstElement) {
     EXPECT_EQ(multiElementList.front(), 1);
@@ -481,12 +469,11 @@ TEST_F(DoublyLinkedListTest, Back_Modifiable_ChangesElement) {
     EXPECT_EQ(list.back(), 100);
 }
 
-// ============================================================================
-// POP_FRONT UND POP_BACK TESTS
-// ============================================================================
+
+// --- pop_front and pop_back Tests ---
 
 TEST_F(DoublyLinkedListTest, PopFront_NonEmptyList_RemovesFirstElement) {
-    // Arrange - multiElementList hat {1, 2, 3, 4, 5}
+    // Arrange - multiElementList has {1, 2, 3, 4, 5}
 
     // Act
     multiElementList.pop_front();
@@ -497,7 +484,7 @@ TEST_F(DoublyLinkedListTest, PopFront_NonEmptyList_RemovesFirstElement) {
 }
 
 TEST_F(DoublyLinkedListTest, PopBack_NonEmptyList_RemovesLastElement) {
-    // Arrange - multiElementList hat {1, 2, 3, 4, 5}
+    // Arrange - multiElementList has {1, 2, 3, 4, 5}
 
     // Act
     multiElementList.pop_back();
@@ -508,7 +495,7 @@ TEST_F(DoublyLinkedListTest, PopBack_NonEmptyList_RemovesLastElement) {
 }
 
 TEST_F(DoublyLinkedListTest, PopFront_SingleElement_MakesListEmpty) {
-    // Arrange - singleElementList hat {42}
+    // Arrange - singleElementList has {42}
 
     // Act
     singleElementList.pop_front();
@@ -536,12 +523,11 @@ TEST_F(DoublyLinkedListTest, PopBack_EmptyList_ThrowsException) {
     EXPECT_THROW(emptyList.pop_back(), std::out_of_range);
 }
 
-// ============================================================================
-// CLEAR TESTS
-// ============================================================================
+
+// --- clear Tests ---
 
 TEST_F(DoublyLinkedListTest, Clear_NonEmptyList_MakesListEmpty) {
-    // Arrange - multiElementList hat Elemente
+    // Arrange - multiElementList has elements
 
     // Act
     multiElementList.clear();
@@ -574,9 +560,8 @@ TEST_F(DoublyLinkedListTest, Clear_ListCanBeReused) {
     EXPECT_EQ(list.back(), 10);
 }
 
-// ============================================================================
-// ITERATOR TESTS - begin() und end()
-// ============================================================================
+
+// --- Iterator Tests: begin() and end() ---
 
 TEST_F(DoublyLinkedListTest, Begin_NonEmptyList_ReturnsIteratorToFirstElement) {
     auto it = multiElementList.begin();
@@ -599,12 +584,11 @@ TEST_F(DoublyLinkedListTest, CBegin_ReturnsConstIterator) {
     EXPECT_EQ(*it, 1);
     
     static_assert(std::is_same<decltype(it), DoublyLinkedList<int>::const_iterator>::value,
-                  "cbegin sollte const_iterator zurückgeben");
+                  "cbegin should return const_iterator");
 }
 
-// ============================================================================
-// ITERATOR TESTS - Operationen
-// ============================================================================
+
+// --- Iterator Tests: Operations ---
 
 TEST_F(DoublyLinkedListTest, Iterator_PreIncrement_MovesToNextElement) {
     auto it = multiElementList.begin();
@@ -655,14 +639,14 @@ TEST_F(DoublyLinkedListTest, Iterator_BidirectionalTraversal_WorksCorrectly) {
     // Arrange
     DoublyLinkedList<int> list = {1, 2, 3};
     
-    // Act - Vorwärts durchlaufen
+    // Act - traverse forward
     auto it = list.begin();
     EXPECT_EQ(*it++, 1);
     EXPECT_EQ(*it++, 2);
     EXPECT_EQ(*it++, 3);
     EXPECT_EQ(it, list.end());
     
-    // Act - Rückwärts durchlaufen
+    // Act - traverse backward
     --it;
     EXPECT_EQ(*it--, 3);
     EXPECT_EQ(*it--, 2);
@@ -676,14 +660,13 @@ TEST_F(DoublyLinkedListTest, Iterator_Modification_ChangesListElement) {
     EXPECT_EQ(multiElementList.front(), 100);
 }
 
-// ============================================================================
-// ITERATOR TESTS - STL-Kompatibilität
-// ============================================================================
+
+// --- Iterator Tests: STL Compatibility ---
 
 TEST_F(DoublyLinkedListTest, Iterator_Category_IsBidirectional) {
     using iterator = DoublyLinkedList<int>::iterator;
     static_assert(std::is_same<iterator::iterator_category, std::bidirectional_iterator_tag>::value,
-                  "Iterator-Kategorie sollte bidirectional_iterator_tag sein");
+                  "Iterator category should be bidirectional_iterator_tag");
 }
 
 TEST_F(DoublyLinkedListTest, Iterator_TypeAliases_AreCorrect) {
@@ -701,9 +684,8 @@ TEST_F(DoublyLinkedListTest, ConstIterator_TypeAliases_AreCorrect) {
     static_assert(std::is_same<const_iterator::pointer, const int*>::value, "pointer");
 }
 
-// ============================================================================
-// RANGE-BASED FOR LOOP TESTS
-// ============================================================================
+
+// --- Range-based For Loop Tests ---
 
 TEST_F(DoublyLinkedListTest, RangeBasedFor_TraversesAllElements) {
     std::vector<int> result;
@@ -737,9 +719,8 @@ TEST_F(DoublyLinkedListTest, RangeBasedFor_EmptyList_NoIterations) {
     EXPECT_EQ(count, 0);
 }
 
-// ============================================================================
-// FOREACH TESTS
-// ============================================================================
+
+// --- foreach Tests ---
 
 TEST_F(DoublyLinkedListTest, Foreach_Lambda_AppliesFunction) {
     // Arrange
@@ -767,7 +748,7 @@ TEST_F(DoublyLinkedListTest, Foreach_EmptyList_NoInvocations) {
     EXPECT_EQ(count, 0);
 }
 
-// Funktor-Klasse für Tests
+// functor class for testing
 struct Doubler {
     void operator()(int& x) const {
         x *= 2;
@@ -786,7 +767,7 @@ TEST_F(DoublyLinkedListTest, Foreach_Functor_AppliesFunction) {
     EXPECT_EQ(list.back(), 6);
 }
 
-// Freie Funktion für Tests
+// free function for testing
 void tripler(int& x) {
     x *= 3;
 }
@@ -841,9 +822,8 @@ TEST_F(DoublyLinkedListTest, Foreach_StdFunction_AppliesFunction) {
     EXPECT_EQ(list.back(), 13);
 }
 
-// ============================================================================
-// INSERT TESTS
-// ============================================================================
+
+// --- insert Tests ---
 
 TEST_F(DoublyLinkedListTest, Insert_AtBegin_AddsAtStart) {
     // Arrange
@@ -875,7 +855,7 @@ TEST_F(DoublyLinkedListTest, Insert_InMiddle_InsertsCorrectly) {
     // Arrange
     DoublyLinkedList<int> list = {1, 3};
     auto it = list.begin();
-    ++it; // Zeigt auf 3
+    ++it; // points to 3
     
     // Act
     list.insert(it, 2);
@@ -888,9 +868,8 @@ TEST_F(DoublyLinkedListTest, Insert_InMiddle_InsertsCorrectly) {
     EXPECT_EQ(result, (std::vector<int>{1, 2, 3}));
 }
 
-// ============================================================================
-// ERASE TESTS
-// ============================================================================
+
+// --- erase Tests ---
 
 TEST_F(DoublyLinkedListTest, Erase_FirstElement_RemovesCorrectly) {
     // Arrange
@@ -908,7 +887,7 @@ TEST_F(DoublyLinkedListTest, Erase_FirstElement_RemovesCorrectly) {
 TEST_F(DoublyLinkedListTest, Erase_LastElement_RemovesCorrectly) {
     // Arrange
     auto it = multiElementList.end();
-    --it; // Zeigt auf 5
+    --it; // points to 5
     
     // Act
     auto next = multiElementList.erase(it);
@@ -923,7 +902,7 @@ TEST_F(DoublyLinkedListTest, Erase_MiddleElement_RemovesCorrectly) {
     // Arrange
     auto it = multiElementList.begin();
     ++it;
-    ++it; // Zeigt auf 3
+    ++it; // points to 3
     
     // Act
     auto next = multiElementList.erase(it);
@@ -937,10 +916,10 @@ TEST_F(DoublyLinkedListTest, Erase_MiddleElement_RemovesCorrectly) {
 TEST_F(DoublyLinkedListTest, Erase_Range_RemovesMultipleElements) {
     // Arrange
     auto first = multiElementList.begin();
-    ++first; // Zeigt auf 2
+    ++first; // points to 2
     auto last = first;
     ++last;
-    ++last; // Zeigt auf 4
+    ++last; // points to 4
     
     // Act
     auto result = multiElementList.erase(first, last);
@@ -956,14 +935,13 @@ TEST_F(DoublyLinkedListTest, Erase_Range_RemovesMultipleElements) {
     EXPECT_EQ(remaining, (std::vector<int>{1, 4, 5}));
 }
 
-// ============================================================================
-// REMOVE_IF TESTS (Sicheres Löschen während Iteration)
-// ============================================================================
+
+// --- remove_if Tests (safe deletion during iteration) ---
 
 TEST_F(DoublyLinkedListTest, RemoveIf_RemovesMatchingElements) {
-    // Arrange - multiElementList hat {1, 2, 3, 4, 5}
+    // Arrange - multiElementList has {1, 2, 3, 4, 5}
     
-    // Act - Entferne alle geraden Zahlen
+    // Act - remove all even numbers
     size_t removed = multiElementList.remove_if([](int x) { return x % 2 == 0; });
     
     // Assert
@@ -1004,7 +982,7 @@ TEST_F(DoublyLinkedListTest, RemoveIf_ConsecutiveElements_RemovesCorrectly) {
     // Arrange
     DoublyLinkedList<int> list = {1, 2, 2, 2, 3};
     
-    // Act - Entferne alle 2er
+    // Act - remove all 2s
     size_t removed = list.remove_if([](int x) { return x == 2; });
     
     // Assert
@@ -1012,9 +990,8 @@ TEST_F(DoublyLinkedListTest, RemoveIf_ConsecutiveElements_RemovesCorrectly) {
     EXPECT_EQ(list.size(), 2);
 }
 
-// ============================================================================
-// VERGLEICHSOPERATOR TESTS
-// ============================================================================
+
+// --- Equality Operator Tests ---
 
 TEST_F(DoublyLinkedListTest, Equality_SameLists_ReturnsTrue) {
     DoublyLinkedList<int> list1 = {1, 2, 3};
@@ -1040,9 +1017,8 @@ TEST_F(DoublyLinkedListTest, Equality_BothEmpty_ReturnsTrue) {
     EXPECT_EQ(list1, list2);
 }
 
-// ============================================================================
-// EDGE CASE TESTS
-// ============================================================================
+
+// --- Edge Case Tests ---
 
 TEST(DoublyLinkedListEdgeCases, LargeList_HandlesCorrectly) {
     // Arrange
@@ -1059,7 +1035,7 @@ TEST(DoublyLinkedListEdgeCases, LargeList_HandlesCorrectly) {
     EXPECT_EQ(list.front(), 0);
     EXPECT_EQ(list.back(), N - 1);
     
-    // Verifiziere vollständige Traversierung
+    // verify full traversal works
     int count = 0;
     for (int x : list) {
         EXPECT_EQ(x, count);
@@ -1140,7 +1116,7 @@ TEST(DoublyLinkedListEdgeCases, RepeatedClearAndRefill_WorksCorrectly) {
     // Arrange
     DoublyLinkedList<int> list;
     
-    // Act & Assert - mehrfaches Leeren und Füllen
+    // Act & Assert - clear and refill multiple times
     for (int round = 0; round < 5; ++round) {
         for (int i = 0; i < 100; ++i) {
             list.push_back(i);
@@ -1153,19 +1129,19 @@ TEST(DoublyLinkedListEdgeCases, RepeatedClearAndRefill_WorksCorrectly) {
 }
 
 TEST(DoublyLinkedListEdgeCases, IteratorInvalidation_AfterPush) {
-    // Hinweis: In einer doppelt verketteten Liste werden Iteratoren
-    // bei push_front/push_back NICHT invalidiert
+    // Note: In a doubly linked list, iterators are NOT invalidated
+    // by push_front/push_back operations
     
     // Arrange
     DoublyLinkedList<int> list = {1, 2, 3};
     auto it = list.begin();
-    ++it; // Zeigt auf 2
+    ++it; // points to 2
     
     // Act
     list.push_front(0);
     list.push_back(4);
     
-    // Assert - Iterator zeigt immer noch auf 2
+    // Assert - iterator should still point to 2
     EXPECT_EQ(*it, 2);
 }
 
@@ -1185,9 +1161,8 @@ TEST(DoublyLinkedListEdgeCases, BackwardIteration_FromEnd) {
     EXPECT_EQ(reversed, (std::vector<int>{5, 4, 3, 2, 1}));
 }
 
-// ============================================================================
-// STL-ALGORITHMUS-KOMPATIBILITÄT TESTS
-// ============================================================================
+
+// --- STL Algorithm Compatibility Tests ---
 
 TEST_F(DoublyLinkedListTest, StdFind_FindsElement) {
     auto it = std::find(multiElementList.begin(), multiElementList.end(), 3);
@@ -1255,23 +1230,21 @@ TEST_F(DoublyLinkedListTest, StdForEach_AppliesFunction) {
     EXPECT_EQ(sum, 15);
 }
 
-// ============================================================================
-// MEMORY/RESOURCE MANAGEMENT TESTS
-// ============================================================================
+
+// --- Memory Management Tests ---
 
 TEST(DoublyLinkedListMemory, DestructorFreesAllMemory) {
-    // Dieser Test ist eher konzeptionell - wir können nicht direkt testen,
-    // ob Speicher freigegeben wird, aber wir können sicherstellen,
-    // dass keine Exceptions geworfen werden
+    // This test is kinda conceptual - we can't really test if memory
+    // is freed directly, but we can make sure no exceptions are thrown
     
     {
         DoublyLinkedList<int> list;
         for (int i = 0; i < 1000; ++i) {
             list.push_back(i);
         }
-    } // Destruktor wird hier aufgerufen
+    } // destructor called here
     
-    // Wenn wir hier ankommen, wurde der Speicher erfolgreich freigegeben
+    // if we get here, memory was freed successfully
     SUCCEED();
 }
 
@@ -1286,14 +1259,13 @@ TEST(DoublyLinkedListMemory, ClearFreesElementMemory) {
     EXPECT_TRUE(list.empty());
 }
 
-// ============================================================================
-// CONST-CORRECTNESS TESTS
-// ============================================================================
+
+// --- Const Correctness Tests ---
 
 TEST_F(DoublyLinkedListTest, ConstList_AllowsReadOperations) {
     const DoublyLinkedList<int> constList = {1, 2, 3, 4, 5};
     
-    // Diese sollten alle ohne Fehler kompilieren und funktionieren
+    // all of these should compile and work fine
     EXPECT_EQ(constList.size(), 5);
     EXPECT_FALSE(constList.empty());
     EXPECT_EQ(constList.front(), 1);
@@ -1301,7 +1273,7 @@ TEST_F(DoublyLinkedListTest, ConstList_AllowsReadOperations) {
     EXPECT_TRUE(constList.contains(3));
     EXPECT_NE(constList.find(3), constList.end());
     
-    // Iteration
+    // iteration should work too
     int sum = 0;
     for (const int& x : constList) {
         sum += x;
@@ -1309,14 +1281,13 @@ TEST_F(DoublyLinkedListTest, ConstList_AllowsReadOperations) {
     EXPECT_EQ(sum, 15);
 }
 
-// ============================================================================
-// STRESS TESTS
-// ============================================================================
+
+// --- Stress Tests ---
 
 TEST(DoublyLinkedListStress, ManyPushPop_MaintainsIntegrity) {
     DoublyLinkedList<int> list;
     
-    // Abwechselnd hinzufügen und entfernen
+    // alternating adds and removes
     for (int i = 0; i < 1000; ++i) {
         list.push_back(i);
         list.push_front(-i);
@@ -1329,14 +1300,14 @@ TEST(DoublyLinkedListStress, ManyPushPop_MaintainsIntegrity) {
         }
     }
     
-    // Verifiziere Integrität durch vollständige Traversierung
+    // verify integrity by full traversal
     size_t count = 0;
     for (auto it = list.begin(); it != list.end(); ++it) {
         ++count;
     }
     EXPECT_EQ(count, list.size());
     
-    // Rückwärts-Traversierung
+    // backward traversal should also work
     count = 0;
     auto it = list.end();
     while (it != list.begin()) {
