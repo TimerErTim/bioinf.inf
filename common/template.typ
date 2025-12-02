@@ -95,6 +95,10 @@
   ])
   set heading(numbering: "1.1.")
   show heading: set block(below: 1em, above: 1.25em)
+  show heading: it => {
+    set text(size: 16pt - it.level * 1pt)
+    it
+  }
   set text(font: "Roboto Serif", lang: "de")
 
   align(center)[
