@@ -10,6 +10,7 @@
 
 #import "../common/visualization/code_metrics.typ": *
 #import "../common/visualization/test_results.typ": *
+#import "../common/visualization/linked_lists.typ": *
 
 = Aufgabe: Doppelt verkettete Liste
 
@@ -21,15 +22,10 @@ Die Aufgabe besteht darin, eine generische doppelt verkettete Liste (`DoublyLink
 
 Die Liste verwendet eine klassische Sentinel-Knoten-Architektur:
 
-```txt
-     head_                                              tail_
-       |                                                  |
-       v                                                  v
-    +------+     +------+     +------+     +------+    +------+
-    |Sentl.|<--->| Node |<--->| Node |<--->| Node |<-->|Sentl.|
-    | head |     |  A   |     |  B   |     |  C   |    | tail |
-    +------+     +------+     +------+     +------+    +------+
-```
+#figure(
+  rect(inset: 0.5cm, visualize-doubly-linked-list-sentinel-structure()),
+  caption: [Visualisierung der Sentinel-Knoten Architektur],
+)
 
 Jeder Knoten (`Node<T>`) enthält:
 - `data`: Das gespeicherte Element vom Typ `T`
