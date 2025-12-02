@@ -1,6 +1,4 @@
 #let table-test-results-overview(data) = {
-  set table(fill: (x, y) => { if y == 0 { gray.lighten(75%) } })
-
   let entry(name, tests, disabled, failures, errors) = {
     let tests = tests - disabled
     let failures = failures + errors
@@ -21,8 +19,6 @@
 }
 
 #let table-test-results-detailed(data) = {
-  set table(fill: (x, y) => { if y == 0 { gray.lighten(75%) } })
-
   let entry(testcase) = {
     let is_disabled = testcase.status != "RUN"
     let has_failed = "failures" in testcase

@@ -3,8 +3,8 @@
   "failures": 0,
   "disabled": 0,
   "errors": 0,
-  "timestamp": "2025-12-02T13:10:54Z",
-  "time": "0.064s",
+  "timestamp": "2025-12-02T23:14:29Z",
+  "time": "0.033s",
   "name": "AllTests",
   "testsuites": [
     {
@@ -77,7 +77,7 @@
       "failures": 0,
       "disabled": 0,
       "errors": 0,
-      "time": "0.028s",
+      "time": "0.019s",
       "testsuite": [
         {
           "name": "PushFront_OnEmptyList_AddsElement",
@@ -274,7 +274,7 @@
         {
           "name": "PopFront_NonEmptyList_RemovesFirstElement",
           "status": "RUN",
-          "time": "0s",
+          "time": "0.001s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -346,7 +346,7 @@
         {
           "name": "CBegin_ReturnsConstIterator",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -406,7 +406,7 @@
         {
           "name": "Iterator_TypeAliases_AreCorrect",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -418,7 +418,7 @@
         {
           "name": "RangeBasedFor_TraversesAllElements",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -448,7 +448,7 @@
         {
           "name": "Foreach_EmptyList_NoInvocations",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -544,7 +544,7 @@
         {
           "name": "RemoveIf_EmptyList_ReturnsZero",
           "status": "RUN",
-          "time": "0s",
+          "time": "0.001s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -598,7 +598,7 @@
         {
           "name": "StdTransform_ModifiesElements",
           "status": "RUN",
-          "time": "0s",
+          "time": "0.001s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -628,7 +628,7 @@
         {
           "name": "StdForEach_AppliesFunction",
           "status": "RUN",
-          "time": "0s",
+          "time": "0.001s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -645,12 +645,12 @@
       "failures": 0,
       "disabled": 0,
       "errors": 0,
-      "time": "0.018s",
+      "time": "0.007s",
       "testsuite": [
         {
           "name": "LargeList_HandlesCorrectly",
           "status": "RUN",
-          "time": "0.015s",
+          "time": "0.006s",
           "classname": "DoublyLinkedListEdgeCases"
         },
         {
@@ -680,7 +680,7 @@
         {
           "name": "RepeatedClearAndRefill_WorksCorrectly",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListEdgeCases"
         },
         {
@@ -703,18 +703,18 @@
       "failures": 0,
       "disabled": 0,
       "errors": 0,
-      "time": "0.011s",
+      "time": "0.004s",
       "testsuite": [
         {
           "name": "DestructorFreesAllMemory",
           "status": "RUN",
-          "time": "0.002s",
+          "time": "0.001s",
           "classname": "DoublyLinkedListMemory"
         },
         {
           "name": "ClearFreesElementMemory",
           "status": "RUN",
-          "time": "0.007s",
+          "time": "0.003s",
           "classname": "DoublyLinkedListMemory"
         }
       ]
@@ -725,18 +725,18 @@
       "failures": 0,
       "disabled": 0,
       "errors": 0,
-      "time": "0.005s",
+      "time": "0.001s",
       "testsuite": [
         {
           "name": "ManyPushPop_MaintainsIntegrity",
           "status": "RUN",
-          "time": "0.003s",
+          "time": "0.001s",
           "classname": "DoublyLinkedListStress"
         },
         {
           "name": "ManyCopies_WorkCorrectly",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListStress"
         }
       ]

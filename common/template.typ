@@ -134,6 +134,7 @@
   show math.equation: format-equation
   show figure: set align(start)
   show link: format-link
+  set table(fill: (x, y) => { if y == 0 { gray.lighten(75%) } })
 
   doc
 }

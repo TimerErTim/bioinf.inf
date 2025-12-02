@@ -39,3 +39,51 @@
     ),
   )
 }
+
+#let big-o-n = {
+  set text(fill: yellow)
+  show math.equation: math.bold
+  $O(n)$
+}
+
+#let big-o-1 = {
+  set text(fill: green)
+  show math.equation: math.bold
+  $O(1)$
+}
+
+#let big-o-log-n = {
+  set text(fill: green)
+  show math.equation: math.bold
+  $O(log(n))$
+}
+
+#let big-o-n-log-n = {
+  set text(fill: orange)
+  show math.equation: math.bold
+  $O(n log(n))$
+}
+
+#let big-o-n-squared = {
+  set text(fill: red)
+  show math.equation: math.bold
+  $O(n^2)$
+}
+
+#let big-o-n-cubed = {
+  set text(fill: red)
+  show math.equation: math.bold
+  $O(n^3)$
+}
+
+#let big-o-2-to-the-n = {
+  set text(fill: red)
+  show math.equation: math.bold
+  $O(2^n)$
+}
+
+#let big-o-n-factorial = {
+  set text(fill: red)
+  show math.equation: math.bold
+  $O(n!)$
+}
