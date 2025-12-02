@@ -1,5 +1,5 @@
 #set text(
-  font: "Lato"
+  font: "Lato",
 )
 
 = SS2025 FDS2 Ü01
@@ -62,13 +62,13 @@ seinen eigenen $(2ZZ, 2ZZ)$ Zustand etablieren.
 
 Bedeutet also konkret für den _Computer_ Zug:
 $
-  "Current State" && "      Modification" \
-  (2ZZ > 0, 2ZZ > 0) && (-1, -1) \
-  (2ZZ > 0, 0) && (-1, 0) \
-  (0, 2ZZ > 0) && (0, -1) \
-  (2ZZ + 1, 2ZZ) && (-1, 0) \
-  (2ZZ + 1, 2ZZ + 1) && (-1, -1) \
-  (2ZZ, 2ZZ + 1) && (0, -1) \
+     "Current State" && "      Modification" \
+  (2ZZ > 0, 2ZZ > 0) &&             (-1, -1) \
+        (2ZZ > 0, 0) &&              (-1, 0) \
+        (0, 2ZZ > 0) &&              (0, -1) \
+      (2ZZ + 1, 2ZZ) &&              (-1, 0) \
+  (2ZZ + 1, 2ZZ + 1) &&             (-1, -1) \
+      (2ZZ, 2ZZ + 1) &&              (0, -1) \
 $
 
 === Testfälle
@@ -347,9 +347,9 @@ dass wir uns in der ersteren Situation befinden, um das Spiel zu gewinnen.
 Das kann auf folgende Regeln vereinfacht werden:
 
 $
- C = sum_(i=0)^n min{R_i, 1} \
- C ... "Die Anzahl an nicht leeren Reihen" \
- n ... "Die Anzahl an Reihen in unserem Spiel"
+  C = sum_(i=0)^n min{R_i, 1} \
+  C ... "Die Anzahl an nicht leeren Reihen" \
+  n ... "Die Anzahl an Reihen in unserem Spiel"
 $
 
 Cases
@@ -463,7 +463,7 @@ Result: #text(green)[success]
 Input file:
 
 ```csv
-1;a;3;5 
+1;a;3;5
 ```
 
 Output:
@@ -574,7 +574,7 @@ Result: #text(green)[success]
 
 === Lösungsansatz
 
-Wir definieren eine Vergleichsfunktion. Diese vergleicht zwei Strings von links nach rechts basierend auf 
+Wir definieren eine Vergleichsfunktion. Diese vergleicht zwei Strings von links nach rechts basierend auf
 `char` _ASCII_ Werten.
 
 Diese Funktion werden wir benutzen, um einen Bubble Sort Algorithmus zu implementieren. Der Bubble Sort Algorithmus
@@ -651,7 +651,7 @@ Result: #text(green)[success]
 
 
 
-  
+
 
 
 

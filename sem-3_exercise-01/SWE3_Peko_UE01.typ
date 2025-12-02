@@ -3,24 +3,43 @@
 #show: documentation-template.with(
   title: "SWE3 - Übung 1",
   semester-term: "WS 2025/26",
-  author: "Tim Peko"
+  author: "Tim Peko",
 )
 
-#let image_display(image_path, caption: none, width: 20em, height: auto, label_: none) = {
+#let image_display(
+  image_path,
+  caption: none,
+  width: 20em,
+  height: auto,
+  label_: none,
+) = {
   show figure: set block(width: 100%)
 
   block[
     #figure(
-      box(stroke: black, width: width, height: height, image(image_path, width: 100%, height: auto)),
+      box(stroke: black, width: width, height: height, image(
+        image_path,
+        width: 100%,
+        height: auto,
+      )),
       caption: caption,
     ) #if label_ != none { label(label_) }
   ]
 }
 
-#let annotated_graphic(content, caption: none, width: 20em, height: auto, label_: none) = {
+#let annotated_graphic(
+  content,
+  caption: none,
+  width: 20em,
+  height: auto,
+  label_: none,
+) = {
   //show figure: set block(width: 100%)
   block[
-    #figure(box(stroke: black, width: width, height: height, inset: 5pt, content), caption: caption) #if label_ != none { label(label_) }
+    #figure(
+      box(stroke: black, width: width, height: height, inset: 5pt, content),
+      caption: caption,
+    ) #if label_ != none { label(label_) }
   ]
 }
 
@@ -28,18 +47,36 @@
 #let tree_display(data, caption: none, width: 20em, height: auto) = {
   show figure: set block(width: 100%)
 
-  block(figure(box(stroke: black, width: width, height: height, inset: 5pt, canvas({
-    import draw: *
+  block(figure(
+    box(stroke: black, width: width, height: height, inset: 5pt, canvas({
+      import draw: *
 
-    set-style(content: (padding: -2.5pt), fill: gray.lighten(70%), stroke: gray.lighten(70%))
+      set-style(
+        content: (padding: -2.5pt),
+        fill: gray.lighten(70%),
+        stroke: gray.lighten(70%),
+      )
 
-    tree.tree(data, spread: 2.5, grow: 1.5, draw-node: (node, ..) => {
-      circle((), radius: .45, stroke: none)
-      content((), node.content)
-    }, draw-edge: (from, to, ..) => {
-      line((a: from, number: .6, b: to), (a: to, number: .6, b: from), mark: (end: ">"))
-    }, name: "tree")
-  })), caption: caption))
+      tree.tree(
+        data,
+        spread: 2.5,
+        grow: 1.5,
+        draw-node: (node, ..) => {
+          circle((), radius: .45, stroke: none)
+          content((), node.content)
+        },
+        draw-edge: (from, to, ..) => {
+          line(
+            (a: from, number: .6, b: to),
+            (a: to, number: .6, b: from),
+            mark: (end: ">"),
+          )
+        },
+        name: "tree",
+      )
+    })),
+    caption: caption,
+  ))
 }
 
 = Heapsort <heapsort-task-01>
@@ -85,12 +122,12 @@ Beispiel für Array `[9, 8, 5, 2, 2]`:
 
 Zur Veranschaulichung des Heapsort-Algorithmus wird der Sortiervorgang am Beispiel des Arrays `[5, 2, 2, 8, 9]` schrittweise dargestellt:
 
-+ Ausgangszustand (unsortiertes Array):\ #tree_display(([5], ([2], [8], [9]), ([2])), caption: "Unsortiertes Array als Baum", width: 40%)
-+ Nach Heapaufbau (Max-Heap):\ #tree_display(([9], ([8], [5], [2]), ([2])), caption: "Max-Heap nach build_heap", width: 40%)
++ Ausgangszustand (unsortiertes Array):\ #tree_display(([5], ([2], [8], [9]), [2]), caption: "Unsortiertes Array als Baum", width: 40%)
++ Nach Heapaufbau (Max-Heap):\ #tree_display(([9], ([8], [5], [2]), [2]), caption: "Max-Heap nach build_heap", width: 40%)
 
-+ Nach erstem Tausch (9 ans Ende):\ #tree_display(([2], ([8], [5]), ([2])), caption: "Nach Tausch von 9 mit letztem Element", width: 40%)
++ Nach erstem Tausch (9 ans Ende):\ #tree_display(([2], ([8], [5]), [2]), caption: "Nach Tausch von 9 mit letztem Element", width: 40%)
 
-+ Nach shift_down der Wurzel:\ #tree_display(([8], ([5], [2]), ([2])), caption: "Nach Wiederherstellung der Heap-Eigenschaft", width: 40%)
++ Nach shift_down der Wurzel:\ #tree_display(([8], ([5], [2]), [2]), caption: "Nach Wiederherstellung der Heap-Eigenschaft", width: 40%)
 
 + Sortiertes Ergebnis:\ Das Verfahren wird fortgesetzt, bis alle Elemente sortiert sind: `[2, 2, 5, 8, 9]`
 
@@ -242,7 +279,7 @@ Nachfolgend sind die vorhandenen Testfälle aus `main.cpp` beschrieben. Jeder Te
 
 #figure(
   image("assets/2025-10-08_empty_array_test.png", width: 40%),
-  caption: "Leeres Array"
+  caption: "Leeres Array",
 )
 
 === Negative Elemente
@@ -252,7 +289,7 @@ Nachfolgend sind die vorhandenen Testfälle aus `main.cpp` beschrieben. Jeder Te
 
 #figure(
   image("assets/2025-10-08_negative_elements_test.png", width: 40%),
-  caption: "Negative Elemente"
+  caption: "Negative Elemente",
 )
 
 === Absteigend sortiertes Array
@@ -262,7 +299,7 @@ Nachfolgend sind die vorhandenen Testfälle aus `main.cpp` beschrieben. Jeder Te
 
 #figure(
   image("assets/2025-10-08_descending_sorted_array_test.png", width: 40%),
-  caption: "Absteigend sortiertes Array"
+  caption: "Absteigend sortiertes Array",
 )
 
 === Bereits sortiertes Array
@@ -272,7 +309,7 @@ Nachfolgend sind die vorhandenen Testfälle aus `main.cpp` beschrieben. Jeder Te
 
 #figure(
   image("assets/2025-10-08_already_sorted_array_test.png", width: 40%),
-  caption: "Bereits sortiertes Array"
+  caption: "Bereits sortiertes Array",
 )
 
 === Duplikate
@@ -282,15 +319,60 @@ Nachfolgend sind die vorhandenen Testfälle aus `main.cpp` beschrieben. Jeder Te
 
 #figure(
   image("assets/2025-10-08_duplicates_test.png", width: 40%),
-  caption: "Duplikate"
+  caption: "Duplikate",
 )
 
 = Heapsort Komplexität
 
 #import "@preview/lilaq:0.5.0" as lq
-#let complexity_n = (100, 200, 500, 1000, 2000, 5000, 10000, 15000, 20000, 30000, 40000, 60000, 80000, 100000)
-#let complexity_compares = (1030, 2455, 7427, 16854, 37710, 107713, 235329, 370337, 510720, 800704, 1101442, 1721334, 2363025, 3019617)
-#let complexity_swaps = (582, 1357, 4039, 9077, 20160, 57119, 124174, 194942, 268385, 419914, 576753, 899780, 1233633, 1574933)
+#let complexity_n = (
+  100,
+  200,
+  500,
+  1000,
+  2000,
+  5000,
+  10000,
+  15000,
+  20000,
+  30000,
+  40000,
+  60000,
+  80000,
+  100000,
+)
+#let complexity_compares = (
+  1030,
+  2455,
+  7427,
+  16854,
+  37710,
+  107713,
+  235329,
+  370337,
+  510720,
+  800704,
+  1101442,
+  1721334,
+  2363025,
+  3019617,
+)
+#let complexity_swaps = (
+  582,
+  1357,
+  4039,
+  9077,
+  20160,
+  57119,
+  124174,
+  194942,
+  268385,
+  419914,
+  576753,
+  899780,
+  1233633,
+  1574933,
+)
 
 == Lösungsansatz
 
@@ -417,18 +499,18 @@ Das ermitteln der Vergleichs- & Tauschanzahl für die verschiedenen Array-Größ
 
 #figure(
   image("assets/2025-10-09_counting_output.png", width: 80%),
-  caption: "Ausgabe der Vergleichs- & Tauschanzahl"
+  caption: "Ausgabe der Vergleichs- & Tauschanzahl",
 )
 
 #figure(
-  image("assets/2025-10-09_counting_output.png", width: 80%), 
-  caption: "Ausgabe der Vergleichs- & Tauschanzahl"
+  image("assets/2025-10-09_counting_output.png", width: 80%),
+  caption: "Ausgabe der Vergleichs- & Tauschanzahl",
 ) <counting-output>
 
 Grafisch dargestellt in @complexity-graph lässt sich deutlich eine Komplexität von $O(n log(n))$ erkennen. Zum Vergleich wird noch die Skalierungsformen $O(n)$ als Referenz in der Grafik abgebildet. Dabei wird hier nur die Zeitkomplexität betrachtet. Die Speicherkomplexität ist $O(1)$, weil der Algorithmus in-place arbeitet. Das bedeutet, er benötigt keinen zusätzlichen Speicherplatz. Also Konstant im Bezug auf die Array-Größe $n$.
 
-#figure(box(stroke: black, inset: 5pt,
-  lq.diagram(
+#figure(
+  box(stroke: black, inset: 5pt, lq.diagram(
     width: 75%,
     height: 8cm,
     title: [Heapsort: Comparisons - Swaps],
@@ -436,19 +518,35 @@ Grafisch dargestellt in @complexity-graph lässt sich deutlich eine Komplexität
     ylabel: [$T(n)$],
     //xscale: "log",
     //yscale: "log",
-    lq.plot(complexity_n, complexity_compares, label: "Comparisons", mark: lq.marks.x),
+    lq.plot(
+      complexity_n,
+      complexity_compares,
+      label: "Comparisons",
+      mark: lq.marks.x,
+    ),
     lq.plot(complexity_n, complexity_swaps, label: "Swaps", mark: lq.marks.x),
-    lq.plot(complexity_n, n => 3.1 * n * calc.log(n), label: [$O(n log(n))$], mark: none),
+    lq.plot(
+      complexity_n,
+      n => 3.1 * n * calc.log(n),
+      label: [$O(n log(n))$],
+      mark: none,
+    ),
     lq.plot(complexity_n, n => 13 * n, label: [$O(n)$], mark: none),
-  )), 
-  caption: "Komplexität von Comparisons und Swaps"
+  )),
+  caption: "Komplexität von Comparisons und Swaps",
 ) <complexity-graph>
 
-#figure(table(
-  columns: (auto, auto, auto),
-  table.header[*Array Size $n$*][*Comparisons*][*Swaps*],
-  ..complexity_n.zip(complexity_compares, complexity_swaps).flatten().map(it => [#it]),
-), caption: [Comparisons und Swaps abhängig von Array Size $n$]) <complexity-table>
+#figure(
+  table(
+    columns: (auto, auto, auto),
+    table.header[*Array Size $n$*][*Comparisons*][*Swaps*],
+    ..complexity_n
+      .zip(complexity_compares, complexity_swaps)
+      .flatten()
+      .map(it => [#it]),
+  ),
+  caption: [Comparisons und Swaps abhängig von Array Size $n$],
+) <complexity-table>
 
 @complexity-table zeigt die in der @complexity-graph dargestellten Werte.
 

@@ -1,5 +1,6 @@
 [tools]
-typst = "latest"
+typst = "0.14.0"
+typstyle = "0.14.0"
 
 [env]
 TYPST_FONT_PATHS = "{{config_root}}/common/fonts"
@@ -34,3 +35,10 @@ git ls-files -z --cached --others --exclude-standard -- "${paths[@]}" | xargs -0
 cd "$tmpdir"
 zip -r "$zipfile" .
 '''
+
+[tasks."fmt:typst"]
+description = "Format all typst files in the project"
+#sources = ["**/*.typ"]
+run = [
+    "typstyle -i ./ --timing",
+]

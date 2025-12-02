@@ -9,7 +9,7 @@
   #text(16pt)[Tim Peko]
 ]
 
-#context[
+#context [
   #let show_outline = counter(page).final().first() > 5
 
   #if show_outline [
@@ -35,29 +35,29 @@ Der binäre Suchbaum (`bstree`) als Ganzes verwaltet einen Zeiger auf den Wurzel
 Die öffentlich angebotenen Methoden lassen sich in folgende Kategorien unterteilen:
 
 1. *Konstruktoren und Destruktor*:
-   - `bstree()`: Erzeugt einen leeren Baum
-   - `bstree(bstree const& src)`: Kopiert einen bestehenden Baum
-   - `~bstree()`: Gibt den Speicher aller Knoten frei
+  - `bstree()`: Erzeugt einen leeren Baum
+  - `bstree(bstree const& src)`: Kopiert einen bestehenden Baum
+  - `~bstree()`: Gibt den Speicher aller Knoten frei
 
 2. *Zugriffsmethoden*:
-   - `apply`: Wendet eine Funktion auf jeden Knoten im Baum an (in-order Traversierung)
-   - `at`: Gibt den Wert am angegebenen Index zurück (in-order Traversierung)
-   - `contains`: Prüft, ob ein Wert im Baum vorhanden ist
-   - `count`: Zählt Vorkommen eines bestimmten Wertes im Baum
-   - `empty`: Prüft, ob der Baum leer ist
-   - `equals`: Vergleicht zwei Bäume auf strukturelle Gleichheit
-   - `size`: Gibt die Anzahl der Knoten im Baum zurück
+  - `apply`: Wendet eine Funktion auf jeden Knoten im Baum an (in-order Traversierung)
+  - `at`: Gibt den Wert am angegebenen Index zurück (in-order Traversierung)
+  - `contains`: Prüft, ob ein Wert im Baum vorhanden ist
+  - `count`: Zählt Vorkommen eines bestimmten Wertes im Baum
+  - `empty`: Prüft, ob der Baum leer ist
+  - `equals`: Vergleicht zwei Bäume auf strukturelle Gleichheit
+  - `size`: Gibt die Anzahl der Knoten im Baum zurück
 
 3. *Modifikationsmethoden*:
-   - `insert`: Fügt einen Wert in den Baum ein
-   - `remove`: Entfernt ein Vorkommen eines Wertes aus dem Baum
-   - `remove_all`: Entfernt alle Vorkommen eines Wertes aus dem Baum
-   - `clear`: Entfernt alle Knoten aus dem Baum
+  - `insert`: Fügt einen Wert in den Baum ein
+  - `remove`: Entfernt ein Vorkommen eines Wertes aus dem Baum
+  - `remove_all`: Entfernt alle Vorkommen eines Wertes aus dem Baum
+  - `clear`: Entfernt alle Knoten aus dem Baum
 
 4. *Ausgabemethoden*:
-   - `print`: Eine flache Darstellung des Baums
-   - `print_2d`: Eine zweidimensionale Darstellung des Baums von links nach rechts
-   - `print_2d_upright`: Eine zweidimensionale Darstellung des Baums von oben nach unten
+  - `print`: Eine flache Darstellung des Baums
+  - `print_2d`: Eine zweidimensionale Darstellung des Baums von links nach rechts
+  - `print_2d_upright`: Eine zweidimensionale Darstellung des Baums von oben nach unten
 
 Für die rekursiven Operationen wurden private Hilfsmethoden implementiert, die die eigentliche Rekursion durchführen. Die öffentlichen Methoden dienen hauptsächlich als Wrapper, die die Gültigkeit der Eingabeparameter prüfen und dann die entsprechenden rekursiven Methoden aufrufen.
 
@@ -95,13 +95,13 @@ Die drei Ausgabemethoden implementieren unterschiedliche Traversierungs- und Aus
   image_path,
   caption: none,
   width: 20em,
-  height: auto
+  height: auto,
 ) = {
   block(
     figure(
       block(stroke: black, image(image_path, width: width, height: height)),
-      caption: caption
-    )
+      caption: caption,
+    ),
   )
 }
 
@@ -111,7 +111,7 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 
 #image_display(
   "assets/empyt_tree_test_output.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]
@@ -120,7 +120,7 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 
 #image_display(
   "assets/single_node_test_output.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]
@@ -130,18 +130,18 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 #image_display(
   "assets/insertion_structure_test_output1.png",
   height: 95%,
-  width: auto
+  width: auto,
 )
 
 #image_display(
   "assets/insertion_structure_test_output2.png",
   height: 100%,
-  width: auto
+  width: auto,
 )
 
 #image_display(
   "assets/insertion_structure_test_output3.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]
@@ -151,7 +151,7 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 
 #image_display(
   "assets/copy_constructor_test_output.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]
@@ -160,7 +160,7 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 
 #image_display(
   "assets/removal_edges_test_output.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]
@@ -169,7 +169,7 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 
 #image_display(
   "assets/remove_all_test_output.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]
@@ -178,7 +178,7 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 
 #image_display(
   "assets/apply_function_test_output.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]
@@ -187,7 +187,7 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 
 #image_display(
   "assets/indexing_test_output.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]
@@ -197,7 +197,7 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 
 #image_display(
   "assets/clear_test_output.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]
@@ -206,7 +206,7 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 
 #image_display(
   "assets/equals_test_output.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]
@@ -215,7 +215,7 @@ Die Testfälle sind in der Datei `main01.cpp` implementiert und geben die Ergebn
 
 #image_display(
   "assets/edge_cases_test_output.png",
-  width: 80%
+  width: 80%,
 )
 
 *Ergebnis*: #text(green)[PASSED]

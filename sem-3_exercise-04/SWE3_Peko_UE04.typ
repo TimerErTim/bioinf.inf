@@ -1,7 +1,12 @@
 #import "../common/template.typ": documentation-template
 #import "../common/components.typ": *
 
-#show: documentation-template.with(title: "SWE3 - Übung 4", semester-term: "WS 2025/26", author: "Tim Peko", aufwand-in-h: "4")
+#show: documentation-template.with(
+  title: "SWE3 - Übung 4",
+  semester-term: "WS 2025/26",
+  author: "Tim Peko",
+  aufwand-in-h: "4",
+)
 
 = Aufgabe 1: Klasse `rational_t` erweitern
 
@@ -65,7 +70,7 @@ Die Ergebnisse der Testfälle, dargestellt in @test-results, zeigen keine Fehler
     #v(-1em)
     #image("assets/test_results_2.png", width: 75%)
   ],
-  caption: [Ergebnisse der Testfälle]
+  caption: [Ergebnisse der Testfälle],
 ) <test-results>
 
 // Variante 2 mit Concepts wird verwendet; es gibt keine `ops`-Abstraktionsschicht.

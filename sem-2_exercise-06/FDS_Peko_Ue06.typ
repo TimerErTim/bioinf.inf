@@ -9,7 +9,7 @@
   #text(16pt)[Tim Peko]
 ]
 
-#context[
+#context [
   #let show_outline = counter(page).final().first() > 5
 
   #if show_outline [
@@ -30,20 +30,20 @@
 
 == Lösungsansatz
 
--  *`sudoku::read`*:\ Liest ein Sudoku $n^2 times n^2$ der Ordnung $n$ aus einem `std::istream`. Das Format beginnt mit der Ordnung $n$, gefolgt von $n^2$ Zeilen mit jeweils $n^2$ Zahlen (0 für leere Zellen). Es wird ein Grid gemäß der Ordnung initialisiert und dann die Zellen zuerst der Spalte nach, dann Zeile für Zeile eingelesen.
--  *`sudoku::is_valid`*:\ Überprüft, ob das Setzen einer Zahl in einer Zelle gemäß den Sudoku-Regeln (Zeile, Spalte, Block) gültig ist, indem über die querenden Zellen iteriert und nach einem Duplikat der zu setzenden Zahl gesucht wird.
--  *`sudoku::simplify`*:\ Reduziert den Suchraum vor der Exhaustion durch Constraint Propagation. Dazu werden zwei Strategien angewendet:
-    +  `check_single_possibility`: Füllt Zellen, für die nur noch eine einzige Zahl möglich ist.
-    +  `check_unique_in_unit`: Füllt Zellen, wenn eine bestimmte Zahl nur an einer einzigen Stelle in einer Zeile, Spalte oder einem Block platziert werden kann.
-    Die `apply_constraints` Funktion wendet diese Strategien iterativ solange an, bis keine weiteren Vereinfachungen mehr möglich sind.
--  *`sudoku::solve`*:\ Implementiert einen rekursiven Backtracking-Algorithmus (Exhaustion).
-    +  Sucht die nächste leere Zelle.
-    +  Wenn keine leere Zelle gefunden wird, ist das Sudoku gelöst.
-    +  Probiert für die leere Zelle alle Zahlen von 1 bis n.
-    +  Wenn eine Zahl gültig ist, wird sie gesetzt und `solve` rekursiv aufgerufen.
-    +  Wenn der rekursive Aufruf erfolgreich ist, wird `true` zurückgegeben. Das Sudoku ist gelöst.
-    +  Wenn nicht, wird die Zahl zurückgesetzt (Backtracking) und die nächste Zahl probiert.
-    +  Wenn keine Zahl funktioniert, wird `false` zurückgegeben. Das Sudoku ist nicht lösbar.
+- *`sudoku::read`*:\ Liest ein Sudoku $n^2 times n^2$ der Ordnung $n$ aus einem `std::istream`. Das Format beginnt mit der Ordnung $n$, gefolgt von $n^2$ Zeilen mit jeweils $n^2$ Zahlen (0 für leere Zellen). Es wird ein Grid gemäß der Ordnung initialisiert und dann die Zellen zuerst der Spalte nach, dann Zeile für Zeile eingelesen.
+- *`sudoku::is_valid`*:\ Überprüft, ob das Setzen einer Zahl in einer Zelle gemäß den Sudoku-Regeln (Zeile, Spalte, Block) gültig ist, indem über die querenden Zellen iteriert und nach einem Duplikat der zu setzenden Zahl gesucht wird.
+- *`sudoku::simplify`*:\ Reduziert den Suchraum vor der Exhaustion durch Constraint Propagation. Dazu werden zwei Strategien angewendet:
+  + `check_single_possibility`: Füllt Zellen, für die nur noch eine einzige Zahl möglich ist.
+  + `check_unique_in_unit`: Füllt Zellen, wenn eine bestimmte Zahl nur an einer einzigen Stelle in einer Zeile, Spalte oder einem Block platziert werden kann.
+  Die `apply_constraints` Funktion wendet diese Strategien iterativ solange an, bis keine weiteren Vereinfachungen mehr möglich sind.
+- *`sudoku::solve`*:\ Implementiert einen rekursiven Backtracking-Algorithmus (Exhaustion).
+  + Sucht die nächste leere Zelle.
+  + Wenn keine leere Zelle gefunden wird, ist das Sudoku gelöst.
+  + Probiert für die leere Zelle alle Zahlen von 1 bis n.
+  + Wenn eine Zahl gültig ist, wird sie gesetzt und `solve` rekursiv aufgerufen.
+  + Wenn der rekursive Aufruf erfolgreich ist, wird `true` zurückgegeben. Das Sudoku ist gelöst.
+  + Wenn nicht, wird die Zahl zurückgesetzt (Backtracking) und die nächste Zahl probiert.
+  + Wenn keine Zahl funktioniert, wird `false` zurückgegeben. Das Sudoku ist nicht lösbar.
 
 Die `soduku` Klasse wurde in einer eigenen Datei implementiert. Die `main01.cpp` Datei definiert die `main` Funktion und liest die Sudoku-Datei ein. Der Pfad zu dieser Datei kann optional über die Kommandozeile angegeben werden. Die Ausgabe erfolgt auf die Standardausgabe.
 
@@ -68,12 +68,15 @@ datei: `sudoku-I-3.txt`
     bottom: if y + 1 == n * n { bold_stroke } else { slim_stroke },
   )
 
-  #box(table(columns: n * n, stroke: stroke, fill: (x, y) =>
-    if calc.even(x) and calc.even(y)or calc.odd(x) and calc.odd(y) { color.lighten(gray, 75%) }, ..grid.flatten().map(it => [
-    #if it > 0 {
-      it
-    }
-  ])))
+  #box(table(columns: n * n, stroke: stroke, fill: (x, y) => if calc.even(x)
+      and calc.even(y)
+      or calc.odd(x) and calc.odd(y) { color.lighten(gray, 75%) }, ..grid
+      .flatten()
+      .map(it => [
+        #if it > 0 {
+          it
+        }
+      ])))
 ]
 #soduku(3, (
   (0, 1, 0, 0, 6, 5, 4, 0, 0),

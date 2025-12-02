@@ -1,7 +1,12 @@
 #import "../common/template.typ": documentation-template
 #import "../common/components.typ": *
 
-#show: documentation-template.with(title: "SWE3 - Übung 5", semester-term: "WS 2025/26", author: "Tim Peko", aufwand-in-h: "6")
+#show: documentation-template.with(
+  title: "SWE3 - Übung 5",
+  semester-term: "WS 2025/26",
+  author: "Tim Peko",
+  aufwand-in-h: "6",
+)
 
 
 = Aufgabe: Flugreisen
@@ -66,8 +71,8 @@ Die `main.cpp` startet GoogleTest; alle Tests laufen automatisiert.
 === Testfälle
 
 #figure(
-    image("assets/testcases-task1.png", width: 75%),
-    caption: "Testfälle der Aufgabe 1"
+  image("assets/testcases-task1.png", width: 75%),
+  caption: "Testfälle der Aufgabe 1",
 )
 
 === Beispielausgabe
@@ -100,9 +105,9 @@ Wesentliche Entwurfsdetails:
 
 - *Klonen statt Kopieren*: `addPart(Part const&)` nutzt `clone()` zur Wahrung des dynamischen Typs (keine Slicing-Probleme).
 - *Eigentum*: `CompositePart` besitzt Kinder via `std::unique_ptr<Part>`. `getParts()` liefert konstante Rohzeiger zur sicheren Iteration.
-- *Persistenzformat*: 
+- *Persistenzformat*:
   - Blätter: `P|<name>`
-  - Composite: 
+  - Composite:
     ```
     C|<name>
     {
@@ -169,6 +174,6 @@ Die Tests folgen dem AAA-Prinzip und orientieren sich an den Best-Practices aus 
 Alle definierten Testfälle sind, wie in @testcases-2 dargestellt, erfolgreich.
 
 #figure(
-    image("assets/testcases-task2.png", width: 75%),
-    caption: "Testfälle der Aufgabe 2"
+  image("assets/testcases-task2.png", width: 75%),
+  caption: "Testfälle der Aufgabe 2",
 ) <testcases-2>

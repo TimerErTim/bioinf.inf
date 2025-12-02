@@ -10,9 +10,7 @@
     xlabel: [Dateityp],
     ylabel: [Zeilen],
     xaxis: (
-      ticks: data.keys()
-      .map(rotate.with(-30deg, reflow: true))
-      .enumerate(),
+      ticks: data.keys().map(rotate.with(-30deg, reflow: true)).enumerate(),
       subticks: none,
     ),
 
@@ -22,20 +20,20 @@
       data.values().map(it => it.code),
       label: "Codezeilen",
       offset: -0.25,
-      width: 0.25
+      width: 0.25,
     ),
     lq.bar(
       range(data.len()),
       data.values().map(it => it.comments),
       label: "Kommentarzeilen",
-      width: 0.25
+      width: 0.25,
     ),
     lq.bar(
       range(data.len()),
       data.values().map(it => it.blanks),
       label: "Leerzeilen",
       offset: 0.25,
-      width: 0.25
+      width: 0.25,
     ),
   )
 }

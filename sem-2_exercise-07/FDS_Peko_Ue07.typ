@@ -9,7 +9,7 @@
   #text(16pt)[Tim Peko]
 ]
 
-#context[
+#context [
   #let show_outline = counter(page).final().first() > 5
 
   #if show_outline [
@@ -44,21 +44,24 @@ Referenzierte Dateien können unter `assets/` gefunden werden.
 
 #let image_display(
   image_path,
-  caption
+  caption,
 ) = {
   block(
     figure(
       block(stroke: black, image(image_path, width: 20em)),
-      caption: caption
-    )
+      caption: caption,
+    ),
   )
 }
 
 Die Testfälle sind in der Datei `main01.cpp` zu finden. Dessen Ausführung ergibt folgende Konsolenausgabe:
 
 #block(align(left, figure(
-  block(stroke: black, align(left, image("assets/testcases_console_output.png"))),
-  caption: "Konsolenausgabe der Testfälle"
+  block(stroke: black, align(
+    left,
+    image("assets/testcases_console_output.png"),
+  )),
+  caption: "Konsolenausgabe der Testfälle",
 )))
 
 === Testfall 1: Leeres Bild
@@ -83,7 +86,7 @@ $theta = 0.1$
 
 #image_display(
   "assets/black_picture.png",
-  "Schwarzes Bild - Input für Testfall 2"
+  "Schwarzes Bild - Input für Testfall 2",
 )
 
 *Output:*\
@@ -93,7 +96,7 @@ count = 0
 
 #image_display(
   "assets/testcase-2_output.png",
-  "Output von Testfall 2"
+  "Output von Testfall 2",
 )
 
 *Ergebnis*: #text(green)[success]
@@ -106,7 +109,7 @@ $theta = 0.5$
 
 #image_display(
   "assets/white_picture.png",
-  "Weißes Bild - Input für Testfall 3"
+  "Weißes Bild - Input für Testfall 3",
 )
 
 *Output:*\
@@ -116,7 +119,7 @@ count = 1
 
 #image_display(
   "assets/testcase-3_output.png",
-  "Output von Testfall 3"
+  "Output von Testfall 3",
 )
 
 *Ergebnis*: #text(green)[success]
@@ -129,7 +132,7 @@ $theta = 0.5$
 
 #image_display(
   "assets/3_dots_picture.png",
-  "Schwarzes Bild mit 3 weißen Punkten - Input für Testfall 4"
+  "Schwarzes Bild mit 3 weißen Punkten - Input für Testfall 4",
 )
 
 *Output:*\
@@ -139,7 +142,7 @@ count = 3
 
 #image_display(
   "assets/testcase-4_output.png",
-  "Output von Testfall 4"
+  "Output von Testfall 4",
 )
 
 *Ergebnis*: #text(green)[success]
@@ -152,7 +155,7 @@ $theta = 0.5$
 
 #image_display(
   "assets/circle_hole_picture.png",
-  "Hohler weißer Kreis - Input für Testfall 5"
+  "Hohler weißer Kreis - Input für Testfall 5",
 )
 
 *Output:*\
@@ -162,7 +165,7 @@ count = 1
 
 #image_display(
   "assets/testcase-5_output.png",
-  "Output von Testfall 5"
+  "Output von Testfall 5",
 )
 
 *Ergebnis*: #text(green)[success]
@@ -175,7 +178,7 @@ $theta = 1.1$
 
 #image_display(
   "assets/white_picture.png",
-  "Weißes Bild - Input für Testfall 6"
+  "Weißes Bild - Input für Testfall 6",
 )
 
 *Output:*\

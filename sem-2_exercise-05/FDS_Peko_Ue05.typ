@@ -9,7 +9,7 @@
   #text(16pt)[Tim Peko]
 ]
 
-#context[
+#context [
   #let show_outline = counter(page).final().first() > 3
 
   #if show_outline [
@@ -32,11 +32,9 @@
 
 Die Fibonacci-Funktion wurde in drei Varianten implementiert:
 
-1. *Rekursive Implementierung*: Die klassische rekursive Implementierung, bei der direkt die mathematische Definition 
-$
-F(n) = F(n-1) + F(n-2)\
-F(0) = 0 | F(1) = 1
-$ umgesetzt wird.
+1. *Rekursive Implementierung*: Die klassische rekursive Implementierung, bei der direkt die mathematische Definition
+$ F(n) = F(n-1) + F(n-2)\
+F(0) = 0 | F(1) = 1 $ umgesetzt wird.
 
 2. *Entrekursivierte Implementierung mit std::stack*: Hier wird die Rekursion durch die Verwendung eines Stacks simuliert, wobei der Stack den Aufrufparameter $n$ speichert.
 
@@ -52,12 +50,8 @@ Die Testfälle vergleichen alle drei Implementierungen für Fibonacci-Zahlen von
 
 *Output:*
 #let fib(n) = [
-  #if n == 0 {
-    return 0
-  },
-  #if n == 1 {
-    return 1
-  },
+  #if n == 0 { return 0 },
+  #if n == 1 { return 1 },
   #if n > 1 {
     return fib(n - 1) + fib(n - 2)
   }
@@ -70,7 +64,7 @@ Die Testfälle vergleichen alle drei Implementierungen für Fibonacci-Zahlen von
   [*n*], [*Rekursiv*], [*STD Stack*], [*Custom Stack*],
   ..for i in range(0, 11) {
     ([#i], [#fib(i)], [#fib(i)], [#fib(i)])
-  }
+  },
 )
 
 Alle drei Implementierungen liefern die gleichen Ergebnisse, die den erwarteten Fibonacci-Zahlen entsprechen.
@@ -85,15 +79,15 @@ Ergebnis: #text(green)[success]
   table(
     columns: (auto, auto, auto, auto),
     align: (center, center, center, center),
-  stroke: 1pt,
-  [*n*], [*Rekursiv*], [*STD Stack*], [*Custom Stack*],
-  [10], [*0.00000530s*], [0.00008450s], [0.00003570s],
-  [15], [*0.00001420s*], [0.00135440s], [0.00055960s],
-  [20], [*0.00014080s*], [0.01193570s], [0.00356280s],
-  [25], [*0.00176910s*], [0.11157950s], [0.03796390s],
-  [30], [*0.01155780s*], [1.27071180s], [0.42477520s],
-  [35], [*0.10993520s*], [13.57575520s], [5.28246510s]
-  )
+    stroke: 1pt,
+    [*n*], [*Rekursiv*], [*STD Stack*], [*Custom Stack*],
+    [10], [*0.00000530s*], [0.00008450s], [0.00003570s],
+    [15], [*0.00001420s*], [0.00135440s], [0.00055960s],
+    [20], [*0.00014080s*], [0.01193570s], [0.00356280s],
+    [25], [*0.00176910s*], [0.11157950s], [0.03796390s],
+    [30], [*0.01155780s*], [1.27071180s], [0.42477520s],
+    [35], [*0.10993520s*], [13.57575520s], [5.28246510s],
+  ),
 )
 
 Der Laufzeitvergleich zeigt deutlich, dass auch die entrekursifizierte Implementierung exponentiell mit der Größe von n $O(2^n)$ wächst. Das liegt daran, dass die Rekursion nur substituiert wird, es werden keine Berechnungen eingespart.
@@ -192,26 +186,26 @@ X    *     *  *
 
 *Output:*
 #par(box[
-```txt
-can_escape = true
+  ```txt
+  can_escape = true
 
-Solved Maze (.):
-***************
-*  ...*       *
-***.*.*    *  *
-*...*.******* *
-*...*........ *
-*.********* . *
-*...*       . *
-***.*  **** . *
-X... *     *. *
-***** ***** . *
-*        *  . *
-* **********.**
-*  S.....*... *
-*    *  ...   *
-***************
-```
+  Solved Maze (.):
+  ***************
+  *  ...*       *
+  ***.*.*    *  *
+  *...*.******* *
+  *...*........ *
+  *.********* . *
+  *...*       . *
+  ***.*  **** . *
+  X... *     *. *
+  ***** ***** . *
+  *        *  . *
+  * **********.**
+  *  S.....*... *
+  *    *  ...   *
+  ***************
+  ```
 ])
 
 Ergebnis: #text(green)[success]
@@ -239,26 +233,26 @@ X    *     *  *
 
 *Output:*
 #par(box[
-```txt
-can_escape_i = true
+  ```txt
+  can_escape_i = true
 
-Solved Maze (.):
-***************
-*  ...*       *
-***.*.*    *  *
-*...*.******* *
-*...*........ *
-*.********* . *
-*...*       . *
-***.*  **** . *
-X... *     *. *
-***** ***** . *
-*        *  . *
-* **********.**
-*  S.....*... *
-*    *  ...   *
-***************
-```
+  Solved Maze (.):
+  ***************
+  *  ...*       *
+  ***.*.*    *  *
+  *...*.******* *
+  *...*........ *
+  *.********* . *
+  *...*       . *
+  ***.*  **** . *
+  X... *     *. *
+  ***** ***** . *
+  *        *  . *
+  * **********.**
+  *  S.....*... *
+  *    *  ...   *
+  ***************
+  ```
 ])
 
 Ergebnis: #text(green)[success]

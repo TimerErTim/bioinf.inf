@@ -73,7 +73,7 @@ $ R' = G' = B' = L $
 
 Die Invertierung der Farben erfolgt, indem bei jedem Farbkanal der maximal mögliche Wert $W$ mit dem aktuellen Wert $C_i$ subtrahiert wird:
 $
- C_i ' = W - C_i 
+  C_i ' = W - C_i
 $
 
 = Testfälle

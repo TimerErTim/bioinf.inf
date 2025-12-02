@@ -9,7 +9,7 @@
   #text(16pt)[Tim Peko]
 ]
 
-#context[
+#context [
   #let show_outline = counter(page).final().first() > 5
 
   #if show_outline [
@@ -42,7 +42,7 @@ Die Zeitmessung der grundlegenden Operationen `add`, `assign`, `compare`, `divid
 
 Die Messungen erfolgen für folgende Operationen:
 - *Add*: Integer-Addition zweier volatile Variablen
-- *Assign*: Zuweisung zwischen zwei volatile Integer-Variablen  
+- *Assign*: Zuweisung zwischen zwei volatile Integer-Variablen
 - *Compare*: Vergleichsoperation zwischen zwei volatile Integer-Variablen
 - *Divide*: Gleitkomma-Division zweier volatile double-Variablen
 - *Multiply*: Integer-Multiplikation zweier volatile Variablen
@@ -61,11 +61,11 @@ Die Implementierung befindet sich in `example01\main01.cpp` und die Ergebnisse w
 
 #figure(
   image(
-    "assets/basic_operations_chart.png"
+    "assets/basic_operations_chart.png",
   ),
   caption: [
     Laufzeit der Grundoperationen
-  ]
+  ],
 )
 
 = Beispiel 2: Binäre Suche - Theorie vs. Praxis
@@ -83,7 +83,7 @@ Der Vergleich zwischen theoretischer Analyse und praktischen Laufzeitmessungen e
 === Testparameter
 
 - *Array-Größen*: 1.000, 2.000, 4.000, 8.000, 16.000, 32.000, 64.000, 128.000 Elemente
-- *Suchszenarien*: 
+- *Suchszenarien*:
   - Zufällig ausgewählte Werte aus dem Array (erfolgreich)
   - Nicht im Array enthaltene Werte (erfolglos)
 - *Wiederholungen*: 1.000 Iterationen pro Messung für statistische Relevanz
@@ -128,7 +128,7 @@ Target 4: V1=-1, V2=-1, V3=-1 - PASSED
 
 Die systematischen Laufzeitmessungen werden für alle Kombinationen aus:
 - 3 Algorithmus-Varianten
-- 8 Array-Größen  
+- 8 Array-Größen
 - 2 Suchszenarien (gefunden/nicht gefunden)
 
 durchgeführt und in `binary_search_analysis.csv` gespeichert.
@@ -152,7 +152,7 @@ Um genaue Messungen zu gewährleisten:
 
 Die generierten CSV-Dateien ermöglichen eine detaillierte Excel-Analyse mit:
 - Tabellarische Darstellung aller Messwerte
-- Graphische Visualisierung der Laufzeitverläufe  
+- Graphische Visualisierung der Laufzeitverläufe
 - Vergleich zwischen Theorie und Praxis
 - Performance-Ranking der Algorithmus-Varianten
 
@@ -160,20 +160,20 @@ Die Hardware-Spezifikation und Timer-Auflösung werden automatisch dokumentiert 
 
 #figure(
   image(
-    "assets/binary_search_found_chart.png"
+    "assets/binary_search_found_chart.png",
   ),
   caption: [
     Laufzeit der Binärsuche (Werte gefunden)
-  ]
+  ],
 )
 
 #figure(
   image(
-    "assets/binary_search_not_found_chart.png"
+    "assets/binary_search_not_found_chart.png",
   ),
   caption: [
     Laufzeit der Binärsuche (Werte nicht auffindbar)
-  ]
+  ],
 )
 
 == Projekt-Struktur
@@ -181,16 +181,16 @@ Die Hardware-Spezifikation und Timer-Auflösung werden automatisch dokumentiert 
 Die Lösung ist in zwei separate Visual Studio Projekte aufgeteilt:
 
 === Example01 - Grundoperationen
-- Datei: `example01\main01.cpp`  
+- Datei: `example01\main01.cpp`
 - Zweck: Zeitmessung der 6 Grundoperationen (add, assign, compare, divide, multiply, index)
 - Output: `basic_operations_timing.csv`
 - Erweiterte System- und CPU-Informationen
 - Reduzierte externe Abhängigkeiten (kein chrono)
 
-=== Example02 - Binäre Suche  
+=== Example02 - Binäre Suche
 - Datei: `example02\main02.cpp`
 - Zweck: Vergleich von 3 binären Suchvarianten (V1, V2, V3)
-- Output: `binary_search_analysis.csv`  
+- Output: `binary_search_analysis.csv`
 - Theoretische vs. praktische Laufzeitanalyse
 - Umfassende Korrektheitstests und Edge-Case-Behandlung
 

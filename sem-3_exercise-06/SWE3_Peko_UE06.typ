@@ -173,7 +173,7 @@ Eine fortgeschrittenere Lösung wäre die Implementierung _stabiler Iteratoren_:
 
 #figure(
   rect(inset: 0.5cm, vis-dll-stable-iterator-architecture()),
-  caption: [Stabile Iterator-Architektur]
+  caption: [Stabile Iterator-Architektur],
 )
 
 Bei dieser Architektur würde:

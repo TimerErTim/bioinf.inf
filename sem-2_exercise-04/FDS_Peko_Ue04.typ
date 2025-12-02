@@ -9,7 +9,7 @@
   #text(16pt)[Tim Peko]
 ]
 
-#context[
+#context [
   #let show_outline = counter(page).final().first() > 3
 
   #if show_outline [
@@ -278,7 +278,7 @@ Ergebnis: #text(green)[success]
 ```txt
 f(x) = x + e^x
 interval = [0, 1]
-``` 
+```
 
 *Output:*
 ```txt
@@ -300,7 +300,7 @@ interval = [-1, 4]
 Error: Function has same signs at interval bounds
 ```
 
-Ergebnis: #text(green)[success] 
+Ergebnis: #text(green)[success]
 
 *Input:*
 ```txt

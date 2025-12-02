@@ -85,46 +85,46 @@ list.empty() = true
 Es lassen sich also folgende Testfälle isolieren:
 
 === Test der `push_front` und `push_back` Operationen
-   - Hinzufügen von Elementen am Anfang und Ende der Liste
+- Hinzufügen von Elementen am Anfang und Ende der Liste
 Ergebnis: #text(green)[success]
 
 === Test der Größe und Leerheit
-   - Abfrage der Listengröße und Überprüfung, ob die Liste leer ist
+- Abfrage der Listengröße und Überprüfung, ob die Liste leer ist
 Ergebnis: #text(green)[success]
 
 === Test der `at` Funktion
-   - Zugriff auf Elemente an bestimmten Positionen
+- Zugriff auf Elemente an bestimmten Positionen
 Ergebnis: #text(green)[success]
 
 === Test von `contains`
-   - Überprüfung, ob bestimmte Elemente in der Liste enthalten sind
+- Überprüfung, ob bestimmte Elemente in der Liste enthalten sind
 Ergebnis: #text(green)[success]
 
 === Test von `insert_sorted`
-   - Einfügen von Elementen in eine sortierte Liste
+- Einfügen von Elementen in eine sortierte Liste
 Ergebnis: #text(green)[success]
 
 === Test der `apply` Funktion
-   - Anwenden einer Funktion zum Ausgeben der Elemente
-   - Anwenden einer Funktion zum Verdoppeln der Elemente
+- Anwenden einer Funktion zum Ausgeben der Elemente
+- Anwenden einer Funktion zum Verdoppeln der Elemente
 Ergebnis: #text(green)[success]
 
 === Test der `pop_front` und `pop_back` Operationen
-   - Entfernen von Elementen am Anfang und Ende der Liste
+- Entfernen von Elementen am Anfang und Ende der Liste
 Ergebnis: #text(green)[success]
 
 === Test des Kopierkonstruktors
-   - Erstellen einer Kopie der Liste
-   - Überprüfung der Gleichheit mit `equal`
+- Erstellen einer Kopie der Liste
+- Überprüfung der Gleichheit mit `equal`
 Ergebnis: #text(green)[success]
 
 === Test von `count` und `remove_all`
-   - Zählen der Vorkommen eines Elements
-   - Entfernen aller Vorkommen eines Elements
+- Zählen der Vorkommen eines Elements
+- Entfernen aller Vorkommen eines Elements
 Ergebnis: #text(green)[success]
 
 === Test der `clear` Funktion
-   - Löschen aller Elemente in der Liste
+- Löschen aller Elemente in der Liste
 Ergebnis: #text(green)[success]
 
 #v(5em)
@@ -253,47 +253,47 @@ DynArray(capacity= 40)[
 Dabei handelt es sich konkret um folgende Testfälle:
 
 === Test des Standardkonstruktors
-   - Erstellung eines leeren, uninitialisierten Arrays
+- Erstellung eines leeren, uninitialisierten Arrays
 Ergebnis: #text(green)[success]
 
 === Test der `initialize` Methode
-   - Angelegtes Array wird mit einer bestimmten Größe initialisiert
+- Angelegtes Array wird mit einer bestimmten Größe initialisiert
 Ergebnis: #text(green)[success]
 
 === Test der `set` Methode
-   - Setzen von Werten an verschiedenen Positionen
+- Setzen von Werten an verschiedenen Positionen
 Ergebnis: #text(green)[success]
 
 === Test der `get` Methode
-   - Abrufen von Werten an verschiedenen Positionen
+- Abrufen von Werten an verschiedenen Positionen
 Ergebnis: #text(green)[success]
 
 === Test der `at` Methode
-   - Zugriff auf Elemente per Referenz
-   - Änderung von Elementen über die Referenz
+- Zugriff auf Elemente per Referenz
+- Änderung von Elementen über die Referenz
 Ergebnis: #text(green)[success]
 
 === Test von ungültigen Positionen
-   - Versuch, auf Elemente außerhalb des gültigen Bereichs zuzugreifen
-   - Überprüfung der Fehlerbehandlung
+- Versuch, auf Elemente außerhalb des gültigen Bereichs zuzugreifen
+- Überprüfung der Fehlerbehandlung
 Ergebnis: #text(green)[success]
 
 === Test des Konstruktors mit Größe
-   - Erstellung eines Arrays mit einer bestimmten Anfangsgröße
-   - Setzen und Abrufen von Werten
+- Erstellung eines Arrays mit einer bestimmten Anfangsgröße
+- Setzen und Abrufen von Werten
 Ergebnis: #text(green)[success]
 
 === Test der `get_max_size` Methode
-   - Abrufen der maximalen Größe der Arrays
+- Abrufen der maximalen Größe der Arrays
 Ergebnis: #text(green)[success]
 
 === Test der `clear` Methode
-   - Löschen aller Elemente im Array
+- Löschen aller Elemente im Array
 Ergebnis: #text(green)[success]
 
 === Test eines großen Arrays
-   - Erstellung eines Arrays mit mehr als `m_cols` Elementen
-   - Setzen und Abrufen von Werten
+- Erstellung eines Arrays mit mehr als `m_cols` Elementen
+- Setzen und Abrufen von Werten
 Ergebnis: #text(green)[success]
 
 #align(right + bottom)[

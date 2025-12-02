@@ -13,10 +13,13 @@
 }
 
 #let gcd_steps(a, b) = {
-  let steps = ((a, b),) + while b != 0 {
-    (a, b) = gcd_step(a, b)
+  let steps = (
     ((a, b),)
-  }
+      + while b != 0 {
+        (a, b) = gcd_step(a, b)
+        ((a, b),)
+      }
+  )
   steps
 }
 
@@ -31,7 +34,13 @@
   for i in range(1, steps.len()) {
     let from = steps.at(i - 1)
     let to = steps.at(i)
-    line-plots.push(lq.line(from, to, stroke: color, tip: tiptoe.stealth, toe: tiptoe.bar))
+    line-plots.push(lq.line(
+      from,
+      to,
+      stroke: color,
+      tip: tiptoe.stealth,
+      toe: tiptoe.bar,
+    ))
   }
 
   let start = steps.at(0)
@@ -40,9 +49,15 @@
     text-location.at(0),
     text-location.at(1),
     align: right,
-    pad(rest: 5%)[Start (#start.at(0), #start.at(1)) #sym.arrow.r #steps.last().at(0)],
+    pad(
+      rest: 5%,
+    )[Start (#start.at(0), #start.at(1)) #sym.arrow.r #steps.last().at(0)],
   ))
-  line-plots.push(lq.line(start, text-location, stroke: red.transparentize(75%)))
+  line-plots.push(lq.line(
+    start,
+    text-location,
+    stroke: red.transparentize(75%),
+  ))
 
   line-plots
 }
@@ -50,7 +65,10 @@
 #let visualize_gcd_divergence(sample-pairs) = {
   let color-map = lq.color.map.okabe-ito
   let line-plots = for (i, (a, b)) in sample-pairs.enumerate() {
-    plots_gcd_divergence(a, b, color: color-map.at(calc.rem(i, color-map.len())))
+    plots_gcd_divergence(a, b, color: color-map.at(calc.rem(
+      i,
+      color-map.len(),
+    )))
   }
 
   lq.diagram(
@@ -71,9 +89,11 @@
   let size = calc.max(x-end, y-end) + 1
 
   let data = for a in range(size) {
-    (for b in range(size) {
-      (0,)
-    },)
+    (
+      for b in range(size) {
+        (0,)
+      },
+    )
   }
 
   for a in a-range {
@@ -99,7 +119,10 @@
       lq.vec.multiply(step, 1 / calc.norm(..step))
     },
     map: lq.color.map.viridis,
-    color: (x, y, u, v) => calc.norm(..lq.vec.subtract(if y == 0 { (0, 0) } else { gcd_step(x, y) }, (x, y))),
+    color: (x, y, u, v) => calc.norm(..lq.vec.subtract(
+      if y == 0 { (0, 0) } else { gcd_step(x, y) },
+      (x, y),
+    )),
     scale: 1,
     pivot: start,
   )
@@ -118,7 +141,12 @@
 }
 
 #let visualize_gcd_steps_needed(x-coordinates, y-coordinates) = {
-  let color-mesh = lq.colormesh(x-coordinates, y-coordinates, (x, y) => gcd_steps_needed(x, y), map: lq.color.map.viridis)
+  let color-mesh = lq.colormesh(
+    x-coordinates,
+    y-coordinates,
+    (x, y) => gcd_steps_needed(x, y),
+    map: lq.color.map.viridis,
+  )
 
   show: lq.set-diagram(height: 9cm, width: 9cm)
   lq.diagram(
@@ -163,6 +191,8 @@
     title: [Zeitkomplexität des Euklidischen Algorithmus],
     xlabel: [$a$],
     ylabel: [Anzahl Schritte = $limits(max)_(i=0)^(a-1) T(a, i)$],
-    lq.plot(a-range, a => range(a).map(b => gcd_steps_needed(a, b)).reduce(calc.max)),
+    lq.plot(a-range, a => range(a)
+      .map(b => gcd_steps_needed(a, b))
+      .reduce(calc.max)),
   )
 }

@@ -9,7 +9,7 @@
   #text(16pt)[Tim Peko]
 ]
 
-#context[
+#context [
   #let show_outline = counter(page).final().first() > 5
 
   #if show_outline [
@@ -80,7 +80,11 @@ werden mithilfe von Python mit Matplotlib visualisiert und hier dargestellt.
   show figure: set block(width: 100%)
 
   block(figure(
-    box(stroke: black, width: width, height: height, image(image_path, width: 100%, height: auto)),
+    box(stroke: black, width: width, height: height, image(
+      image_path,
+      width: 100%,
+      height: auto,
+    )),
     caption: caption,
   ))
 }
@@ -88,7 +92,11 @@ werden mithilfe von Python mit Matplotlib visualisiert und hier dargestellt.
 Hier wird eine Grafik eingefügt, die die Anzahl der Zeichenvergleiche für jeden Algorithmus über verschiedene Text- und
 Musterlängen für ein bestimmtes Alphabet darstellt.
 
-#image_display("assets/comparison_chart.png", caption: "Anzahl der Vergleiche für alle Algorithmen und Alphabete", width: 90%)
+#image_display(
+  "assets/comparison_chart.png",
+  caption: "Anzahl der Vergleiche für alle Algorithmen und Alphabete",
+  width: 90%,
+)
 
 *Analyse*: Die Ergebnisse bestätigen die theoretischen Erwartungen. Der Brute-Force-Algorithmus zeigt durchgehend die
 höchste Anzahl an Vergleichen, insbesondere bei größeren Texten und kleineren Alphabeten. Boyer-Moore ist beinahe
@@ -178,6 +186,6 @@ Der Vergleich im Average-Case unter einem binären Alphabet zeigt den Vorteil vo
   width: 80%,
 )
 
-  #align(right + bottom)[
+#align(right + bottom)[
   Aufwand in h: 8
 ]

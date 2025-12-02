@@ -10,15 +10,15 @@
       fill: highlight-color.lighten(95%),
       radius: 5pt,
       width: 100%,
-      inset: (top: 10pt, right: 20pt, bottom: 10pt, left: 5pt)
+      inset: (top: 10pt, right: 20pt, bottom: 10pt, left: 5pt),
     )[
       #place(
-        top + right, 
+        top + right,
         dx: 15pt,
         dy: -5pt,
         text(size: 8pt, fill: gray.darken(50%))[
           #it.lang
-        ]
+        ],
       )
 
       #set par(linebreaks: "optimized")
@@ -27,16 +27,19 @@
         columns: (auto, 1fr),
         row-gutter: 4pt,
         column-gutter: 5pt,
-        ..it.lines.map(line => {
-          (
-            text(baseline: 1.5pt, size: 5pt, fill: gray)[
-              #line.number
-            ], 
-            text(size: 8pt)[
-              #line.body\ // The backslash is important to force the text height using a singular forced whitespace
-            ]
-          )
-        }).flatten()
+        ..it
+          .lines
+          .map(line => {
+            (
+              text(baseline: 1.5pt, size: 5pt, fill: gray)[
+                #line.number
+              ],
+              text(size: 8pt)[
+                #line.body\ // The backslash is important to force the text height using a singular forced whitespace
+              ],
+            )
+          })
+          .flatten()
       )
     ]
   } else {
@@ -45,7 +48,7 @@
       fill: gray.lighten(80%),
       radius: 4pt,
       extent: 3pt,
-      it//[#h(1pt)#it#h(1pt)]
+      it, //[#h(1pt)#it#h(1pt)]
     )
     h(3pt)
   }
@@ -54,14 +57,20 @@
 #let format-equation(it) = {
   set text(font: "Libertinus Math")
   it
-} 
+}
 
 #let format-quote(quote) = {
   let border-color = gray.lighten(50%)
   if quote.block {
-    block(stroke: (
-      x: border-color,
-    ), radius: 8pt, inset: (y: 8pt), above: 1em, below: 1em)[
+    block(
+      stroke: (
+        x: border-color,
+      ),
+      radius: 8pt,
+      inset: (y: 8pt),
+      above: 1em,
+      below: 1em,
+    )[
       #quote
     ]
   } else {
@@ -83,16 +92,19 @@
   semester-term: "",
   author: "",
   aufwand-in-h: none,
-  doc
+  doc,
 ) = {
-  set page(footer: context[
-    #set align(right)
-    #let cur = counter(page).get().first()
-    #let tot = counter(page).final().first()
-    Seite #cur / #tot
-  ], header: [
-    #semester-term #h(1fr) #author
-  ])
+  set page(
+    footer: context [
+      #set align(right)
+      #let cur = counter(page).get().first()
+      #let tot = counter(page).final().first()
+      Seite #cur / #tot
+    ],
+    header: [
+      #semester-term #h(1fr) #author
+    ],
+  )
   set heading(numbering: "1.1.")
   show heading: set block(below: 1em, above: 1.25em)
   show heading: it => {
@@ -113,7 +125,7 @@
     #text(16pt)[#author]
   ]
 
-  context{
+  context {
     let show_outline = counter(page).final().first() > 5
 
     if show_outline [

@@ -1,7 +1,12 @@
 #import "../common/template.typ": documentation-template
 #import "../common/components.typ": *
 
-#show: documentation-template.with(title: "SWE3 - Übung 2", semester-term: "WS 2025/26", author: "Tim Peko", aufwand-in-h: 12)
+#show: documentation-template.with(
+  title: "SWE3 - Übung 2",
+  semester-term: "WS 2025/26",
+  author: "Tim Peko",
+  aufwand-in-h: 12,
+)
 
 #import "../common/visualization/mergesort.typ": *
 #import "@preview/suiji:0.4.0": *
@@ -16,12 +21,18 @@ Der Merge Sort Algorithmus funktioniert, indem wir immer sortierte Subarrays zu 
 
 Um die gesamte Collection zu sortieren, brechen wir die Collection auf die kleinste möglichen Subarrays, die bereits sortiert sind, auf. Das sind die Subarrays, die nur ein Element enthalten. Danach wird der Merge Schritt für die immer größer werdenden (gemerged) Super-/Subarrays wiederholt, bis die gesamte Collection sortiert ist. Das ist in @mergesort-visualization visualisiert.
 
-#figure(box(stroke: black, inset: 10pt, visualize_merge_step()), caption: [Visualisierung eines Merge Schrittes]) <merge-step-visualization>
+#figure(
+  box(stroke: black, inset: 10pt, visualize_merge_step()),
+  caption: [Visualisierung eines Merge Schrittes],
+) <merge-step-visualization>
 
 #let mergesort_demo_data = (1, 2, 3, 4, 5, 6, 7, 8)
-#figure(box(stroke: black, inset: 10pt, visualize_mergesort(mergesort_demo_data)), caption: [
-  Visualisierung des Merge Sort Algorithmus
-]) <mergesort-visualization>
+#figure(
+  box(stroke: black, inset: 10pt, visualize_mergesort(mergesort_demo_data)),
+  caption: [
+    Visualisierung des Merge Sort Algorithmus
+  ],
+) <mergesort-visualization>
 
 @mergesort-distr-random und @mergesort-distr-reverse zeigen, wie die Datenordnung während des Sortiervorgangs nach jedem Merge Schritt verändert wird. Sortierte Teilbereiche werden dabei in gleicher Farbe markiert. Es fällt auf, dass die Bereiche der sortierten Chunks bei beiden Ausgangslagen gleich sind.
 
@@ -36,7 +47,11 @@ Um die gesamte Collection zu sortieren, brechen wir die Collection auf die klein
 ) <mergesort-distr-random>
 
 #figure(
-  box(stroke: black, inset: 10pt, visualize_mergesort_process(range(64, 0, step: -1))),
+  box(stroke: black, inset: 10pt, visualize_mergesort_process(range(
+    64,
+    0,
+    step: -1,
+  ))),
   caption: [Verteilung der Daten beim Sortiervorgang des Merge Sort Algorithmus mit umgekehrter Ausgangsreihenfolge],
 ) <mergesort-distr-reverse>
 
@@ -99,7 +114,11 @@ void merge_sorter::merge(IMergeReader<T> &sorted_l, IMergeReader<T> &sorted_r, I
 ```
 
 #figure(
-  quote(block: true, attribution: "Übungsangabe", image("assets/merge_iteration_flowchart.png")),
+  quote(
+    block: true,
+    attribution: "Übungsangabe",
+    image("assets/merge_iteration_flowchart.png"),
+  ),
   caption: [Jeweils Chunks der Größe $n$ von A und B, werden zu einem Chunk der Größe $2n$ zusammengeführt. Die neuen
     Chunks werden abgechselnd in C und D geschrieben.],
 ) <merge-iteration-flowchart>
@@ -115,7 +134,11 @@ Die `complete_sort` Methode
 Visualisierung in @complete-sort-flowchart.
 
 #figure(
-  quote(block: true, attribution: "Übungsangabe", image("assets/complete_sort_flowchart.png")),
+  quote(
+    block: true,
+    attribution: "Übungsangabe",
+    image("assets/complete_sort_flowchart.png"),
+  ),
   caption: [Flowchart der `complete_sort` Methode: Aufteilung und wiederholtes zusammenführen von immer größeren Chunks.],
 ) <complete-sort-flowchart>
 
@@ -183,24 +206,24 @@ Die Implementierung konvertiert die Eingabe in einen Reader, orchestriert `compl
 
 Der Standard-Testfall
 + *Arrange* - Legt eine Datei mit zufälligen Strings an\ ```cpp
-      std::string filename = "test_file.txt";
-      file_manipulator::fill_randomly(filename, array_length, string_length);
-      ```
+  std::string filename = "test_file.txt";
+  file_manipulator::fill_randomly(filename, array_length, string_length);
+  ```
 + *Act* - Sortiert diese per `merge_sorter::sort_file_in_memory(...)`\ ```cpp
-      merge_sorter sorter;
-      sorter.sort_file_in_memory(filename);
-      ```
+  merge_sorter sorter;
+  sorter.sort_file_in_memory(filename);
+  ```
 + *Assert* - Verifiziert das Ergebnis hinsichtlich der Sortierung.\ ```cpp
-      std::ifstream file(filename);
-      stream_reader<std::string> reader(file);
+  std::ifstream file(filename);
+  stream_reader<std::string> reader(file);
 
-      std::string prev = reader.get();
-      while (reader.has_next()) {
-          std::string current = reader.get();
-          ASSERT_LE(prev, current) << "Elements are not in sorted order";
-          prev = current;
-      }
-      ```
+  std::string prev = reader.get();
+  while (reader.has_next()) {
+      std::string current = reader.get();
+      ASSERT_LE(prev, current) << "Elements are not in sorted order";
+      prev = current;
+  }
+  ```
 
 === Liste der abgedeckten Testfälle
 
@@ -218,7 +241,10 @@ Zusätzlich gibt es kleine Testfälle, die sowohl die `random.h` als auch die `s
 
 == Ergebnisse
 
-#figure(image("assets/2025-10-14_test_results.png"), caption: [Ergebnisse der Testfälle für Beispiel 1]) <task-01-test-results>
+#figure(
+  image("assets/2025-10-14_test_results.png"),
+  caption: [Ergebnisse der Testfälle für Beispiel 1],
+) <task-01-test-results>
 
 Alle Testfälle bestehen erfolgreich, wie in @task-01-test-results zu sehen ist. Es fällt auf, dass die Laufzeit bei den parametrisierten Testfällen stark unterschiedlich ausfällt. Das liegt an der stark unterschiedlichen Größe der zu sortierenden Datei.
 
@@ -230,13 +256,13 @@ Alle Testfälle bestehen erfolgreich, wie in @task-01-test-results zu sehen ist.
 Wir müssen folgende Anforderungen aus der Angabe erfüllen:
 
 #quote(block: true, attribution: "Übungsangabe")[
-Ein paar Implementierungshinweise:
-+ Die Klasse merge_sorter soll die in der Übung besprochene Klasse file_manipulator für alle Dateioperationen
-  verwenden. Diese Dateioperationen könnten sein: eine Datei kopieren, eine Datei mit Zufallswerten füllen, eine
-  Datei in mehrere Dateien aufsplitten, den Inhalt einer Datei ausgeben.
-+ Die Klasse file_manipulator operiert auf ifstreams und ofstreams. Die einzigen erlaubten Operationen auf diese
-  Streams sind nur `<<` und `>>`.
-+ Die Klasse `stream_reader<value_type>` ...
+  Ein paar Implementierungshinweise:
+  + Die Klasse merge_sorter soll die in der Übung besprochene Klasse file_manipulator für alle Dateioperationen
+    verwenden. Diese Dateioperationen könnten sein: eine Datei kopieren, eine Datei mit Zufallswerten füllen, eine
+    Datei in mehrere Dateien aufsplitten, den Inhalt einer Datei ausgeben.
+  + Die Klasse file_manipulator operiert auf ifstreams und ofstreams. Die einzigen erlaubten Operationen auf diese
+    Streams sind nur `<<` und `>>`.
+  + Die Klasse `stream_reader<value_type>` ...
 ]
 
 == Lösungsidee
@@ -283,7 +309,10 @@ Zusätzlich testen wir die Fehlerbehandlung für nicht vorhandene Dateien (Erwar
 
 Die Tests verifizieren die korrekte Sortierung und robuste Fehlerbehandlung. Auch hier zeigt @task-02-test-results, dass die Laufzeit entsprechend mit der Größe der zu sortierenden Datenfolge wächst. Der Testlauf, der die $100 "MB"$ Datei sortiert, dauert \~10 Minuten. Die Struktur mit `IMergeReader`/`IMergeWriter` ermöglicht identische Kernlogik für In-Memory und On-Disk, was die Wartbarkeit verbessert.
 
-#figure(image("assets/2025-10-16_test_results_task-02.png"), caption: [Ergebnisse der Testfälle für Beispiel 2]) <task-02-test-results>
+#figure(
+  image("assets/2025-10-16_test_results_task-02.png"),
+  caption: [Ergebnisse der Testfälle für Beispiel 2],
+) <task-02-test-results>
 
 === Benchmark
 
@@ -296,23 +325,31 @@ Der Benchmark wurde auf folgender Hardware durchgeführt:
   table(
     columns: (auto, auto),
     [*CPU*],
-    [#benchmark-data.system.cpu_brand \@ #calc.round(benchmark-data.system.cpu_frequency_mhz / 1000, digits: 2) $"GHz"$],
-    [*Logical Cores*],
-    [#benchmark-data.system.cpu_cores_logical],
+    [#benchmark-data.system.cpu_brand \@ #calc.round(
+        benchmark-data.system.cpu_frequency_mhz / 1000,
+        digits: 2,
+      ) $"GHz"$],
+
+    [*Logical Cores*], [#benchmark-data.system.cpu_cores_logical],
     [*RAM*],
-    [#calc.round(benchmark-data.system.total_memory_kb / 1024 / 1024, digits: 2) $"GB"$],
-    [*Arch*],
-    [#benchmark-data.system.arch],
-    [*Kernel*],
-    [#benchmark-data.system.kernel_version],
-    [*OS*],
-    [#benchmark-data.system.long_os_version],
+    [#calc.round(
+        benchmark-data.system.total_memory_kb / 1024 / 1024,
+        digits: 2,
+      ) $"GB"$],
+
+    [*Arch*], [#benchmark-data.system.arch],
+    [*Kernel*], [#benchmark-data.system.kernel_version],
+    [*OS*], [#benchmark-data.system.long_os_version],
   ),
   caption: [Hardware Spezifikationen des Benchmark Systems],
 )
 
 #figure(
-  box(stroke: black, inset: 10pt, visualize_mergesort_benchmarks_results(benchmark-data)),
+  box(
+    stroke: black,
+    inset: 10pt,
+    visualize_mergesort_benchmarks_results(benchmark-data),
+  ),
   caption: [Benchmark Ergebnisse des Merge Sort Algorithmus auf einer #benchmark-data.system.cpu_brand CPU],
 ) <task-02-benchmarks-results>
 
