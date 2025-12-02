@@ -5,7 +5,7 @@
   title: "SWE3 - Übung 6",
   semester-term: "WS 2025/26",
   author: "Tim Peko",
-  aufwand-in-h: "6",
+  aufwand-in-h: "3",
 )
 
 #import "../common/visualization/code_metrics.typ": *
