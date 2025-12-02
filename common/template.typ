@@ -85,7 +85,12 @@
   aufwand-in-h: none,
   doc
 ) = {
-  set page(numbering: "1 von 1", number-align: right, header: [
+  set page(footer: context[
+    #set align(right)
+    #let cur = counter(page).get().first()
+    #let tot = counter(page).final().first()
+    Seite #cur / #tot
+  ], header: [
     #semester-term #h(1fr) #author
   ])
   set heading(numbering: "1.1.")
