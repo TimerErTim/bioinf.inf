@@ -5,14 +5,14 @@
 
   lq.diagram(
     width: 95%,
-    height: 10cm,
+    height: 8cm,
     title: [Code-Metriken],
     xlabel: [Dateityp],
     ylabel: [Zeilen],
     xaxis: (
       ticks: data.keys()
-       .map(rotate.with(-45deg, reflow: true))
-      .map(align.with(right)).enumerate(),
+      .map(rotate.with(-30deg, reflow: true))
+      .enumerate(),
       subticks: none,
     ),
 

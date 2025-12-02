@@ -22,5 +22,5 @@ description = "Runs the Testcases and stores them in a .json asset"
 sources = ["SWE3_Peko_UE06/x64/Debug/01_Beispiel.exe"]
 outputs = ["assets/test_results.json"]
 run = [
-    "SWE3_Peko_UE06/x64/Debug/01_Beispiel.exe --gtest_output=json:assets/test_resuls.json"
+    "SWE3_Peko_UE06/x64/Debug/01_Beispiel.exe --gtest_output=json:assets/test_resuls.json || true"
 ]

@@ -1,8 +1,15 @@
 #import "../common/template.typ": documentation-template
 #import "../common/components.typ": *
 
-#show: documentation-template.with(title: "SWE3 - Übung 6", semester-term: "WS 2025/26", author: "Tim Peko", aufwand-in-h: "-")
+#show: documentation-template.with(
+  title: "SWE3 - Übung 6",
+  semester-term: "WS 2025/26",
+  author: "Tim Peko",
+  aufwand-in-h: "6",
+)
 
+#import "../common/visualization/code_metrics.typ": *
+#import "../common/visualization/test_results.typ": *
 
 = Aufgabe: Doppelt verkettete Liste
 
@@ -266,24 +273,55 @@ Die Implementierung erfüllt alle geforderten Anforderungen:
 3. *Bidirektionaler Iterator:* STL-konform mit korrektem `iterator_tag`
 4. *foreach-Methode:* Akzeptiert Lambdas, Funktoren und Funktionszeiger
 5. *Sichere Modifikation:* `remove_if` ermöglicht sicheres Löschen während Iteration
-6. *Umfassende Tests:* 70+ Unit-Tests decken alle Funktionalitäten und Edge Cases ab
+6. *Umfassende Tests:* Über 100 Unit-Tests decken alle Funktionalitäten und Edge Cases ab. Die Ergebnisse sind in @test-cases aufgelistet.
 
 === Code-Metriken
 
-- *Header-Datei:* ~600 Zeilen (inkl. Dokumentation)
-- *Test-Datei:* ~900 Zeilen
-- *Testfälle:* 70+ individuelle Tests
+#let code-counts = json("assets/code_metrics.json")
 
-=== Beispielausgabe
+#figure(
+  table(
+    columns: 4,
+    table.header[*Typ*][*Codezeilen*][*Kommentarzeilen*][*Leerzeilen*],
+    ..code-counts
+      .pairs()
+      .map(((key, value)) => (
+        [_#(key)_],
+        [#value.code],
+        [#value.comments],
+        [#value.blanks],
+      ))
+      .flatten(),
+      align: (x, y) => if x == 0 { right } else { auto }
+  ),
+  caption: [Code-Metriken für das Übungsprojekt],
+) <code-metrics-table>
 
-```txt
-[==========] Running 70 tests from 6 test suites.
-[----------] Global test environment set-up.
-...
-[----------] 70 tests from DoublyLinkedListTest
-[ RUN      ] DoublyLinkedListTest.PushFront_OnEmptyList_AddsElement
-[       OK ] DoublyLinkedListTest.PushFront_OnEmptyList_AddsElement (0 ms)
-...
-[==========] 70 tests from 6 test suites ran. (X ms total)
-[  PASSED  ] 70 tests.
-```
+Weil die tabellarische Code-Metrik Darstellung in @code-metrics-table noch nciht genug ist, sind die gleichen Daten nochmal grafisch in @code-metrics-graph dargestellt.
+
+#figure(
+  rect(code-metrics-bar-graph(code-counts), inset: 0.5cm),
+  caption: [Grafische Darstellung der Code-Metriken]
+) <code-metrics-graph>
+
+
+=== Testfälle <test-cases>
+#let test-results = json("assets/test_resuls.json")
+
+Das Google-Test Framework wird in der `main.cpp` aufgerufen und erlaubt so, die Testfälle aus der kompilierten Binärdatei auszuführen. Mit dem\ 
+`--gtest_output=json:assets/test_resuls.json`-Flag wird die Ausgabe in Datei geschrieben, die grob in @test-results-overview und detailliert in @test-results-detailed dargestellt wird.
+
+#figure(
+  table-test-results-overview(test-results),
+  caption: [Übersicht der Testfälle und Ergebnisse]
+) <test-results-overview>
+
+#[
+  #show figure: set block(breakable: true)
+  #figure(
+    table-test-results-detailed(test-results),
+    caption: [Detailierte Ergebnisse der Testfälle]
+  ) <test-results-detailed>
+]
+
+

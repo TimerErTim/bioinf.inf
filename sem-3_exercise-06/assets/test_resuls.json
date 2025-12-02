@@ -3,8 +3,8 @@
   "failures": 0,
   "disabled": 0,
   "errors": 0,
-  "timestamp": "2025-12-02T09:09:39Z",
-  "time": "0.12s",
+  "timestamp": "2025-12-02T13:10:54Z",
+  "time": "0.064s",
   "name": "AllTests",
   "testsuites": [
     {
@@ -13,7 +13,7 @@
       "failures": 0,
       "disabled": 0,
       "errors": 0,
-      "time": "0.004s",
+      "time": "0s",
       "testsuite": [
         {
           "name": "DefaultConstructor_CreatesEmptyList",
@@ -48,7 +48,7 @@
         {
           "name": "MoveConstructor_TransfersOwnership",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListConstructor"
         },
         {
@@ -77,12 +77,12 @@
       "failures": 0,
       "disabled": 0,
       "errors": 0,
-      "time": "0.067s",
+      "time": "0.028s",
       "testsuite": [
         {
           "name": "PushFront_OnEmptyList_AddsElement",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -112,7 +112,7 @@
         {
           "name": "PushBack_OnNonEmptyList_AddsAtEnd",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -130,7 +130,7 @@
         {
           "name": "Size_EmptyList_ReturnsZero",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -178,7 +178,7 @@
         {
           "name": "Find_NonExistingElement_ReturnsEndIterator",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -196,7 +196,7 @@
         {
           "name": "Find_LastElement_ReturnsValidIterator",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -250,7 +250,7 @@
         {
           "name": "Front_EmptyList_ThrowsException",
           "status": "RUN",
-          "time": "0s",
+          "time": "0.001s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -274,7 +274,7 @@
         {
           "name": "PopFront_NonEmptyList_RemovesFirstElement",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -304,13 +304,13 @@
         {
           "name": "PopBack_EmptyList_ThrowsException",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
           "name": "Clear_NonEmptyList_MakesListEmpty",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -328,7 +328,7 @@
         {
           "name": "Begin_NonEmptyList_ReturnsIteratorToFirstElement",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -346,7 +346,7 @@
         {
           "name": "CBegin_ReturnsConstIterator",
           "status": "RUN",
-          "time": "0s",
+          "time": "0.001s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -358,7 +358,7 @@
         {
           "name": "Iterator_PostIncrement_MovesToNextElement",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -376,7 +376,7 @@
         {
           "name": "Iterator_ArrowOperator_AccessesMember",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -388,7 +388,7 @@
         {
           "name": "Iterator_BidirectionalTraversal_WorksCorrectly",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -406,7 +406,7 @@
         {
           "name": "Iterator_TypeAliases_AreCorrect",
           "status": "RUN",
-          "time": "0s",
+          "time": "0.001s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -418,13 +418,13 @@
         {
           "name": "RangeBasedFor_TraversesAllElements",
           "status": "RUN",
-          "time": "0s",
+          "time": "0.001s",
           "classname": "DoublyLinkedListTest"
         },
         {
           "name": "RangeBasedFor_ModifiesElements",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -472,7 +472,7 @@
         {
           "name": "Foreach_WithCapturingLambda_AccessesExternalState",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -520,7 +520,7 @@
         {
           "name": "Erase_Range_RemovesMultipleElements",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -616,13 +616,13 @@
         {
           "name": "StdAnyOf_ChecksSomeElements",
           "status": "RUN",
-          "time": "0.002s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
           "name": "StdNoneOf_ChecksNoElements",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListTest"
         },
         {
@@ -645,12 +645,12 @@
       "failures": 0,
       "disabled": 0,
       "errors": 0,
-      "time": "0.021s",
+      "time": "0.018s",
       "testsuite": [
         {
           "name": "LargeList_HandlesCorrectly",
           "status": "RUN",
-          "time": "0.018s",
+          "time": "0.015s",
           "classname": "DoublyLinkedListEdgeCases"
         },
         {
@@ -662,7 +662,7 @@
         {
           "name": "StringType_WorksCorrectly",
           "status": "RUN",
-          "time": "0.001s",
+          "time": "0s",
           "classname": "DoublyLinkedListEdgeCases"
         },
         {
@@ -703,18 +703,18 @@
       "failures": 0,
       "disabled": 0,
       "errors": 0,
-      "time": "0.017s",
+      "time": "0.011s",
       "testsuite": [
         {
           "name": "DestructorFreesAllMemory",
           "status": "RUN",
-          "time": "0.005s",
+          "time": "0.002s",
           "classname": "DoublyLinkedListMemory"
         },
         {
           "name": "ClearFreesElementMemory",
           "status": "RUN",
-          "time": "0.012s",
+          "time": "0.007s",
           "classname": "DoublyLinkedListMemory"
         }
       ]
@@ -725,12 +725,12 @@
       "failures": 0,
       "disabled": 0,
       "errors": 0,
-      "time": "0.006s",
+      "time": "0.005s",
       "testsuite": [
         {
           "name": "ManyPushPop_MaintainsIntegrity",
           "status": "RUN",
-          "time": "0.004s",
+          "time": "0.003s",
           "classname": "DoublyLinkedListStress"
         },
         {
