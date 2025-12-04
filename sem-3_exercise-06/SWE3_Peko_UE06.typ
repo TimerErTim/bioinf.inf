@@ -231,7 +231,7 @@ Die Implementierung erfüllt alle geforderten Anforderungen:
   caption: [Code-Metriken für das Übungsprojekt],
 ) <code-metrics-table>
 
-Weil die tabellarische Code-Metrik Darstellung in @code-metrics-table noch nciht genug ist, sind die gleichen Daten nochmal grafisch in @code-metrics-graph dargestellt.
+Weil die tabellarische Code-Metrik Darstellung in @code-metrics-table noch nicht genug ist, sind die gleichen Daten nochmal grafisch in @code-metrics-graph dargestellt.
 
 #figure(
   rect(code-metrics-bar-graph(code-counts), inset: 0.5cm),
